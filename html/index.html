@@ -8,10 +8,14 @@
                 height: 100%;
                 padding: 0;
                 width: 100%;
+                color: hsl( 183, 100%, 50% );
             }
 
             body {
                 font-size: 16px;
+                display: flex;
+                flex-direction: column;
+                background-color: hsl(0, 0%, 0%);
             }
             
             header {
@@ -35,15 +39,47 @@
             header > h1 {
                 margin: 0;
             }
+
+            section#ResumenDevocional {
+                flex: 1 0 auto;
+                padding: 0.5rem;
+                vertical-align: middle;
+            }
+
+            footer {
+                padding: 0 0.5rem;
+            }
+
+            nav#Omnibox {
+                display: flex;
+            }
+
+            div#OmniboxContenidoCentral {
+                flex: 1 0 auto;
+            }
+
+            .invisible {
+                visibility: hidden;
+            }
+
+            .inexistente {
+                display: none;
+            }
+
+            button#DescargaBtn {
+                stroke-width: 10;
+                stroke: hsl( 183, 100%, 50% );
+                outline: none;
+            }
         </style>
     </head>
     <body>
         <header>
             <h1>R07</h1>
             <div class="dummy"></div>
-            <button>
+            <button id="DescargaBtn">
                 <svg width="100%" height="100%" viewbox="0 0 100 100" >
-                    <g style="stroke: black; stroke-width: 10;">
+                    <g>
                         <line x1="50" y1="20" x2="50" y2="78"></line>
                         <line x1="22" y1="55" x2="52" y2="76"></line>
                         <line x1="78" y1="55" x2="48" y2="76"></line>
@@ -52,11 +88,17 @@
                 </svg>
             </button>
         </header>
-        <section>
+        <section id="ResumenDevocional">
             Si ves esto es porque está cargando la página o no está habilitado JavaScript
         </section>
-        <nav>
-            
+        <nav id="Omnibox" >
+            <button id="OmniboxIzqBtn" class="invisible"></button>
+            <div id="OmniboxContenidoCentral">
+                <button id="OmniboxCronometroBtn" class="invisible"></button>
+                <button id="OmniboxBusquedaBtn" class="inexistente"></button>
+                <input id="OmniboxBusqueda" type="text" class="inexistente" />
+            </div>
+            <button id="OmniboxDerBtn" class="invisible"></button>
         </nav>
         <footer>
             Miércoles 29 Julio 2015
