@@ -4,32 +4,32 @@
         <meta charset="utf-8">
         <style>
             html, body {
-                margin: 0;
-                height: 100%;
+                color  : hsl( 183, 100%, 50% );
+                height : 100%;
+                margin : 0;
                 padding: 0;
-                width: 100%;
-                color: hsl( 183, 100%, 50% );
+                width  : 100%;
             }
 
             body {
-                font-size: 16px;
-                display: flex;
-                flex-direction: column;
                 background-color: hsl(0, 0%, 0%);
+                display         : flex;
+                font-size       : 16px;
+                flex-direction  : column;
             }
             
             header {
-                display: flex;
+                align-items    : center;
+                display        : flex;
                 justify-content: space-around;
-                align-items: center;
-                padding: 0.5rem;
+                padding        : 0.5rem;
             }
             header > button {
-                height: 10vw;
-                width : 10vw;
-                padding: 0;
                 background-color: hsla(0, 0%, 0%, 0);
-                border: none;
+                border          : none;
+                height          : 10vw;
+                padding         : 0;
+                width           : 10vw;
             }
             
             header .dummy {
@@ -41,13 +41,13 @@
             }
 
             section#ResumenDevocional {
-                flex: 1 0 auto;
-                padding: 0.5rem;
+                flex          : 1 0 auto;
+                padding       : 0.5rem;
                 vertical-align: middle;
             }
 
             footer {
-                padding: 0 0.5rem;
+                padding: 0 0.5rem 0.5rem;
             }
 
             nav#Omnibox {
@@ -67,9 +67,13 @@
             }
 
             button#DescargaBtn {
+                outline     : none;
+                stroke      : hsl( 183, 100%, 50% );
                 stroke-width: 10;
-                stroke: hsl( 183, 100%, 50% );
-                outline: none;
+            }
+            
+            button:hover {
+                cursor: pointer;
             }
         </style>
     </head>
@@ -89,7 +93,7 @@
             </button>
         </header>
         <section id="ResumenDevocional">
-            Si ves esto es porque está cargando la página o no está habilitado JavaScript
+            Si ves esto es porque está cargando la página o no está habilitado JavaScript (que es indispensable para la aplicación)
         </section>
         <nav id="Omnibox" >
             <button id="OmniboxIzqBtn" class="invisible"></button>
@@ -103,5 +107,39 @@
         <footer>
             Miércoles 29 Julio 2015
         </footer>
+        <script>
+            // Si corre esto es porque está habilitado JavaScript
+            
+            var R07 = {
+                Cargador: {
+                    
+                    /**
+                     * Devolvemos el módulo a través del callback. No usamos promesas porque al comienzo no sabemos si las podemos usar
+                     * @param {          String   } modulo   El nombre del módulo
+                     * @param {Function} callback La manera como hacemos saber que fue cargado el módulo solicitado
+                     */
+                    dame( modulo, callback ) {
+                        
+                        var script  = document.createElement( 'script' )
+                        script.type = 'text/javascript'
+                        script.src  = 'modulos/' + modulo.toLowerCase() + '/' + modulo + '.js'
+                        
+                        document.querySelector( 'head' ).appendChild( script )
+                        
+                        function alCargar() {
+                            script.removeEventListener( 'onload', alCargar )
+                            script = null
+                            callback()
+                        }
+                        
+                        script.addEventListener( 'onload', alCargar )
+                    }
+                }
+            }
+            
+            R07.Cargador.dame( 'Elementos', function() {
+                // TODO
+            })
+        </script>
     </body>
 </html>
