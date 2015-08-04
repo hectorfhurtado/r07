@@ -81,7 +81,7 @@
         <header>
             <h1>R07</h1>
             <div class="dummy"></div>
-            <button id="DescargaBtn">
+            <button id="DescargaBtn" class="invisible">
                 <svg width="100%" height="100%" viewbox="0 0 100 100" >
                     <g>
                         <line x1="50" y1="20" x2="50" y2="78"></line>
@@ -111,6 +111,7 @@
             // Si corre esto es porque está habilitado JavaScript
             
             var R07 = {
+                DEBUG: true,
                 Cargador: {
                     
                     /**
@@ -118,7 +119,7 @@
                      * @param {          String   } modulo   El nombre del módulo
                      * @param {Function} callback La manera como hacemos saber que fue cargado el módulo solicitado
                      */
-                    dame( modulo, callback ) {
+                    dame: function( modulo, callback ) {
                         
                         var script  = document.createElement( 'script' )
                         script.type = 'text/javascript'
@@ -127,19 +128,57 @@
                         document.querySelector( 'head' ).appendChild( script )
                         
                         function alCargar() {
-                            script.removeEventListener( 'onload', alCargar )
+                            script.removeEventListener( 'load', alCargar )
+                            document.querySelector( 'head' ).removeChild( script )
+                            
                             script = null
                             callback()
+                            
+                            if ( R07.DEBUG ) {
+                                this.pruebaModulo( modulo )
+                            }
                         }
                         
-                        script.addEventListener( 'onload', alCargar )
+                        script.addEventListener( 'load', alCargar.bind( this ))
+                    },
+                    
+                    pruebaModulo: function( modulo ) {
+                        
+                        var script  = document.createElement( 'script' )
+                        script.type = 'text/javascript'
+                        script.src  = 'modulos/' + modulo.toLowerCase() + '/' + modulo + 'Test.js'
+                        
+                        document.querySelector( 'head' ).appendChild( script )
+                        
+                        function alCargar() {
+                            script.removeEventListener( 'load', alCargar )
+                            document.querySelector( 'head' ).removeChild( script )
+                            script = null
+                        }
+                        
+                        script.addEventListener( 'load', alCargar )
                     }
                 }
             }
             
-            R07.Cargador.dame( 'Elementos', function() {
-                // TODO
-            })
+//            ( function() {
+                
+                R07.hasPromise = 'Promise' in window
+            
+                if ( R07.hasPromise ) {
+                
+                    R07.Cargador.dame( 'CargadorConPromesa', function() {
+                        R07.Cargador.dame( 'ControladorMaestro' ).then( iniciarControladorMaestro )
+                    })
+                }
+                else {
+                    R07.Cargador.dame( 'ControladorMaestro', iniciarControladorMaestro )
+                }
+            
+                function iniciarControladorMaestro() {
+                    R07.ControladorMaestro.inicia()
+                }
+//            })();
         </script>
     </body>
 </html>
