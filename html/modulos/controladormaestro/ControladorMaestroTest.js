@@ -2,5 +2,5 @@
  * @author nando
  */
 ( function() {
-    console.assert( false, 'DEBUG Controlador Maestro' );
+    console.assert( true, 'DEBUG Controlador Maestro' );
 })();

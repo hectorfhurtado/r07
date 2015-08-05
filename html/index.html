@@ -111,7 +111,7 @@
             // Si corre esto es porque está habilitado JavaScript
             
             var R07 = {
-                DEBUG: true,
+                DEBUG: false,
                 Cargador: {
                     
                     /**
@@ -120,6 +120,12 @@
                      * @param {Function} callback La manera como hacemos saber que fue cargado el módulo solicitado
                      */
                     dame: function( modulo, callback ) {
+                        
+                        // Necesito mirar si el módulo no es cargador, porque es el único que está definico al comenzar
+                        if ( R07[ modulo ] && modulo !== 'Cargador' ) {
+                            callback( R07[ modulo ]);
+                            return
+                        }
                         
                         var script  = document.createElement( 'script' )
                         script.type = 'text/javascript'
@@ -132,7 +138,7 @@
                             document.querySelector( 'head' ).removeChild( script )
                             
                             script = null
-                            callback()
+                            callback( R07[ modulo ])
                             
                             if ( R07.DEBUG ) {
                                 this.pruebaModulo( modulo )
@@ -142,6 +148,10 @@
                         script.addEventListener( 'load', alCargar.bind( this ))
                     },
                     
+                    /**
+                     * El el método que carga los scripts de pruebas
+                     * @param {String} modulo El nombre del módulo que estamos cargando
+                     */
                     pruebaModulo: function( modulo ) {
                         
                         var script  = document.createElement( 'script' )
@@ -160,25 +170,22 @@
                     }
                 }
             }
-            
-//            ( function() {
                 
-                R07.hasPromise = 'Promise' in window
-            
-                if ( R07.hasPromise ) {
-                
-                    R07.Cargador.dame( 'CargadorConPromesa', function() {
-                        R07.Cargador.dame( 'ControladorMaestro' ).then( iniciarControladorMaestro )
-                    })
-                }
-                else {
-                    R07.Cargador.dame( 'ControladorMaestro', iniciarControladorMaestro )
-                }
-            
-                function iniciarControladorMaestro() {
-                    R07.ControladorMaestro.inicia()
-                }
-//            })();
+            R07.hasPromise = 'Promise' in window
+
+            if ( R07.hasPromise ) {
+
+                R07.Cargador.dame( 'Cargador', function( Cargador ) {
+                    Cargador.dame( 'ControladorMaestro' ).then( iniciarControladorMaestro )
+                })
+            }
+            else {
+                R07.Cargador.dame( 'ControladorMaestro', iniciarControladorMaestro )
+            }
+
+            function iniciarControladorMaestro( Maestro ) {
+                Maestro.inicia()
+            }
         </script>
     </body>
 </html>

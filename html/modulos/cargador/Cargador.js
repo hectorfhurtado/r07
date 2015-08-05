@@ -17,25 +17,31 @@
 
             return new Promise( function( resolve ) {
                 
+                if ( R07[ modulo ]) {
+                    resolve( R07[ modulo ]);
+                    return;
+                }
+                
                 var script  = document.createElement( 'script' );
                 script.type = 'text/javascript';
                 script.src  = `modulos/${ modulo.toLocaleLowerCase() }/${ modulo }.js`;
 
                 document.querySelector( 'head' ).appendChild( script );
+                script.addEventListener( 'load', alCargar );
 
                 function alCargar() {
                     script.removeEventListener( 'load', alCargar );
                     document.querySelector( 'head' ).removeChild( script );
                     script = null;
-                    resolve();
+                    resolve( R07[ modulo ]);
                 }
-
-                script.addEventListener( 'load', alCargar );
-            }.bind( this )).then( function() {
+            }.bind( this )).then( function( Modulo ) {
                 
                 if ( R07.DEBUG ) {
                     this.pruebaModulo( modulo );
                 }
+                
+                return Modulo;
             }.bind( this ));
         },
 
