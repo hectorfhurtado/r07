@@ -66,7 +66,7 @@
                 display: none;
             }
 
-            button#DescargaBtn {
+            button#DescargaBtn, button#OmniboxIzqBtn {
                 outline     : none;
                 stroke      : hsl( 183, 100%, 50% );
                 stroke-width: 10;
@@ -74,6 +74,25 @@
             
             button:hover {
                 cursor: pointer;
+            }
+            
+            nav#Omnibox {
+/*                height: 5vh;*/
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+                flex-direction: row;
+            }
+            
+            div#OmniboxContenidoCentral {
+                flex: 1 0 auto;
+            }
+            
+            button#OmniboxIzqBtn {
+                width: 54px;
+                height: 54px;
+                background-color: transparent;
+                border: none;
             }
         </style>
     </head>
@@ -96,7 +115,14 @@
             Si ves esto es porque está cargando la página o no está habilitado JavaScript (que es indispensable para la aplicación)
         </section>
         <nav id="Omnibox" >
-            <button id="OmniboxIzqBtn" class="invisible"></button>
+            <button id="OmniboxIzqBtn" class="invisible">
+                <svg width="100%" height="100%" viewBox="0 0 100 100">
+                    <g style="stroke-linecap: round;" >
+                        <line x1="60" y1="20" x2="30" y2="50" />
+                        <line x1="60" y1="80" x2="30" y2="50" />
+                    </g>
+                </svg>
+            </button>
             <div id="OmniboxContenidoCentral">
                 <button id="OmniboxCronometroBtn" class="invisible"></button>
                 <button id="OmniboxBusquedaBtn" class="inexistente"></button>
@@ -111,7 +137,7 @@
             // Si corre esto es porque está habilitado JavaScript
             
             var R07 = {
-                DEBUG: false,
+                DEBUG: true,
                 Cargador: {
                     
                     /**

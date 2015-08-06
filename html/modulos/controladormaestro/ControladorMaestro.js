@@ -3,7 +3,7 @@
  * @description Se encarga de coordinar a todos los módulos de la app
  */
 
-/* global R07, Promise */
+/* global R07, Promise, console */
 
 ( function() {
     
@@ -13,7 +13,8 @@
          * El inicio de esta módulo
          */
         inicia: function() {
-            this._mostrarElementosIniciales();
+            this._mostrarElementosIniciales()
+                .then( this._cambiaMensajePrincipal.bind( this ));
         },
         
         /**
@@ -25,7 +26,7 @@
             
             if ( R07.hasPromise ) {
                 
-                return Promise( function( resolve ) {
+                return new Promise( function( resolve ) {
                     
                     R07.Cargador.dame( 'Elementos' ).then( function( Elementos ) {
                         return Elementos.damePorId( 'DescargaBtn' );
@@ -40,6 +41,26 @@
                     }).then( function( $cronometroBtn ) {
                         return $cronometroBtn.classList.remove( 'invisible' );
                     }).then( function() {
+                        resolve();
+                    }).catch( function( e ) {
+                        console.log( e );
+                    });
+                });
+            }
+        },
+        
+        /**
+         * Cambia el mensaje inicial cuando no hay JavasCript a uno donde se le indica al usuario qué hacer
+         */
+        _cambiaMensajePrincipal: function() {
+            
+            if ( R07.hasPromise ) {
+                
+                return new Promise( function( resolve ) {
+                    
+                    R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $resumen ) {
+                        
+                        $resumen.textContent = 'Toca el reloj para comenzar';
                         resolve();
                     });
                 });
