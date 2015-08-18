@@ -55,7 +55,10 @@
             }
 
             div#OmniboxContenidoCentral {
+                display: flex;
                 flex: 1 0 auto;
+                justify-content: center;
+                flex-direction: row;
             }
 
             .invisible {
@@ -66,10 +69,15 @@
                 display: none;
             }
 
-            button#DescargaBtn, button#OmniboxIzqBtn {
+            button#DescargaBtn, button#OmniboxIzqBtn, button#OmniboxCronometroBtn {
+                fill        : none;
                 outline     : none;
                 stroke      : hsl( 183, 100%, 50% );
-                stroke-width: 10;
+                stroke-width: 10%;
+            }
+            
+            button#OmniboxCronometroBtn #manecilla, button#OmniboxIzqBtn {
+                stroke-linecap: round;
             }
             
             button:hover {
@@ -84,11 +92,7 @@
                 flex-direction: row;
             }
             
-            div#OmniboxContenidoCentral {
-                flex: 1 0 auto;
-            }
-            
-            button#OmniboxIzqBtn {
+            button#OmniboxIzqBtn, button#OmniboxCronometroBtn, button#OmniboxDerBtn {
                 width: 54px;
                 height: 54px;
                 background-color: transparent;
@@ -117,18 +121,31 @@
         <nav id="Omnibox" >
             <button id="OmniboxIzqBtn" class="invisible">
                 <svg width="100%" height="100%" viewBox="0 0 100 100">
-                    <g style="stroke-linecap: round;" >
+                    <g>
                         <line x1="60" y1="20" x2="30" y2="50" />
                         <line x1="60" y1="80" x2="30" y2="50" />
                     </g>
                 </svg>
             </button>
             <div id="OmniboxContenidoCentral">
-                <button id="OmniboxCronometroBtn" class="invisible"></button>
+                <button id="OmniboxCronometroBtn" class="invisible">
+                    <svg width="100%" height="100%" viewbox="0 0 100 100">
+                        <g>
+                            <line x1="40" y1="15" x2="60" y2="15" ></line>
+                            <circle cx="50" cy="55" r="25"></circle>
+                            <line id="manecilla" x1="50" y1="55" x2="60" y2="55" ></line>
+                        </g>
+                    </svg>
+                </button>
                 <button id="OmniboxBusquedaBtn" class="inexistente"></button>
                 <input id="OmniboxBusqueda" type="text" class="inexistente" />
             </div>
-            <button id="OmniboxDerBtn" class="invisible"></button>
+            <button id="OmniboxDerBtn" class="invisible">
+                <svg width="100%" height="100%" viewBox="0 0 100 100">
+                    <line x1="40" y1="20" x2="70" y2="50" />
+                    <line x1="40" y1="80" x2="70" y2="50" />
+                </svg>
+            </button>
         </nav>
         <footer>
             Miércoles 29 Julio 2015
