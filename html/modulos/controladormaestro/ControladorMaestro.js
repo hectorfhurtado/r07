@@ -3,7 +3,7 @@
  * @description Se encarga de coordinar a todos los módulos de la app
  */
 
-/* global R07, Promise, console */
+/* global R07, window  */
 
 ( function() {
     
@@ -13,58 +13,62 @@
          * El inicio de esta módulo
          */
         inicia: function() {
-            this._mostrarElementosIniciales()
-                .then( this._cambiaMensajePrincipal.bind( this ));
+            this._mostrarElementosIniciales( this._cambiaMensajePrincipal.bind( this ));
         },
         
         /**
          * Muestra los elementos de la página inicial que al comienzo están escondidos porque no se tiene acceso a JavaScript al cargarr
-         * @returns {Promise}    Puede regresar una promesa si está habilitado
+         * @param {Function} callback    La función que llamaremos al terminar de mostrar los elementos iniciales
          * @private
          */
-        _mostrarElementosIniciales: function() {
+        _mostrarElementosIniciales: function( callback ) {
             
-            if ( R07.hasPromise ) {
+            R07.Cargador.dame( 'Elementos', function( Elementos ) {
                 
-                return new Promise( function( resolve ) {
-                    
-                    R07.Cargador.dame( 'Elementos' ).then( function( Elementos ) {
-                        return Elementos.damePorId( 'DescargaBtn' );
-                    }).then( function( $descargarBtn ) {
-                        return $descargarBtn.classList.remove( 'invisible' );
-                    }).then( function() {
-                        return R07.Elementos.damePorId( 'OmniboxIzqBtn' );
-                    }).then( function( $izqBtn ) {
-                        return $izqBtn.classList.remove( 'invisible' );
-                    }).then( function() {
-                        return R07.Elementos.damePorId( 'OmniboxCronometroBtn' );
-                    }).then( function( $cronometroBtn ) {
-                        return $cronometroBtn.classList.remove( 'invisible' );
-                    }).then( function() {
-                        resolve();
-                    }).catch( function( e ) {
-                        console.log( e );
-                    });
+                Elementos.damePorId( 'DescargaBtn', function( $descargarBtn ) {
+                    $descargarBtn.classList.remove( 'invisible' );
                 });
-            }
+                
+                Elementos.damePorId( 'OmniboxIzqBtn', function( $izqBtn ) {
+                    $izqBtn.classList.remove( 'invisible' );
+                });
+                
+                Elementos.damePorId( 'OmniboxCronometroBtn', function( $cronometroBtn ) {
+                    $cronometroBtn.classList.remove( 'invisible' );
+                });
+                
+                callback();
+            });
         },
         
         /**
          * Cambia el mensaje inicial cuando no hay JavasCript a uno donde se le indica al usuario qué hacer
          */
-        _cambiaMensajePrincipal: function() {
+        _cambiaMensajePrincipal: function( callback ) {
             
-            if ( R07.hasPromise ) {
+            R07.Elementos.damePorId( 'ResumenDevocional', function( $resumen ) {
+                $resumen.textContent = 'Toca el reloj para comenzar';
                 
-                return new Promise( function( resolve ) {
-                    
-                    R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $resumen ) {
-                        
-                        $resumen.textContent = 'Toca el reloj para comenzar';
-                        resolve();
-                    });
+                if ( callback ) {
+                    callback();
+                }
+            });
+        },
+        
+        _iniciarBd: function() {
+            
+            if ( 'indexedDB' in window === false ) {
+                
+                R07.Elementos.damePorId( 'ResumenDevocional', function( $resumen ) {
+                    $resumen.textContent = 'Tu navegador no soporta el tener una base de datos local, resulta ser imprescindible para poder funcionar';
                 });
+                return;
             }
+            
+            
+            R07.Cargador.dame( 'Db', function( ) {
+                
+            });
         }
         
     };

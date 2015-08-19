@@ -4,7 +4,7 @@
  * @description Se encarga de tener una referencia a los elementos del DOM de la app
  */
 
-/* global R07, Promise, document */
+/* global R07, document */
 
 ( function() {
     
@@ -20,19 +20,6 @@
          * @returns {Promise}  Retornamos la promesa
          */
         damePorId: function( id, callback ) {
-            
-            if ( R07.hasPromise ) {
-                
-                if ( id in this.elementosPorId ) {
-                    return new Promise.resolve( this.elementosPorId[ id ]);
-                }
-                
-                return new Promise( function( resolve ) {    
-                    this.elementosPorId[ id ] = document.getElementById( id );
-                    
-                    resolve( this.elementosPorId[ id ]);
-                }.bind( this ));
-            }
             
             if ( id in this.elementosPorId ) {
                 callback( this.elementosPorId[ id ]);
