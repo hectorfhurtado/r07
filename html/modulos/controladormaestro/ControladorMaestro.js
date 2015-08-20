@@ -13,7 +13,7 @@
          * El inicio de esta módulo
          */
         inicia: function() {
-            this._mostrarElementosIniciales( this._cambiaMensajePrincipal.bind( this ));
+            this._mostrarElementosIniciales( this._cambiaMensajePrincipal.bind( this, this._iniciarBd.bind( this )));
         },
         
         /**
@@ -47,7 +47,7 @@
         _cambiaMensajePrincipal: function( callback ) {
             
             R07.Elementos.damePorId( 'ResumenDevocional', function( $resumen ) {
-                $resumen.textContent = 'Toca el reloj para comenzar';
+                $resumen.textContent = 'Toca el cronómetro para comenzar';
                 
                 if ( callback ) {
                     callback();
