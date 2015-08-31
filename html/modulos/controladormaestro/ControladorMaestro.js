@@ -13,7 +13,13 @@
          * El inicio de esta módulo
          */
         inicia: function() {
-            this._mostrarElementosIniciales( this._cambiaMensajePrincipal.bind( this, this._iniciarBd.bind( this )));
+            
+            // Llamo a un método después del siguiente
+            this._mostrarElementosIniciales( 
+                this._cambiaMensajePrincipal.bind( this, 
+                this._muestraFecha.bind( this, new Date(),
+                this._iniciarBd.bind( this )))
+            );
         },
         
         /**
@@ -55,6 +61,21 @@
             });
         },
         
+        _muestraFecha: function( fecha, callback ) {
+            
+            R07.Elementos.damePorId( 'fechaFooter', function( $fecha ) {
+                R07.Cargador.dame( 'UtilidadFecha', function( Util ) {
+                    
+                    $fecha.textContent = Util.dateAddddDDMMyyyy( fecha );
+                    callback()
+                });
+            });
+        },
+        
+        /**
+         * Llamamos a la base de datos y le damos arrancar
+         * @private
+         */
         _iniciarBd: function() {
             
             if ( 'indexedDB' in window === false ) {
@@ -65,9 +86,11 @@
                 return;
             }
             
-            
-            R07.Cargador.dame( 'Db', function( ) {
+            R07.Cargador.dame( 'Db', function( BD ) {
                 
+                BD.iniciar( 'r07', function( db ) {
+                    // TODO
+                });
             });
         }
         
