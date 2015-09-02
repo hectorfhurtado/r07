@@ -3,7 +3,7 @@
  * @description La interfaz con la que realizaremos las transacciones a la BD
  */
 
-/* global R07, indexedDB */
+/* global R07, indexedDB, console */
 
 ( function() {
     
@@ -35,6 +35,41 @@
                 this.db = e.target.result;
                 
                 callback( this.db );
+            }.bind( this );
+        },
+        
+        /**
+         * Busca en el indexedDB registro para el devocional con la fecha suministrada
+         * @param {Date}     fecha    La fecha a buscar
+         * @param {Function} callback Le pasamos lo encontrado en la BD o un objeto para el devocional nuevo
+         */
+        trae: function( fecha, callback ) {
+            
+            if ( !this.db ) {
+                throw new Error( 'No tengo instancia de la Base de Datos' );
+            }
+            
+            var fechaABuscar = fecha || new Date();
+            var fechaIndex   = new Date( fechaABuscar.getFullYear(), fechaABuscar.getMonth(), fechaABuscar.getDate(), 0, 0, 0, 0 ).getTime();
+            
+            this.db.transaction([ 'devocional' ], 'readonly' ).objectStore( 'devocional' ).get( fechaIndex ).onsuccess = function( e ) {
+                if ( e.target.result ) {
+                    e.target.result.fecha = new Date( e.target.result.date );
+                    this.dato = e.target.result;
+                }
+                else {
+                    this.dato = {
+                        fecha     : new Date( fechaIndex ),
+                        horainicio: null,
+                        horafin   : null,
+                        devocional: '',
+                        texto     : '',
+                        capitulo  : '',
+                        libro     : ''
+                    };
+                }
+                
+                callback( this.dato );
             }.bind( this );
         }
     };

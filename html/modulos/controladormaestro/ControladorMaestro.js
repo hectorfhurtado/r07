@@ -61,13 +61,19 @@
             });
         },
         
+        /**
+         * Se encarga de poner la fecha correcta en la pantalla de inicio
+         * @param {Object}   fecha    La fecha que queremos mostrar en la pantalla
+         * @param {Function} callback La consecución del programa
+         * @private
+         */
         _muestraFecha: function( fecha, callback ) {
             
             R07.Elementos.damePorId( 'fechaFooter', function( $fecha ) {
                 R07.Cargador.dame( 'UtilidadFecha', function( Util ) {
                     
                     $fecha.textContent = Util.dateAddddDDMMyyyy( fecha );
-                    callback()
+                    callback();
                 });
             });
         },
@@ -86,10 +92,20 @@
                 return;
             }
             
+            R07.Cargador.dame( 'Omnibox', function( Omnibox ) {
+                
+                Omnibox.inicia();
+            });
+            
             R07.Cargador.dame( 'Db', function( BD ) {
                 
-                BD.iniciar( 'r07', function( db ) {
-                    // TODO
+                BD.iniciar( 'r07', function() {
+                    BD.trae( null, function( devocional ) {
+                        
+                        if ( devocional.horainicio === null ) {
+                            
+                        }
+                    });
                 });
             });
         }
