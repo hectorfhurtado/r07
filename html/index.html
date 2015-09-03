@@ -16,6 +16,7 @@
                 display         : flex;
                 font-size       : 16px;
                 flex-direction  : column;
+                overflow        : hidden;
             }
             
             header {
@@ -59,6 +60,7 @@
                 flex: 1 0 auto;
                 justify-content: center;
                 flex-direction: row;
+                position: relative;
             }
 
             .invisible {
@@ -106,6 +108,21 @@
             button#OmniboxCronometroBtn svg.cronometroGrande {
                 transform : scale( 8 ) translateY( -4vh );
             }
+            
+            div#OmniboxHoras {
+                display: flex;
+                position: absolute;
+                top: -0.7rem;
+                margin: 0 auto;
+                width: 100%;
+                box-sizing: border-box;
+                left: 0;
+                padding: 0 33%;
+                justify-content: space-between;
+                font-size: 0.7rem;
+            }
+            
+            
         </style>
     </head>
     <body>
@@ -136,6 +153,9 @@
                 </svg>
             </button>
             <div id="OmniboxContenidoCentral">
+                <div id="OmniboxHoras" class="invisible" >
+                    <span>--:--</span><span>--:--</span>
+                </div>
                 <button id="OmniboxCronometroBtn" class="invisible">
                     <svg width="100%" height="100%" viewbox="0 0 100 100" class="cronometroGrande">
                         <g>

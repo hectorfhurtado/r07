@@ -21,6 +21,27 @@
             var mes       = this.MESES[ fecha.getMonth() ];
             
             return diaSemana + ' ' + fecha.getDate() + ' ' + mes + ' ' + fecha.getFullYear();
+        },
+        
+        /**Extrae la hora de una fecha, agregando un cero al número si es menor a 10
+         * @param   {Date} fecha
+         * @returns {String} 
+         */
+        traeHoras: function( fecha ) {
+            var horas = fecha.getHours();
+            
+            return horas < 10 ? '0' + horas : '' + horas;
+        },
+        
+        /**
+         * Extrae los minutos de la fecha suministrada agregando un cero si es menor a 10
+         * @param   {Date}     fecha
+         * @returns {String} 
+         */
+        traeMinutos: function( fecha ) {
+            var minutos = fecha.getMinutes();
+            
+            return minutos < 10 ? '0' + minutos : '' + minutos;
         }
     };
 })();
