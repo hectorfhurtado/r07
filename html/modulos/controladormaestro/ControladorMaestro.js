@@ -103,7 +103,7 @@
                     BD.trae( null, function( devocional ) {
                         
                         if ( devocional.horainicio === null ) {
-                            R07.Omnibox.escribeHoraInicio()
+                            R07.Omnibox.escribeHoraInicio( devocional )
                         }
                     });
                 });

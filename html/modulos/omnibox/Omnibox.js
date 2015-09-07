@@ -40,15 +40,15 @@
             });
         },
         
-        escribeHoraInicio: function( fecha ) {
+        escribeHoraInicio: function( devocional ) {
             
-            var fechaHora = fecha || new Date();
+            var fecha = new Date();
             
             R07.Cargador.dame( 'UtilidadFecha', function( util ) {
                 
                 R07.Elementos.damePorId( 'OmniboxHoras', function( $horas ) {
                     
-                    $horas.children[ 0 ].textContent = util.traeHoras( fechaHora ) + ':' + util.traeMinutos( fechaHora );
+                    $horas.children[ 0 ].textContent = devocional.horainicio = util.traeHoras( fecha ) + ':' + util.traeMinutos( fecha );
                 });
             });
         }
