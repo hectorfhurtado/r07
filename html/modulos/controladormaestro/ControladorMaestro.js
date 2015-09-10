@@ -53,7 +53,7 @@
         _cambiaMensajePrincipal: function( callback ) {
             
             R07.Elementos.damePorId( 'ResumenDevocional', function( $resumen ) {
-                $resumen.textContent = 'Toca el cronómetro para comenzar';
+                $resumen.textContent = 'Toca el reloj para comenzar';
                 
                 if ( callback ) {
                     callback();
