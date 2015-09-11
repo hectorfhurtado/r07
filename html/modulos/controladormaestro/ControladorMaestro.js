@@ -7,6 +7,8 @@
 
 ( function() {
     
+	var UN_DIA_EN_MILIS = 1000 * 60 * 60 * 24;
+	
     R07.ControladorMaestro = {
         
         /**
@@ -20,6 +22,23 @@
                 this._muestraFecha.bind( this, new Date(),
                 this._iniciarBd.bind( this )))
             );
+			
+			R07.Cargador.dame( 'Elementos', function( Elementos ) {
+				
+				Elementos.damePorSelector( 'body', function( $body ) {
+
+					$body.addEventListener( 'traeFechaAnterior', function() {
+						
+						if ( R07.DEVOCIONAL ) {
+							
+							this._muestraFecha( new Date( R07.DEVOCIONAL.fecha - UN_DIA_EN_MILIS ));
+							
+							// TODO(Nando): Continuar con el traer la fecha desde la BD
+						}
+
+					}.bind( this ), true );
+				}.bind( this ));
+			}.bind( this ));
         },
         
         /**
@@ -73,7 +92,10 @@
                 R07.Cargador.dame( 'UtilidadFecha', function( Util ) {
                     
                     $fecha.textContent = Util.dateAddddDDMMyyyy( fecha );
-                    callback();
+					
+					if ( callback ) {
+                    	callback();
+					}
                 });
             });
         },
@@ -102,9 +124,8 @@
                 BD.iniciar( 'r07', function() {
                     BD.trae( null, function( devocional ) {
                         
-                        if ( devocional.horainicio === null ) {
-                            R07.Omnibox.escribeHoraInicio( devocional )
-                        }
+						R07.Omnibox.escribeHoraInicio( devocional );
+						R07.DEVOCIONAL = devocional;
                     });
                 });
             });

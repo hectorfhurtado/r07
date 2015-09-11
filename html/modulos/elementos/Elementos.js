@@ -28,6 +28,24 @@
             
             this.elementosPorId[ id ] = document.getElementById( id );
             callback( this.elementosPorId[ id ]);
-        }
+        },
+		
+		/**
+		 * A veces necesitamos elementos que pueden encontrarse con u nselector normal, pero si
+		 * el elemento tienen ID, es mejor guardarlo para después
+		 * @param {String}   selector El selector para encontrar al elemento en el DOM
+		 * @param {Function} callback Le pasamos el Elemento encontrado o null
+		 */
+		damePorSelector: function( selector, callback ) {
+			
+			var $elemento = document.querySelector( selector );
+			
+			if ( $elemento.id ) {
+				this.elementosPorId[ $elemento.id ] = $elemento;
+			}
+			
+			callback( $elemento );
+			$elemento = null;
+		}
     };
 })();

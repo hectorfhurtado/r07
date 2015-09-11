@@ -2,7 +2,7 @@
  * @author    Héctor Fernando Hurtado
  */
 
-/* global R07 */
+/* global R07, Event */
 
 ( function() {
     
@@ -16,21 +16,9 @@
             R07.Cargador.dame( 'Elementos', function( Elementos ) {
                 
                 Elementos.damePorId( 'OmniboxCronometroBtn', function( $cronometroBtn ) {
+					$cronometroBtn.classList.add( 'cronometroGrande' );
                     
-                    var $svg = $cronometroBtn.children[ 0 ];
-					$svg.classList.add( 'cronometroGrande' );
-                    
-//                    $cronometroBtn.addEventListener( 'click', function() {
-                    $svg.addEventListener( 'click', function() {
-//                        var $cronometro = this.children[ 0 ];
-//                        
-//                        $cronometro.classList.remove( 'cronometroGrande' );
-//						$cronometro.classList.remove( 'oprimido' );
-//						$cronometro.classList.add( 'cronometroCorriendo' );
-//						
-//                        // Luego de que termine la animación del cronómetro encogiéndose, mostramos la hora de inicio
-//                        $cronometro.addEventListener( 'transitionend', function() {
-                        
+                    $cronometroBtn.addEventListener( 'click', function() {
                         this.classList.remove( 'cronometroGrande' );
 						this.classList.remove( 'oprimido' );
 						this.classList.add( 'cronometroCorriendo' );
@@ -44,21 +32,30 @@
                         
                     }, false );
 					
-					// TODO: No corre en Firefox
-					
 					// Al oprimir el mouse, hacemos como que oprimimos el cronóemtro para comenzar
-//					$cronometroBtn.addEventListener( 'mousedown', function() {
-					$svg.addEventListener( 'mousedown', function() {
-						var $cronometro = this.children[ 0 ];
-                        
-						$cronometro.classList.add( 'oprimido' );
-					}, false )
+					$cronometroBtn.addEventListener( 'mousedown', function() {    
+						this.classList.add( 'oprimido' );
+					}, false );
 					
                 });
                 
+				// Agregamos los Event handlers para la flecha de la izquierda
+				Elementos.damePorId( 'OmniboxIzqBtn', function( $botonIzq ) {
+					
+					$botonIzq.addEventListener( 'click', function() {
+						var evento = new Event( 'traeFechaAnterior' );
+						
+						this.dispatchEvent( evento );
+					}, true );
+				});
             });
         },
         
+        /**
+         * Al oprimir por primera vez el botón del reloj, el usuario puede saber a qué hora comenzó
+         * a hacer su devocional
+         * @para    {Object}    devocional  Es el objeto que está guardado en la BD con la info del devocional
+         */
         escribeHoraInicio: function( devocional ) {
             
             var fecha = new Date();
@@ -67,7 +64,12 @@
                 
                 R07.Elementos.damePorId( 'OmniboxHoras', function( $horas ) {
                     
-                    $horas.children[ 0 ].textContent = devocional.horainicio = util.traeHoras( fecha ) + ':' + util.traeMinutos( fecha );
+                    if ( devocional.horainicio ) {
+                        $horas.children[ 0 ].textContent = devocional.horainicio;
+                    }
+					else {
+                    	$horas.children[ 0 ].textContent = devocional.horainicio = util.traeHoras( fecha ) + ':' + util.traeMinutos( fecha );
+					}
                 });
             });
         }
