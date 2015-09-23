@@ -48,6 +48,16 @@
 						this.dispatchEvent( evento );
 					}, true );
 				});
+				
+				// Agregamos los Event handlers para la flecha de la izquierda
+				Elementos.damePorId( 'OmniboxDerBtn', function( $botonDer ) {
+					
+					$botonDer.addEventListener( 'click', function() {
+						var evento = new Event( 'traeFechaSiguiente' );
+						
+						this.dispatchEvent( evento );
+					}, true );
+				});
             });
         },
         
@@ -72,6 +82,31 @@
 					}
                 });
             });
+        },
+        
+        /**
+         * Solo debe aparecer la flecha de la derecha en el omnibox cuando la fecha mostrada es diferente al día de hoy
+         * @param   {Date}  fecha   La fecha que viene del devocional
+         */
+        debeMostrarFlechaDerecha: function( fecha ) {
+			
+            var hoy = new Date();
+            
+            if ( fecha.getFullYear() === hoy.getFullYear() &&
+                fecha.getMonth() === hoy.getMonth() &&
+                fecha.getDate() === hoy.getDate()
+            ) {
+                
+                R07.Elementos.damePorId( 'OmniboxDerBtn', function( $btnDer ) {    
+                    $btnDer.classList.add( 'invisible' );
+                });
+            }
+            else {
+                
+                R07.Elementos.damePorId( 'OmniboxDerBtn', function( $btnDer ) {
+                    $btnDer.classList.remove( 'invisible' );
+                });
+            }
         }
     };
 })();

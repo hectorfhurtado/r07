@@ -53,6 +53,7 @@
             var fechaIndex   = new Date( fechaABuscar.getFullYear(), fechaABuscar.getMonth(), fechaABuscar.getDate(), 0, 0, 0, 0 ).getTime();
             
             this.db.transaction([ 'devocional' ], 'readonly' ).objectStore( 'devocional' ).get( fechaIndex ).onsuccess = function( e ) {
+                
                 if ( e.target.result ) {
                     e.target.result.fecha = new Date( e.target.result.date );
                     this.dato = e.target.result;

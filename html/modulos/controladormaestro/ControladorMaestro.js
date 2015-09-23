@@ -20,25 +20,9 @@
             this._mostrarElementosIniciales( 
                 this._cambiaMensajePrincipal.bind( this, 
                 this._muestraFecha.bind( this, new Date(),
-                this._iniciarBd.bind( this )))
+                this._iniciarBd.bind( this,
+                this._aplicaEventListeners.bind( this ))))
             );
-			
-			R07.Cargador.dame( 'Elementos', function( Elementos ) {
-				
-				Elementos.damePorSelector( 'body', function( $body ) {
-
-					$body.addEventListener( 'traeFechaAnterior', function() {
-						
-						if ( R07.DEVOCIONAL ) {
-							
-							this._muestraFecha( new Date( R07.DEVOCIONAL.fecha - UN_DIA_EN_MILIS ));
-							
-							// TODO(Nando): Continuar con el traer la fecha desde la BD
-						}
-
-					}.bind( this ), true );
-				}.bind( this ));
-			}.bind( this ));
         },
         
         /**
@@ -102,9 +86,10 @@
         
         /**
          * Llamamos a la base de datos y le damos arrancar
+         * @param   {Function}  callback    La función para continuar el flujo del módulo
          * @private
          */
-        _iniciarBd: function() {
+        _iniciarBd: function( callback ) {
             
             if ( 'indexedDB' in window === false ) {
                 
@@ -122,14 +107,82 @@
             R07.Cargador.dame( 'Db', function( BD ) {
                 
                 BD.iniciar( 'r07', function() {
-                    BD.trae( null, function( devocional ) {
-                        
-						R07.Omnibox.escribeHoraInicio( devocional );
-						R07.DEVOCIONAL = devocional;
-                    });
-                });
-            });
-        }
+                   this._actualizaFechaDevocional( null, BD, callback );
+                }.bind( this ));
+            }.bind( this ));
+        },
         
+        /**
+         * Escucha todos los eventos que vengan de los componentes de la app
+         * @private
+         */
+        _aplicaEventListeners: function() {
+            
+            R07.Cargador.dame( 'Elementos', function( Elementos ) {
+				
+				Elementos.damePorSelector( 'body', function( $body ) {
+
+					$body.addEventListener( 'traeFechaAnterior', function() {
+						
+						if ( R07.DEVOCIONAL ) {
+                            
+                            var ayer = new Date( R07.DEVOCIONAL.fecha.getTime() - UN_DIA_EN_MILIS );
+							
+							this._actualizaUiPrincipal( ayer );
+						}
+
+					}.bind( this ), true );
+					
+					$body.addEventListener( 'traeFechaSiguiente', function() {
+						
+						if ( R07.DEVOCIONAL ) {
+                            
+                            var manana = new Date( R07.DEVOCIONAL.fecha.getTime() + UN_DIA_EN_MILIS );
+			
+							this._actualizaUiPrincipal( manana );
+						}
+
+					}.bind( this ), true );
+				}.bind( this ));
+			}.bind( this ));
+        },
+        
+        /**
+         * Muestra en el UI la fecha para el usuario y actualiza el objeto DEVOCIONAL que todos consumen
+         * @param   {Date}  fecha   La fecha que vamos a buscar en la BD
+         * @param   {IndexedDB} BD
+         * @param   {Function}  callback    La función que usamos en el flujo del componente al iniciar cada parte
+         * @private
+         */
+        _actualizaFechaDevocional: function( fecha, BD, callback ) {
+            
+            BD.trae( fecha, function( devocional ) {
+                        
+                R07.Omnibox.escribeHoraInicio( devocional );
+                R07.Omnibox.debeMostrarFlechaDerecha( devocional.fecha );
+                R07.DEVOCIONAL = devocional;
+                
+                if ( callback ) {
+                    callback();
+                }
+            });
+        },
+		
+		/**
+		 * Debe actualizar la fecha que ve el usuario y preguntarle al Omnibox si debe mostrar la flecha de la derecha
+		 * @param {Date} fecha La fecha del devocional más o menos un día
+		 * @private
+		 */
+		_actualizaUiPrincipal: function( fecha ) {
+			
+			this._muestraFecha( fecha );
+
+			R07.Cargador.dame( 'Db', function( DB ) {
+
+				this._actualizaFechaDevocional( fecha, DB );
+
+				// TODO (nando): Mirar si se necesita comunicar a todos los componentes del cambio de
+			}.bind( this ));
+		}
     };
 })();
