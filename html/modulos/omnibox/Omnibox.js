@@ -18,6 +18,7 @@
                 Elementos.damePorId( 'OmniboxCronometroBtn', function( $cronometroBtn ) {
 					$cronometroBtn.classList.add( 'cronometroGrande' );
                     
+					// TODO(nando): Al estar corriendo el cronómetro, debe poner la hora de fin
                     $cronometroBtn.addEventListener( 'click', function() {
                         this.classList.remove( 'cronometroGrande' );
 						this.classList.remove( 'oprimido' );
@@ -25,10 +26,20 @@
 						
                         // Luego de que termine la animación del cronómetro encogiéndose, mostramos la hora de inicio
                         this.addEventListener( 'transitionend', function() {
+							
+							// cuando oprimimos las flechas para cambiar de día, corre este eventHandler, por lo que no queremos que
+							// se vea la hora con un dato errado
+							if ( this.classList.contains( 'cronometroGrande' )) {
+								return;
+							}
+							
                             Elementos.damePorId( 'OmniboxHoras', function( $horas ) {
                                 $horas.classList.remove( 'invisible' );
                             });
                         }, false );
+						
+						var evento = new Event( 'actualizaDevocional' );
+						this.dispatchEvent( evento );
                         
                     }, false );
 					
@@ -107,6 +118,41 @@
                     $btnDer.classList.remove( 'invisible' );
                 });
             }
-        }
+        },
+		
+		/**
+		 * Cada vez que cambia el dato del devocional debemos saber si el usuario debe ver el cronómetro para comenzar con su tiempo con Dios
+		 * @param {Object} devocional El objeto con el devocional de la base de datos
+		 */
+		verificaCronometro: function( devocional ) {
+			
+			R07.Elementos.damePorId( 'OmniboxCronometroBtn', function( $cronometro ) {
+				
+				if ( !devocional.horainicio ) {
+					$cronometro.classList.add( 'cronometroGrande' );
+					$cronometro.classList.remove( 'cronometroCorriendo' );
+					
+					R07.Elementos.damePorId( 'OmniboxHoras', function( $horas ) {
+						$horas.classList.add( 'invisible' );
+					});
+					
+					return;
+				}
+				
+				if ( !devocional.horafin ) {
+					
+					$cronometro.classList.remove( 'cronometroGrande' );
+					$cronometro.classList.add( 'cronometroCorriendo' );
+					
+					R07.Elementos.damePorId( 'OmniboxHoras', function( $horas ) {
+						$horas.classList.remove( 'invisible' );
+					});
+					
+					return;
+				}
+				
+				$cronometro.classList.add( 'inexistente' );
+			});
+		}
     };
 })();

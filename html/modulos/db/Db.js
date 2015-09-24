@@ -72,6 +72,23 @@
                 
                 callback( this.dato );
             }.bind( this );
-        }
+        },
+		
+		/**
+		 * Necesitamos guardar los cambios realizados en el devocional
+		 * @param {Object} dato
+		 */
+		actualizaDato: function( dato ) {
+			
+			if ( !this.db ) {
+                throw new Error( 'No tengo instancia de la Base de Datos' );
+            }
+			
+			dato.date = dato.fecha.getTime();
+			
+			this.db.transaction([ 'devocional' ], 'readwrite' ).objectStore( 'devocional' ).put( dato ).onerror = function( e ) {
+				console.log( e );
+			};
+		}
     };
 })();

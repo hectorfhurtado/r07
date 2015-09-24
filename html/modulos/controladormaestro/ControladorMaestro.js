@@ -143,6 +143,14 @@
 						}
 
 					}.bind( this ), true );
+					
+					$body.addEventListener( 'actualizaDevocional', function() {
+						
+						R07.Cargador.dame( 'Db', function( DB) {
+							
+							DB.actualizaDato( R07.DEVOCIONAL );
+						});
+					}, true );
 				}.bind( this ));
 			}.bind( this ));
         },
@@ -158,9 +166,10 @@
             
             BD.trae( fecha, function( devocional ) {
                         
+                R07.DEVOCIONAL = devocional;
+				R07.Omnibox.verificaCronometro( devocional );
                 R07.Omnibox.escribeHoraInicio( devocional );
                 R07.Omnibox.debeMostrarFlechaDerecha( devocional.fecha );
-                R07.DEVOCIONAL = devocional;
                 
                 if ( callback ) {
                     callback();
