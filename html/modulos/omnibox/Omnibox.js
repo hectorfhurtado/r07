@@ -18,25 +18,38 @@
                 Elementos.damePorId( 'OmniboxCronometroBtn', function( $cronometroBtn ) {
 					$cronometroBtn.classList.add( 'cronometroGrande' );
                     
+					// Luego de que termine la animación del cronómetro encogiéndose, mostramos la hora de inicio
+					$cronometroBtn.addEventListener( 'transitionend', function() {
+
+						// cuando oprimimos las flechas para cambiar de día, corre este eventHandler, por lo que no queremos que
+						// se vea la hora con un dato errado
+						if ( this.classList.contains( 'cronometroGrande' )) {
+							return;
+						}
+
+						Elementos.damePorId( 'OmniboxHoras', function( $horas ) {
+							$horas.classList.remove( 'invisible' );
+						});
+					}, false );
+					
 					// TODO(nando): Al estar corriendo el cronómetro, debe poner la hora de fin
                     $cronometroBtn.addEventListener( 'click', function() {
-                        this.classList.remove( 'cronometroGrande' );
-						this.classList.remove( 'oprimido' );
-						this.classList.add( 'cronometroCorriendo' );
 						
-                        // Luego de que termine la animación del cronómetro encogiéndose, mostramos la hora de inicio
-                        this.addEventListener( 'transitionend', function() {
+						if ( this.classList.contains( 'cronometroCorriendo' )) {
+							this.classList.remove( 'cronometroGrande' );
+							this.classList.remove( 'oprimido' );
+							this.classList.remove( 'cronometroCorriendo' );
 							
-							// cuando oprimimos las flechas para cambiar de día, corre este eventHandler, por lo que no queremos que
-							// se vea la hora con un dato errado
-							if ( this.classList.contains( 'cronometroGrande' )) {
-								return;
-							}
+							R07.Omnibox.escribeHoraFin( R07.DEVOCIONAL );
+						}
+						
+						if ( this.classList.contains( 'cronometroGrande' ) && this.classList.contains( 'cronometroCorriendo' ) === false ) {
 							
-                            Elementos.damePorId( 'OmniboxHoras', function( $horas ) {
-                                $horas.classList.remove( 'invisible' );
-                            });
-                        }, false );
+							this.classList.remove( 'cronometroGrande' );
+							this.classList.remove( 'oprimido' );
+							this.classList.add( 'cronometroCorriendo' );
+
+						}
 						
 						var evento = new Event( 'actualizaDevocional' );
 						this.dispatchEvent( evento );
@@ -94,6 +107,30 @@
                 });
             });
         },
+		
+		/**
+		 * Se necesita mostrar a qué hora temrina el devocional el usuario
+		 * @param {Object} devocional
+		 */
+		escribeHoraFin: function( devocional ) {
+			var fecha = new Date();
+			
+			R07.Cargador.dame( 'UtilidadFecha', function( util ) {
+                
+                R07.Elementos.damePorId( 'OmniboxHoras', function( $horas ) {
+                    
+                    if ( devocional.horafin ) {
+                        $horas.children[ 1 ].textContent = devocional.horafin;
+                    }
+					else if ( devocional.horainicio && devocional.horafin === null ) {
+                    	$horas.children[ 1 ].textContent = devocional.horafin = util.traeHoras( fecha ) + ':' + util.traeMinutos( fecha );
+					}
+					else {
+						$horas.children[ 1 ].textContent = '--:--';
+					}
+                });
+            });
+		},
         
         /**
          * Solo debe aparecer la flecha de la derecha en el omnibox cuando la fecha mostrada es diferente al día de hoy
@@ -151,7 +188,19 @@
 					return;
 				}
 				
-				$cronometro.classList.add( 'inexistente' );
+				if ( devocional.horafin ) {
+					
+					$cronometro.classList.remove( 'cronometroGrande' );
+					$cronometro.classList.remove( 'cronometroCorriendo' );
+					$cronometro.classList.add( 'inexistente' );
+					
+					R07.Elementos.damePorId( 'OmniboxHoras', function( $horas ) {
+						$horas.classList.remove( 'invisible' );
+					});
+					
+					return;
+				}
+				
 			});
 		}
     };

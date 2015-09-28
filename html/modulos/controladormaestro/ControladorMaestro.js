@@ -149,8 +149,9 @@
 						R07.Cargador.dame( 'Db', function( DB) {
 							
 							DB.actualizaDato( R07.DEVOCIONAL );
-						});
-					}, true );
+							this._actualizaUiPrincipal( R07.DEVOCIONAL.fecha );
+						}.bind( this ));
+					}.bind( this ), true );
 				}.bind( this ));
 			}.bind( this ));
         },
@@ -168,6 +169,8 @@
                         
                 R07.DEVOCIONAL = devocional;
 				R07.Omnibox.verificaCronometro( devocional );
+				// TODO pensar mejor cómo va a ser la lógica de la hora inicio y final
+				// R07.Omnibox.escribeHoraFin( devocional );
                 R07.Omnibox.escribeHoraInicio( devocional );
                 R07.Omnibox.debeMostrarFlechaDerecha( devocional.fecha );
                 
