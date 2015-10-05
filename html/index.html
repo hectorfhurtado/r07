@@ -47,7 +47,7 @@
                 margin: 0;
             }
 
-            section#ResumenDevocional {
+            main {
                 flex          : 1 0 auto;
                 padding       : 0.5rem;
                 vertical-align: middle;
@@ -157,9 +157,9 @@
                 </svg>
             </button>
         </header>
-        <section id="ResumenDevocional">
+        <main id="ResumenDevocional">
             Si ves esto es porque está cargando la página o no está habilitado JavaScript (que es indispensable para la aplicación)
-        </section>
+        </main>
         <nav id="Omnibox" >
             <button id="OmniboxIzqBtn" class="invisible">
                 <svg width="100%" height="100%" viewbox="0 0 100 100">
@@ -205,34 +205,38 @@
                      * Devolvemos el módulo a través del callback. No usamos promesas porque al comienzo no sabemos si las podemos usar
                      * @param {          String   } modulo   El nombre del módulo
                      * @param {Function} callback La manera como hacemos saber que fue cargado el módulo solicitado
+                     * @return {Object}   La promesa con el módulo
                      */
-                    dame: function( modulo, callback ) {
-                        
-                        // Necesito mirar si el módulo no es cargador, porque es el único que está definico al comenzar
-                        if ( R07[ modulo ] && modulo !== 'Cargador' ) {
-                            callback( R07[ modulo ]);
-                            return
-                        }
-                        
-                        var script  = document.createElement( 'script' )
-                        script.type = 'text/javascript'
-                        script.src  = 'modulos/' + modulo.toLowerCase() + '/' + modulo + '.js'
-                        
-                        document.querySelector( 'head' ).appendChild( script )
-                        
-                        function alCargar() {
-                            script.removeEventListener( 'load', alCargar )
-                            document.querySelector( 'head' ).removeChild( script )
-                            
-                            script = null
-                            callback( R07[ modulo ])
-                            
-                            if ( R07.DEBUG ) {
-                                this.pruebaModulo( modulo )
-                            }
-                        }
-                        
-                        script.addEventListener( 'load', alCargar.bind( this ))
+                    dame: function( modulo ) {
+						
+						return new Promise( function( resolver ) {
+							
+							// Necesito mirar si el módulo no es cargador, porque es el único que está definico al comenzar
+							if ( R07[ modulo ] && modulo !== 'Cargador' ) {
+								resolver( R07[ modulo ]);
+								return
+							}
+							
+							var script  = document.createElement( 'script' )
+							script.type = 'text/javascript'
+							script.src  = 'modulos/' + modulo.toLowerCase() + '/' + modulo + '.js'
+
+							document.querySelector( 'head' ).appendChild( script )
+
+							function alCargar() {
+								script.removeEventListener( 'load', alCargar )
+								document.querySelector( 'head' ).removeChild( script )
+
+								script = null
+								resolver( R07[ modulo ])
+
+								if ( R07.DEBUG ) {
+									this.pruebaModulo( modulo )
+								}
+							}
+
+							script.addEventListener( 'load', alCargar.bind( this ))
+						})
                     },
                     
                     /**
@@ -258,11 +262,9 @@
                 }
             }
                 
-            R07.Cargador.dame( 'ControladorMaestro', iniciarControladorMaestro )
-            
-            function iniciarControladorMaestro( Maestro ) {
+            R07.Cargador.dame( 'ControladorMaestro' ).then( function( Maestro ) {
                 Maestro.inicia()
-            }
+			})
         </script>
     </body>
 </html>

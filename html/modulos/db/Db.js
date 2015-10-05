@@ -3,7 +3,7 @@
  * @description La interfaz con la que realizaremos las transacciones a la BD
  */
 
-/* global R07, indexedDB, console */
+/* global R07, indexedDB, console, Promise */
 
 ( function() {
     
@@ -14,28 +14,32 @@
          * @param {String}   nombreDb El nombre de la base de datos
          * @param {Function} callback Le pasamos la base de datos
          */
-        iniciar: function( nombreDb, callback ) {
+        iniciar: function( nombreDb ) {
+			
+			return new Promise( function( resolver, rechazar ) {
+				
+				var req = indexedDB.open( nombreDb, 1 );
+
+				req.onerror = function( e ) {
+					console.log( 'R07.Db.iniciar(). Hubo un error al intentar abrir la BD' );
+					rechazar( new Error( e ));
+				};
+
+				req.onupgradeneeded = function( e ) {
+					var db = e.currentTarget.result;
+
+					if ( !db.objectStoreNames.contains( 'devocional' )) {
+						db.createObjectStore( 'devocional', { keyPath: 'date' });
+					}
+				}.bind( this );
+
+				req.onsuccess = function( e ) {
+					this.db = e.target.result;
+
+					resolver( this.db );
+				}.bind( this );
+			}.bind( this ));
             
-            var req = indexedDB.open( nombreDb, 1 );
-            
-            req.onerror = function( e ) {
-                console.log( 'R07.Db.iniciar(). Hubo un error al intentar abrir la BD' );
-                throw new Error( e );
-            };
-            
-            req.onupgradeneeded = function( e ) {
-                var db = e.currentTarget.result;
-                
-                if ( !db.objectStoreNames.contains( 'devocional' )) {
-                    db.createObjectStore( 'devocional', { keyPath: 'date' });
-                }
-            }.bind( this );
-            
-            req.onsuccess = function( e ) {
-                this.db = e.target.result;
-                
-                callback( this.db );
-            }.bind( this );
         },
         
         /**
@@ -43,35 +47,40 @@
          * @param {Date}     fecha    La fecha a buscar
          * @param {Function} callback Le pasamos lo encontrado en la BD o un objeto para el devocional nuevo
          */
-        trae: function( fecha, callback ) {
+        trae: function( fecha ) {
+			
+			return new Promise( function( resolver, rechazar ) {
+				
+				if ( !this.db ) {
+					rechazar( new Error( 'No tengo instancia de la Base de Datos' ));
+					return;
+				}
+
+				var fechaABuscar = fecha || new Date();
+				var fechaIndex   = new Date( fechaABuscar.getFullYear(), fechaABuscar.getMonth(), fechaABuscar.getDate(), 0, 0, 0, 0 ).getTime();
+
+				this.db.transaction([ 'devocional' ], 'readonly' ).objectStore( 'devocional' ).get( fechaIndex ).onsuccess = function( e ) {
+
+					if ( e.target.result ) {
+						e.target.result.fecha = new Date( e.target.result.date );
+						this.dato = e.target.result;
+					}
+					else {
+						this.dato = {
+							fecha     : new Date( fechaIndex ),
+							horainicio: null,
+							horafin   : null,
+							devocional: '',
+							texto     : '',
+							capitulo  : '',
+							libro     : ''
+						};
+					}
+
+					resolver( this.dato );
+				}.bind( this );
+			}.bind( this ));
             
-            if ( !this.db ) {
-                throw new Error( 'No tengo instancia de la Base de Datos' );
-            }
-            
-            var fechaABuscar = fecha || new Date();
-            var fechaIndex   = new Date( fechaABuscar.getFullYear(), fechaABuscar.getMonth(), fechaABuscar.getDate(), 0, 0, 0, 0 ).getTime();
-            
-            this.db.transaction([ 'devocional' ], 'readonly' ).objectStore( 'devocional' ).get( fechaIndex ).onsuccess = function( e ) {
-                
-                if ( e.target.result ) {
-                    e.target.result.fecha = new Date( e.target.result.date );
-                    this.dato = e.target.result;
-                }
-                else {
-                    this.dato = {
-                        fecha     : new Date( fechaIndex ),
-                        horainicio: null,
-                        horafin   : null,
-                        devocional: '',
-                        texto     : '',
-                        capitulo  : '',
-                        libro     : ''
-                    };
-                }
-                
-                callback( this.dato );
-            }.bind( this );
         },
 		
 		/**
@@ -80,15 +89,22 @@
 		 */
 		actualizaDato: function( dato ) {
 			
-			if ( !this.db ) {
-                throw new Error( 'No tengo instancia de la Base de Datos' );
-            }
+			return new Promise( function( resolver, rechazar ) {
+				
+				if ( !this.db ) {
+					rechazar( new Error( 'No tengo instancia de la Base de Datos' ));
+					return;
+				}
+
+				dato.date = dato.fecha.getTime();
+
+				this.db.transaction([ 'devocional' ], 'readwrite' ).objectStore( 'devocional' ).put( dato ).onerror = function( e ) {
+					rechazar (console.log( e ));
+				};
+				
+				resolver();
+			}.bind( this ));
 			
-			dato.date = dato.fecha.getTime();
-			
-			this.db.transaction([ 'devocional' ], 'readwrite' ).objectStore( 'devocional' ).put( dato ).onerror = function( e ) {
-				console.log( e );
-			};
 		}
     };
 })();

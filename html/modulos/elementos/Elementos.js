@@ -4,7 +4,7 @@
  * @description Se encarga de tener una referencia a los elementos del DOM de la app
  */
 
-/* global R07, document */
+/* global R07, document, Promise */
 
 ( function() {
     
@@ -16,36 +16,42 @@
          * Devuelve el elemento del DOM en una promesa o por callback según se necesite.
          * Guarda el elemento en el caché
          * @param   {String}   id       El ID del elemento
-         * @param   {Function} callback Cuando no se puede usar promesas se debe pasar el callback
          * @returns {Promise}  Retornamos la promesa
          */
-        damePorId: function( id, callback ) {
+        damePorId: function( id ) {
             
-            if ( id in this.elementosPorId ) {
-                callback( this.elementosPorId[ id ]);
-                return;
-            }
-            
-            this.elementosPorId[ id ] = document.getElementById( id );
-            callback( this.elementosPorId[ id ]);
+			return new Promise( function( resolver ) {
+				
+				if ( id in this.elementosPorId ) {
+					resolver( this.elementosPorId[ id ]);
+					return;
+				}
+
+				this.elementosPorId[ id ] = document.getElementById( id );
+				resolver( this.elementosPorId[ id ]);
+			}.bind( this ));
+			
         },
 		
 		/**
 		 * A veces necesitamos elementos que pueden encontrarse con u nselector normal, pero si
 		 * el elemento tienen ID, es mejor guardarlo para después
-		 * @param {String}   selector El selector para encontrar al elemento en el DOM
-		 * @param {Function} callback Le pasamos el Elemento encontrado o null
+		 * @param {String} selector El selector para encontrar al elemento en el DOM
+		 * @return {Object} Promise con el elementos solicitado
 		 */
-		damePorSelector: function( selector, callback ) {
+		damePorSelector: function( selector ) {
 			
-			var $elemento = document.querySelector( selector );
-			
-			if ( $elemento.id ) {
-				this.elementosPorId[ $elemento.id ] = $elemento;
-			}
-			
-			callback( $elemento );
-			$elemento = null;
+			return new Promise( function( resolver ) {
+				
+				var $elemento = document.querySelector( selector );
+
+				if ( $elemento.id ) {
+					this.elementosPorId[ $elemento.id ] = $elemento;
+				}
+
+				resolver( $elemento );
+				$elemento = null;
+			}.bind( this ));
 		}
     };
 })();
