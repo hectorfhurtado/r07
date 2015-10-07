@@ -12,23 +12,16 @@
     R07.ControladorMaestro = {
         
         /**
-         * El inicio de esta módulo
+         * El inicio de este módulo
          */
         inicia: function() {
             
-            // Llamo a un método después del siguiente
 			this._mostrarElementosIniciales()
 				.then( this._cambiaMensajePrincipal.bind( this ))
 				.then( this._muestraFecha.bind( this, new Date()))
 				.then( this._iniciarBd.bind( this ))
+				.then( this._iniciaOmnibox.bind( this ))
                 .then( this._aplicaEventListeners.bind( this ));
-
-//            this._mostrarElementosIniciales( 
-//                this._cambiaMensajePrincipal.bind( this, 
-//                this._muestraFecha.bind( this, new Date(),
-//                this._iniciarBd.bind( this,
-//                this._aplicaEventListeners.bind( this ))))
-//            );
         },
         
         /**
@@ -40,7 +33,7 @@
             
 			return R07.Cargador.dame( 'Elementos' ).then( function( Elementos ) {
 
-				Elementos.damePorId( 'DescargaBtn' ).then( function( $descargarBtn ) {
+				return Elementos.damePorId( 'DescargaBtn' ).then( function( $descargarBtn ) {
 					$descargarBtn.classList.remove( 'invisible' );
 					
 					return Elementos.damePorId( 'OmniboxIzqBtn' );
@@ -90,22 +83,44 @@
             if ( 'indexedDB' in window === false ) {
                 
                 return R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $resumen ) {
-                    $resumen.textContent = 'Tu navegador no soporta el tener una base de datos local, resulta ser imprescindible para poder funcionar';
+                    $resumen.textContent = 'Tu navegador no soporta el tener una base de datos local que es imprescindible para poder funcionar';
+					return null
                 });
             }
             
-            return R07.Cargador.dame( 'Omnibox' ).then( function( Omnibox ) {
-                
-                Omnibox.inicia();
+			return R07.Cargador.dame( 'Db' ).then( function( BD ) {
 				
-				return R07.Cargador.dame( 'Db' );
-            }).then( function( BD ) {
-                
-                return BD.iniciar( 'r07' );
-            }.bind( this )).then( function() {
-				this._actualizaFechaDevocional( null );
-			}.bind( this ));
+				return BD.iniciar( 'r07' )
+			}).then( function( BD ) {
+				return BD.trae()
+			}).then( function( devocionalEnBd ) {
+				return R07.DEVOCIONAL = devocionalEnBd
+			})
+			
+//            return R07.Cargador.dame( 'Omnibox' ).then( function( Omnibox ) {
+//                
+//                Omnibox.inicia();
+//				
+//				return R07.Cargador.dame( 'Db' );
+//            }).then( function( BD ) {
+//                
+//                return BD.iniciar( 'r07' );
+//            }.bind( this )).then( function() {
+//				this._actualizaFechaDevocional( null );
+//			}.bind( this ));
         },
+		
+		_iniciaOmnibox: function( devocional ) {
+			
+			// Cuando hay problemas con la BD, me devuelven null
+			if ( devocional === null ) return null
+			
+			return R07.Cargador.dame( 'Omnibox' ).then( function( Omnibox ) {
+				return Omnibox.inicia()
+			})
+			
+			
+		},
         
         /**
          * Escucha todos los eventos que vengan de los componentes de la app

@@ -36,7 +36,7 @@
 				req.onsuccess = function( e ) {
 					this.db = e.target.result;
 
-					resolver( this.db );
+					resolver( this );
 				}.bind( this );
 			}.bind( this ));
             

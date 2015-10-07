@@ -18,7 +18,7 @@
                 return Elementos.damePorId( 'OmniboxCronometroBtn' );
 				
 			}).then( function( $cronometroBtn ) {
-				$cronometroBtn.classList.add( 'cronometroGrande' );
+//				$cronometroBtn.classList.add( 'cronometroGrande' );
 
 				// Luego de que termine la animación del cronómetro encogiéndose, mostramos la hora de inicio
 				$cronometroBtn.addEventListener( 'transitionend', function() {
@@ -38,11 +38,12 @@
 				$cronometroBtn.addEventListener( 'click', function() {
 
 					if ( this.classList.contains( 'cronometroCorriendo' )) {
+
 						this.classList.remove( 'cronometroGrande' );
 						this.classList.remove( 'oprimido' );
 						this.classList.remove( 'cronometroCorriendo' );
 
-						R07.Omnibox.escribeHoraFin( R07.DEVOCIONAL );
+						R07.Omnibox.escribeHoraFin( R07.Omnibox.devocional );
 					}
 
 					if ( this.classList.contains( 'cronometroGrande' ) && this.classList.contains( 'cronometroCorriendo' ) === false ) {
@@ -50,10 +51,11 @@
 						this.classList.remove( 'cronometroGrande' );
 						this.classList.remove( 'oprimido' );
 						this.classList.add( 'cronometroCorriendo' );
-
+						
+						R07.Omnibox.escribeHoraInicio( R07.Omnibox.devocional );
 					}
 
-					var evento = new Event( 'actualizaDevocional' );
+					var evento = new CustomEvent( 'actualizaDevocional', R07.Omnibox.devocional );
 					this.dispatchEvent( evento );
 
 				}, false );
@@ -86,28 +88,33 @@
 				}, true );
             });
         },
-        
+		
+		/**
+		 * Cuando hay un cambio en el devocional por la BD, debemos ajsutar el UI para reflejar el cambio
+		 * @param   {Object}  devocional El devocional que viene de la BD
+		 * @returns {Promise} Esta función devuelve una promesa al estar el UI basado en ellas
+		 */
+		cambioDevocional: function( devocional ) {
+			this.devocional = devocional
+			
+			return this.verificaCronometro( devocional )
+		},
+		
         /**
          * Al oprimir por primera vez el botón del reloj, el usuario puede saber a qué hora comenzó
          * a hacer su devocional
-         * @para    {Object}    devocional  Es el objeto que está guardado en la BD con la info del devocional
          */
         escribeHoraInicio: function( devocional ) {
             
-            var fecha = new Date();
-            
-            return R07.Cargador.dame( 'UtilidadFecha' ).then( function( util ) {
-                
-                return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
-                    
-                    if ( devocional.horainicio ) {
-                        $horas.children[ 0 ].textContent = devocional.horainicio;
-                    }
-					else {
-                    	$horas.children[ 0 ].textContent = devocional.horainicio = util.traeHoras( fecha ) + ':' + util.traeMinutos( fecha );
-					}
-                });
-            });
+			return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
+
+				if ( devocional.horainicio ) {
+					$horas.children[ 0 ].textContent = devocional.horainicio;
+				}
+				else {
+					$horas.children[ 0 ].textContent = '--';
+				}
+			}.bind( this ));
         },
 		
 		/**
@@ -115,23 +122,16 @@
 		 * @param {Object} devocional
 		 */
 		escribeHoraFin: function( devocional ) {
-			var fecha = new Date();
-			
-			return R07.Cargador.dame( 'UtilidadFecha' ).then( function( util ) {
                 
-                return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
-                    
-                    if ( devocional.horafin ) {
-                        $horas.children[ 1 ].textContent = devocional.horafin;
-                    }
-					else if ( devocional.horainicio && devocional.horafin === null ) {
-                    	$horas.children[ 1 ].textContent = devocional.horafin = util.traeHoras( fecha ) + ':' + util.traeMinutos( fecha );
-					}
-					else {
-						$horas.children[ 1 ].textContent = '--:--';
-					}
-                });
-            });
+			return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
+
+				if ( devocional.horafin ) {
+					$horas.children[ 1 ].textContent = devocional.horafin;
+				}
+				else {
+					$horas.children[ 1 ].textContent = '--';
+				}
+			});
 		},
         
         /**
@@ -164,7 +164,7 @@
 		 * Cada vez que cambia el dato del devocional debemos saber si el usuario debe ver el cronómetro para comenzar con su tiempo con Dios
 		 * @param {Object} devocional El objeto con el devocional de la base de datos
 		 */
-		verificaCronometro: function( devocional ) {
+		verificaCronometro: function( devocional ) {	// TODO(Nando): Cambiarle el nombre a esta función por actualizar UI
 			
 			return R07.Elementos.damePorId( 'OmniboxCronometroBtn' ).then( function( $cronometro ) {
 				
@@ -174,7 +174,10 @@
 					
 					return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
 						$horas.classList.add( 'invisible' );
-					});
+					}).then( function() {
+						this.escribeHoraInicio( this.devocional )
+						this.escribeHoraFin( this.devocional )
+					}.bind( this ));
 				}
 				
 				if ( !devocional.horafin ) {
@@ -184,7 +187,7 @@
 					
 					return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
 						$horas.classList.remove( 'invisible' );
-					});
+					});	// TODO(Nando): Continuar aquí con la actualización de la hora inicio y fin
 				}
 				
 				if ( devocional.horafin ) {
@@ -197,7 +200,9 @@
 						$horas.classList.remove( 'invisible' );
 					});
 				}
-			});
+			}.bind( this ));
 		}
+		
+		// TODO(Nando): Escribir la lógica para que al oprimir el cornómetro cambie la hora inicio y la hora fin. De pronto al inicio
     };
 })();
