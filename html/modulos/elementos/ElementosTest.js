@@ -12,11 +12,24 @@
     
     document.querySelector( 'body' ).appendChild( spanPrueba );
     
-    R07.Elementos.damePorId( ID_PRUEBA, function( elemento ) {
+	// Probamos el primer método: damePorId
+	R07.Elementos.damePorId( ID_PRUEBA ).then( function( elemento ) {
+		
         console.assert( elemento,                                               'Existe el Elemento' );
         console.assert( elemento.id === ID_PRUEBA,                              'Efectivamente es el elemento de prueba' );
         console.assert( R07.Elementos.elementosPorId[ ID_PRUEBA ] === elemento, 'Existe el elemento en el caché' );
 
+	}).then( function() {
+		
+		// Probamos el siguiente método que se llama damePorSelector
+		return R07.Elementos.damePorSelector( 'body > span' )
+		
+	}).then( function( elemento ) {
+		console.assert( elemento,                                               'Existe el Elemento' );
+        console.assert( elemento.id === ID_PRUEBA,                              'Efectivamente es el elemento de prueba' );
+        console.assert( R07.Elementos.elementosPorId[ ID_PRUEBA ] === elemento, 'Existe el elemento en el caché porque el elemento introducido tiene ID' );
+		
         document.querySelector( 'body' ).removeChild( spanPrueba );
-    });
+		spanPrueba = null
+	})
 })();

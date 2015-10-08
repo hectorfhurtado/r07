@@ -94,7 +94,7 @@
 			}).then( function( BD ) {
 				return BD.trae()
 			}).then( function( devocionalEnBd ) {
-				return R07.DEVOCIONAL = devocionalEnBd
+				return ( R07.DEVOCIONAL = devocionalEnBd )
 			})
 			
 //            return R07.Cargador.dame( 'Omnibox' ).then( function( Omnibox ) {

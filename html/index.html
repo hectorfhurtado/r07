@@ -198,7 +198,7 @@
             // Si corre esto es porque está habilitado JavaScript
             
             var R07 = {
-                DEBUG: false,
+                DEBUG: true,
                 Cargador: {
                     
                     /**
@@ -236,7 +236,7 @@
 							}
 
 							script.addEventListener( 'load', alCargar.bind( this ))
-						})
+						}.bind( this ))
                     },
                     
                     /**
@@ -263,7 +263,8 @@
             }
                 
             R07.Cargador.dame( 'ControladorMaestro' ).then( function( Maestro ) {
-                Maestro.inicia()
+				
+				if ( R07.DEBUG === false ) Maestro.inicia()
 			})
         </script>
     </body>
