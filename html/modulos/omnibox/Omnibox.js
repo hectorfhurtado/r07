@@ -11,83 +11,93 @@
         /**
          * Inicia le Omnibox agregando los EventListeners a los botones que contiene
          */
-        inicia: function() {
+        inicia: function( devocional ) {
             
 			return R07.Cargador.dame( 'Elementos' ).then( function( Elementos ) {
                 
                 return Elementos.damePorId( 'OmniboxCronometroBtn' );
 				
 			}).then( function( $cronometroBtn ) {
-//				$cronometroBtn.classList.add( 'cronometroGrande' );
-
+				
 				// Luego de que termine la animación del cronómetro encogiéndose, mostramos la hora de inicio
-				$cronometroBtn.addEventListener( 'transitionend', function() {
-
-					// cuando oprimimos las flechas para cambiar de día, corre este eventHandler, por lo que no queremos que
-					// se vea la hora con un dato errado
-					if ( this.classList.contains( 'cronometroGrande' )) {
-						return;
-					}
-
-					R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
-						$horas.classList.remove( 'invisible' );
-					});
-				}, false );
+				$cronometroBtn.addEventListener( 'transitionend', this._transitionEndHandler, false );
 					
-				// TODO(nando): Al estar corriendo el cronómetro, debe poner la hora de fin
-				$cronometroBtn.addEventListener( 'click', function() {
+				$cronometroBtn.addEventListener( 'click', this._clickCronometroHandler, false );
 
-					if ( this.classList.contains( 'cronometroCorriendo' )) {
+				// Al oprimir el mouse, hacemos como que oprimimos el cronóemtro para comenzar
+				$cronometroBtn.addEventListener( 'mousedown', this._mousedownCronometroHandler, false );
 
-						this.classList.remove( 'cronometroGrande' );
-						this.classList.remove( 'oprimido' );
-						this.classList.remove( 'cronometroCorriendo' );
-
-						R07.Omnibox.escribeHoraFin( R07.Omnibox.devocional );
-					}
-
-					if ( this.classList.contains( 'cronometroGrande' ) && this.classList.contains( 'cronometroCorriendo' ) === false ) {
-
-						this.classList.remove( 'cronometroGrande' );
-						this.classList.remove( 'oprimido' );
-						this.classList.add( 'cronometroCorriendo' );
-						
-						R07.Omnibox.escribeHoraInicio( R07.Omnibox.devocional );
-					}
-
-					var evento = new CustomEvent( 'actualizaDevocional', R07.Omnibox.devocional );
-					this.dispatchEvent( evento );
-
-				}, false );
-
-					// Al oprimir el mouse, hacemos como que oprimimos el cronóemtro para comenzar
-				$cronometroBtn.addEventListener( 'mousedown', function() {    
-					this.classList.add( 'oprimido' );
-				}, false );
-
-			}).then( function() {
+			}.bind( this )).then( function() {
 				
 				// Agregamos los Event handlers para la flecha de la izquierda
 				return R07.Elementos.damePorId( 'OmniboxIzqBtn' );
 			}).then( function( $botonIzq ) {
 					
-				$botonIzq.addEventListener( 'click', function() {
-					var evento = new Event( 'traeFechaAnterior' );
-
-					this.dispatchEvent( evento );
-				}, true );
+				$botonIzq.addEventListener( 'click', this._clickBotonIzquierdoHandler, true );
 			
 				// Agregamos los Event handlers para la flecha de la izquierda
 				return R07.Elementos.damePorId( 'OmniboxDerBtn' );
 			}).then( function( $botonDer ) {
 					
-				$botonDer.addEventListener( 'click', function() {
-					var evento = new Event( 'traeFechaSiguiente' );
-
-					this.dispatchEvent( evento );
-				}, true );
+				$botonDer.addEventListener( 'click', this._clickBotonDerechoHandler, true );
+				
+				return true
             });
         },
+		
+		_transitionEndHandler: function() {
+			
+			// cuando oprimimos las flechas para cambiar de día, corre este eventHandler, por lo que no queremos que
+			// se vea la hora sobreponiéndose al cronómetor
+			if ( this.classList.contains( 'cronometroGrande' )) {
+				return;
+			}
+
+			R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
+				$horas.classList.remove( 'invisible' );
+			});
+		},
+		
+		_clickCronometroHandler: function() {
+			
+			if ( this.classList.contains( 'cronometroCorriendo' )) {
+
+				this.classList.remove( 'cronometroGrande' );
+				this.classList.remove( 'oprimido' );
+				this.classList.remove( 'cronometroCorriendo' );
+
+				R07.Omnibox.escribeHoraFin( R07.Omnibox.devocional );
+			}
+
+			if ( this.classList.contains( 'cronometroGrande' ) && this.classList.contains( 'cronometroCorriendo' ) === false ) {
+
+				this.classList.remove( 'cronometroGrande' );
+				this.classList.remove( 'oprimido' );
+				this.classList.add( 'cronometroCorriendo' );
+
+				R07.Omnibox.escribeHoraInicio( R07.Omnibox.devocional );
+			}
+
+			var evento = new CustomEvent( 'actualizaDevocional', R07.Omnibox.devocional );
+			this.dispatchEvent( evento );
+		},
+		
+		_mousedownCronometroHandler: function() {
+			
+			this.classList.add( 'oprimido' );
+		},
+		
+		_clickBotonIzquierdoHandler: function() {
+			var evento = new Event( 'traeFechaAnterior' );
+
+			this.dispatchEvent( evento );
+		},
+		
+		_clickBotonDerechoHandler: function() {
+			var evento = new Event( 'traeFechaSiguiente' );
+
+			this.dispatchEvent( evento );
+		},
 		
 		/**
 		 * Cuando hay un cambio en el devocional por la BD, debemos ajsutar el UI para reflejar el cambio

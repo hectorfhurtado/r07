@@ -3,5 +3,5 @@
  */
 
 ( function() {
-    // TODO
+    // TODO( Nando ): comenzar con los tests de los eventHandlers
 })();

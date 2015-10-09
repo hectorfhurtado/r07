@@ -96,30 +96,21 @@
 			}).then( function( devocionalEnBd ) {
 				return ( R07.DEVOCIONAL = devocionalEnBd )
 			})
-			
-//            return R07.Cargador.dame( 'Omnibox' ).then( function( Omnibox ) {
-//                
-//                Omnibox.inicia();
-//				
-//				return R07.Cargador.dame( 'Db' );
-//            }).then( function( BD ) {
-//                
-//                return BD.iniciar( 'r07' );
-//            }.bind( this )).then( function() {
-//				this._actualizaFechaDevocional( null );
-//			}.bind( this ));
         },
 		
+		/**
+		 * Inicializamos el Omnibox
+		 * @param   {Object}  devocional El devocional que viene de la BD
+		 * @returns {Promise} La promesa para pasar al siguiente método
+		 */
 		_iniciaOmnibox: function( devocional ) {
 			
 			// Cuando hay problemas con la BD, me devuelven null
 			if ( devocional === null ) return null
 			
 			return R07.Cargador.dame( 'Omnibox' ).then( function( Omnibox ) {
-				return Omnibox.inicia()
+				return Omnibox.inicia( devocional )
 			})
-			
-			
 		},
         
         /**
