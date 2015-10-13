@@ -19,13 +19,13 @@
 				
 			}).then( function( $cronometroBtn ) {
 				
-				// Luego de que termine la animación del cronómetro encogiéndose, mostramos la hora de inicio
-				$cronometroBtn.addEventListener( 'transitionend', this._transitionEndHandler, false );
+				// Al oprimir el mouse, hacemos como que oprimimos el cronóemtro para comenzar
+				$cronometroBtn.addEventListener( 'mousedown', this._mousedownCronometroHandler, false );
 					
 				$cronometroBtn.addEventListener( 'click', this._clickCronometroHandler, false );
 
-				// Al oprimir el mouse, hacemos como que oprimimos el cronóemtro para comenzar
-				$cronometroBtn.addEventListener( 'mousedown', this._mousedownCronometroHandler, false );
+				// Luego de que termine la animación del cronómetro encogiéndose, mostramos la hora de inicio
+				$cronometroBtn.addEventListener( 'transitionend', this._transitionEndHandler, false );
 
 			}.bind( this )).then( function() {
 				
@@ -37,18 +37,20 @@
 			
 				// Agregamos los Event handlers para la flecha de la izquierda
 				return R07.Elementos.damePorId( 'OmniboxDerBtn' );
-			}).then( function( $botonDer ) {
+			}.bind( this )).then( function( $botonDer ) {
 					
 				$botonDer.addEventListener( 'click', this._clickBotonDerechoHandler, true );
 				
+            }.bind( this )).then( function() {
+				
+				this.cambioDevocional( devocional )
 				return true
-            });
+			}.bind( this ));
         },
 		
 		_transitionEndHandler: function() {
 			
-			// cuando oprimimos las flechas para cambiar de día, corre este eventHandler, por lo que no queremos que
-			// se vea la hora sobreponiéndose al cronómetor
+			// Solo queremos que se vean las horas cuando estamos encogiendo el botón, no cuando se activa el mouseDown
 			if ( this.classList.contains( 'cronometroGrande' )) {
 				return;
 			}
@@ -60,26 +62,33 @@
 		
 		_clickCronometroHandler: function() {
 			
-			if ( this.classList.contains( 'cronometroCorriendo' )) {
+			return R07.Cargador.dame( 'UtilidadFecha' ).then( function( Util ) {
+				
+				var fecha = new Date()
+				
+				if ( this.classList.contains( 'cronometroCorriendo' )) {
 
-				this.classList.remove( 'cronometroGrande' );
-				this.classList.remove( 'oprimido' );
-				this.classList.remove( 'cronometroCorriendo' );
+					this.classList.remove( 'cronometroGrande' );
+					this.classList.remove( 'oprimido' );
+					this.classList.remove( 'cronometroCorriendo' );
 
-				R07.Omnibox.escribeHoraFin( R07.Omnibox.devocional );
-			}
+					R07.Omnibox.escribeHoraFin( R07.Omnibox.devocional.horafin );
+				}
 
-			if ( this.classList.contains( 'cronometroGrande' ) && this.classList.contains( 'cronometroCorriendo' ) === false ) {
+				if ( this.classList.contains( 'cronometroGrande' )) { // && this.classList.contains( 'cronometroCorriendo' ) === false ) {
 
-				this.classList.remove( 'cronometroGrande' );
-				this.classList.remove( 'oprimido' );
-				this.classList.add( 'cronometroCorriendo' );
+					this.classList.remove( 'cronometroGrande' );
+					this.classList.remove( 'oprimido' );
+					this.classList.add( 'cronometroCorriendo' );
 
-				R07.Omnibox.escribeHoraInicio( R07.Omnibox.devocional );
-			}
+					R07.Omnibox.devocional.horainicio = Util.traeHoras( fecha ) + ':' + Util.traeMinutos( fecha )
+					R07.Omnibox.escribeHoraInicio( R07.Omnibox.devocional.horainicio );
+				}
 
-			var evento = new CustomEvent( 'actualizaDevocional', R07.Omnibox.devocional );
-			this.dispatchEvent( evento );
+				var evento = new CustomEvent( 'actualizaDevocional', R07.Omnibox.devocional );
+				this.dispatchEvent( evento );
+			}.bind( this ))
+			
 		},
 		
 		_mousedownCronometroHandler: function() {
@@ -107,7 +116,7 @@
 		cambioDevocional: function( devocional ) {
 			this.devocional = devocional
 			
-			return this.verificaCronometro( devocional )
+			return this.actualizaUI( devocional )
 		},
 		
         /**
@@ -174,7 +183,7 @@
 		 * Cada vez que cambia el dato del devocional debemos saber si el usuario debe ver el cronómetro para comenzar con su tiempo con Dios
 		 * @param {Object} devocional El objeto con el devocional de la base de datos
 		 */
-		verificaCronometro: function( devocional ) {	// TODO(Nando): Cambiarle el nombre a esta función por actualizar UI
+		actualizaUI: function( devocional ) {
 			
 			return R07.Elementos.damePorId( 'OmniboxCronometroBtn' ).then( function( $cronometro ) {
 				
@@ -213,6 +222,5 @@
 			}.bind( this ));
 		}
 		
-		// TODO(Nando): Escribir la lógica para que al oprimir el cornómetro cambie la hora inicio y la hora fin. De pronto al inicio
     };
 })();

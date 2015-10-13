@@ -50,7 +50,7 @@
 	}).then( function( estadoOmnibox ) {
 		
 		console.assert( R07.Omnibox,   'Verificamos que haya cargado el módulo' )
-		console.assert( estadoOmnibox === false, 'Verificamos que pasamos por toda la inicialización del Omnibox' )
+		console.assert( estadoOmnibox === true, 'Verificamos que pasamos por toda la inicialización del Omnibox' )
 		
 		// TODO( Nando ): continuar con los eventos del Omnibox para pasar al siguiente d econtrolador Maestro
 	})
