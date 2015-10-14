@@ -55,10 +55,11 @@
 				return;
 			}
 
-			R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
+			return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
 				$horas.classList.remove( 'invisible' );
 			});
 		},
+		
 		
 		_clickCronometroHandler: function() {
 			
@@ -72,7 +73,8 @@
 					this.classList.remove( 'oprimido' );
 					this.classList.remove( 'cronometroCorriendo' );
 
-					R07.Omnibox.escribeHoraFin( R07.Omnibox.devocional.horafin );
+					R07.Omnibox.devocional.horafin = Util.traeHoras( fecha ) + ':' + Util.traeMinutos( fecha )
+					R07.Omnibox.escribeHoraFin( R07.Omnibox.devocional.horafin )
 				}
 
 				if ( this.classList.contains( 'cronometroGrande' )) { // && this.classList.contains( 'cronometroCorriendo' ) === false ) {
@@ -85,7 +87,7 @@
 					R07.Omnibox.escribeHoraInicio( R07.Omnibox.devocional.horainicio );
 				}
 
-				var evento = new CustomEvent( 'actualizaDevocional', R07.Omnibox.devocional );
+				var evento = new CustomEvent( 'actualizaDevocional', { detail: R07.Omnibox.devocional });
 				this.dispatchEvent( evento );
 			}.bind( this ))
 			
@@ -123,12 +125,12 @@
          * Al oprimir por primera vez el botón del reloj, el usuario puede saber a qué hora comenzó
          * a hacer su devocional
          */
-        escribeHoraInicio: function( devocional ) {
+        escribeHoraInicio: function( horainicio ) {
             
 			return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
 
-				if ( devocional.horainicio ) {
-					$horas.children[ 0 ].textContent = devocional.horainicio;
+				if ( horainicio ) {
+					$horas.children[ 0 ].textContent = horainicio;
 				}
 				else {
 					$horas.children[ 0 ].textContent = '--';
@@ -140,12 +142,12 @@
 		 * Se necesita mostrar a qué hora temrina el devocional el usuario
 		 * @param {Object} devocional
 		 */
-		escribeHoraFin: function( devocional ) {
+		escribeHoraFin: function( horafin ) {
                 
 			return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
 
-				if ( devocional.horafin ) {
-					$horas.children[ 1 ].textContent = devocional.horafin;
+				if ( horafin ) {
+					$horas.children[ 1 ].textContent = horafin;
 				}
 				else {
 					$horas.children[ 1 ].textContent = '--';
