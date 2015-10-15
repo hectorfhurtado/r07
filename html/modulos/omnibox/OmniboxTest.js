@@ -7,8 +7,10 @@
 ( function() {
     
 	var horaRegExp = /\d{2}:\d{2}/
+	
 	// Comenzamos probando los handlers de cada botón
-	var $omnibox = document.getElementById( 'OmniboxCronometroBtn' )
+	var $omnibox       = document.getElementById( 'OmniboxCronometroBtn' )
+	var $flechaDerecha = document.getElementById( 'OmniboxDerBtn' )
 	
 	console.assert( $omnibox, 'Verificamos que existe el botón Cronómetr' )
 	
@@ -73,16 +75,67 @@
 	}).then( function() {
 		
 		console.assert( $horas.classList.contains( 'invisible' ) === false,          'Miramos que se esté mostrando la hora' )
+		
+	}).then( function() {
+		
+		// Probamos el handler para la flecha izquierda _clickBotonIzquierdoHandler
+		var EVENTO = 'traeFechaAnterior'
+		
+		$body.addEventListener( EVENTO, traerFechaAnteriorHandler, true )
+		
+		function traerFechaAnteriorHandler() {
+			
+			console.assert( true, 'Verificamos que se dispara el Evento al oprimir la flecha izquierda del omnibox' )
+			
+			$body.removeEventListener( EVENTO, traerFechaAnteriorHandler, true )
+		}
+		
+		R07.Omnibox._clickBotonIzquierdoHandler.bind( document.getElementById( 'OmniboxIzqBtn' ))()
+		
+	}).then( function() {
+		
+		// Probamos el handler para la flecha derecha
+		console.assert( $flechaDerecha.classList.contains( 'invisible' ), 'Probamos que al comienzo la flecha derecha no se ve porque no hay devocional de un día que no ha llegado' )
+		
+		var EVENTO = 'traeFechaSiguiente'
+		
+		$body.addEventListener( EVENTO, traerFechaSiguienteHandler, true )
+		
+		function traerFechaSiguienteHandler() {
+			
+			console.assert( true, 'Verificamos que se dispara el Evento al oprimir la flecha derecha del omnibox' )
+			
+			$body.removeEventListener( EVENTO, traerFechaSiguienteHandler, true )
+		}
+		
+		R07.Omnibox._clickBotonDerechoHandler.bind( document.getElementById( 'OmniboxIzqBtn' ))()
+		
+	}).then( function() {
+		
+		// Probamos el método debeMostrarFlechaDerecha
+		var ayer = new Date( new Date().getTime() - ( 1000 * 60 * 60 * 24 ))
+		
+		return R07.Omnibox.debeMostrarFlechaDerecha( ayer )
+	}).then( function() {
+		
+		console.assert( $flechaDerecha.classList.contains( 'invisible' ) === false, 'Probamos que al pasar una fecha anterior al hoy sí se debe ver la flecha derecha' )
+		
+		return R07.Omnibox.debeMostrarFlechaDerecha( new Date() )
+	}).then( function() {
+		
+		console.assert( $flechaDerecha.classList.contains( 'invisible' ), 'Probamos que al pasar la fecha de hoy no se debe ver la flecha derecha' )
 	})
 	
-	// TODO: Probar la flecha Derecha
-	// TODO: Probar la flecha izquierda
 	
 	// TODO: Aquí debemos probar que desaparezca el cronómetro para que se muestre la lupa de búsqueda
 	// TODO: Aquí debemos probar que al hacer click en la lupa de búsqueda aparezca el input de la fecha
 	// TODO: Aquí debemos probar que al cambiar la fecha en el input, traiga los datos de esa fecha
 	// TODO: Probar que al traer los datos de la fecha, quede solo la lupa si hay datos de hora inicio y fin
-	
+	// TODO: Probar que al cambiar el devocional se actualice todo el UI: Probar cuando no viene nada
+	// TODO: Probar que al cambiar el devocional se actualice todo el UI: Probar cuando sólo viene la fecha de inicio
+	// TODO: Probar que al cambiar el devocional se actualice todo el UI: Probar cuando sólo viene la fecha de inicio y fin
+	// TODO: Probar que al cambiar el devocional se actualice todo el UI: Probar cuando viene la fecha de un día anterior
+	// TODO: Probar que al cambiar el devocional se actualice todo el UI: Probar cuando no viene nada nuevamente para ver el cambio con la flecha derecha del omnibox
 	
 	
 })();

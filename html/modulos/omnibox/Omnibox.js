@@ -48,6 +48,11 @@
 			}.bind( this ));
         },
 		
+		/**
+		 * Necesitamos saber cuándo mostrar la hora para que no compita por el espacion con el cronómetro cuando este está grande.
+		 * Una vez termina la animación del cronóemtro puede verse la hora
+		 * @returns {Object} Promise
+		 */
 		_transitionEndHandler: function() {
 			
 			// Solo queremos que se vean las horas cuando estamos encogiendo el botón, no cuando se activa el mouseDown
@@ -60,7 +65,10 @@
 			});
 		},
 		
-		
+		/**
+		 * Toma en cuenta los estados en los que debe estar el cronómetro en cada click
+		 * @returns {Object} Promesa
+		 */
 		_clickCronometroHandler: function() {
 			
 			return R07.Cargador.dame( 'UtilidadFecha' ).then( function( Util ) {
@@ -186,6 +194,8 @@
 		 * @param {Object} devocional El objeto con el devocional de la base de datos
 		 */
 		actualizaUI: function( devocional ) {
+			
+			// TODO: (Nando) Debemos aquí mirar si debemos mostrar o no la flecha derecha
 			
 			return R07.Elementos.damePorId( 'OmniboxCronometroBtn' ).then( function( $cronometro ) {
 				
