@@ -75,16 +75,19 @@
 				
 				var fecha = new Date()
 				
+				// Esto es en el segundo click
 				if ( this.classList.contains( 'cronometroCorriendo' )) {
 
 					this.classList.remove( 'cronometroGrande' );
 					this.classList.remove( 'oprimido' );
 					this.classList.remove( 'cronometroCorriendo' );
+					this.classList.add( 'busqueda' )
 
 					R07.Omnibox.devocional.horafin = Util.traeHoras( fecha ) + ':' + Util.traeMinutos( fecha )
 					R07.Omnibox.escribeHoraFin( R07.Omnibox.devocional.horafin )
 				}
 
+				// Esto es en el primer click
 				if ( this.classList.contains( 'cronometroGrande' )) { // && this.classList.contains( 'cronometroCorriendo' ) === false ) {
 
 					this.classList.remove( 'cronometroGrande' );

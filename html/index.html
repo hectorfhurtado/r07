@@ -128,7 +128,16 @@
                 font-size: 0.7rem;
             }
 			
-			svg #botonReloj {
+			/* Animaciones de los elementos internos del cronómetro */
+			#OmniboxCronometroBtn #botonReloj {
+				transition: transform 0.3s, opacity: 0.2s;
+			}
+			
+			#OmniboxCronometroBtn circle {
+				transition: transform 0.3s;
+			}
+			
+			#OmniboxCronometroBtn #manecilla {
 				transition: transform 0.3s;
 			}
             
@@ -139,6 +148,21 @@
 			#OmniboxCronometroBtn.cronometroCorriendo #manecilla {
 				transform-origin: 50px 55px;
 				animation: giroManecilla 10s linear infinite;
+			}
+			
+			#OmniboxCronometroBtn.busqueda #botonReloj {
+				opacity: 0;
+			}
+			
+			#OmniboxCronometroBtn.busqueda circle {
+				transform: translate3d( -10%, -15%, 0 );
+			}
+			
+			#OmniboxCronometroBtn.busqueda #manecilla {
+				transform:  scale( 2, 2 ) translate3D( 8%, 2.5%, 0) rotateZ(45deg);
+				transform-origin: center;
+				stroke-width: 5;
+				
 			}
         </style>
     </head>

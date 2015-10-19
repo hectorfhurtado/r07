@@ -59,6 +59,7 @@
 		console.assert( $omnibox.classList.contains( 'cronometroGrande' ) === false, 'Miramos que haya quitado la clase que muestra grande el botón' );
 		console.assert( $omnibox.classList.contains( 'oprimido' ) === false,         'Miramos que ya no se vea oprimido el botón del cronómetro' );
 		console.assert( $omnibox.classList.contains( 'cronometroCorriendo' ) === false, 'Miramos que ya no esté corriendo la manecilla del cronómetro' );
+		console.assert( $omnibox.classList.contains( 'busqueda'), 'Miramos que esté visible el ícono de búsqueda' )
 		
 		console.assert( horaRegExp.test( R07.Omnibox.devocional.horafin ), 'Miramos que si haya escrito la hora de fin')
 		
@@ -127,7 +128,6 @@
 	})
 	
 	
-	// TODO: Aquí debemos probar que desaparezca el cronómetro para que se muestre la lupa de búsqueda
 	// TODO: Aquí debemos probar que al hacer click en la lupa de búsqueda aparezca el input de la fecha
 	// TODO: Aquí debemos probar que al cambiar la fecha en el input, traiga los datos de esa fecha
 	// TODO: Probar que al traer los datos de la fecha, quede solo la lupa si hay datos de hora inicio y fin
