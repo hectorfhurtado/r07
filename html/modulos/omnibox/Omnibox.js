@@ -75,12 +75,27 @@
 				
 				var fecha = new Date()
 				
+				// Este sería el tercer, quinto, séptimo, etc, click
+				if ( this.classList.contains( 'busqueda' )) {
+					
+					this.classList.add( 'buscando' )
+					
+					R07.Elementos.damePorId( 'OmniboxBusqueda' ).then( function( $input ) {
+						
+						$input.classList.remove( 'inexistente')
+						$input.focus()
+						
+						setTimeout( function() {
+							$input.classList.remove( 'colapsado')
+						}, 0 )
+					})
+					return
+				}
+				
 				// Esto es en el segundo click
 				if ( this.classList.contains( 'cronometroCorriendo' )) {
 
-					this.classList.remove( 'cronometroGrande' );
-					this.classList.remove( 'oprimido' );
-					this.classList.remove( 'cronometroCorriendo' );
+					this.classList.remove( 'cronometroGrande', 'oprimido', 'cronometroCorriendo' );
 					this.classList.add( 'busqueda' )
 
 					R07.Omnibox.devocional.horafin = Util.traeHoras( fecha ) + ':' + Util.traeMinutos( fecha )
@@ -90,8 +105,7 @@
 				// Esto es en el primer click
 				if ( this.classList.contains( 'cronometroGrande' )) { // && this.classList.contains( 'cronometroCorriendo' ) === false ) {
 
-					this.classList.remove( 'cronometroGrande' );
-					this.classList.remove( 'oprimido' );
+					this.classList.remove( 'cronometroGrande', 'oprimido' );
 					this.classList.add( 'cronometroCorriendo' );
 
 					R07.Omnibox.devocional.horainicio = Util.traeHoras( fecha ) + ':' + Util.traeMinutos( fecha )

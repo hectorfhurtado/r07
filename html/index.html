@@ -138,7 +138,7 @@
 			}
 			
 			#OmniboxCronometroBtn #manecilla {
-				transition: transform 0.3s;
+				transition: transform 0.3s, opacity 0.3s;
 			}
             
 			#OmniboxCronometroBtn.oprimido #botonReloj {
@@ -162,7 +162,43 @@
 				transform:  scale( 2, 2 ) translate3D( 8%, 2.5%, 0) rotateZ(45deg);
 				transform-origin: center;
 				stroke-width: 5;
-				
+			}
+			
+			#OmniboxCronometroBtn.busqueda.buscando circle {
+				opacity: 0;
+			}
+			
+			#OmniboxCronometroBtn.busqueda.buscando #manecilla {
+				opacity: 0;
+			}
+			
+			/* INPUT de búsqueda de fechas */
+			input#OmniboxBusqueda {
+				color: hsl( 183, 100%, 50% );
+				font-size: 1rem;
+				position: absolute;
+				left: 0px;
+				top: 0px;
+				width: calc( 100% - 1rem);
+				height: calc( 100% - 1rem );
+				margin: 0.5rem;
+				background-color: transparent;
+				border: medium thin hsl( 183, 100%, 50% );
+				padding: 0.5rem;
+				box-sizing: border-box;
+				border-radius: 0.5rem;
+				transition: border-radius 0.3s, width 0.3s, left 0.3s, height 0.3s, top 0.3s, border-width 0.3s;
+				transition-timing-function: ease-out;
+			}
+			
+			input#OmniboxBusqueda.colapsado {
+				border-radius: 50%;
+				width: 27px;
+				left: calc(50% - 18px);
+				height: 27px;
+				top: 9.4px;
+				border-width: 5px;
+				transition-timing-function: ease-out;
 			}
         </style>
     </head>
@@ -206,8 +242,7 @@
                         </g>
                     </svg>
                 </button>
-                <button id="OmniboxBusquedaBtn" class="inexistente"></button>
-                <input id="OmniboxBusqueda" type="text" class="inexistente" />
+                <input id="OmniboxBusqueda" type="date" class="inexistente colapsado" />
             </div>
             <button id="OmniboxDerBtn" class="invisible">
                 <svg width="100%" height="100%" viewbox="0 0 100 100">
