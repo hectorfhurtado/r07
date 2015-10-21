@@ -85,16 +85,18 @@
 						$input.classList.remove( 'inexistente')
 						$input.focus()
 						
-						setTimeout( function() {
-							$input.classList.remove( 'colapsado')
-						}, 0 )
+						return $input
+						
+					}).then( function( $input ) {
+						
+						$input.classList.remove( 'colapsado')
 					})
 					return
 				}
 				
 				// Esto es en el segundo click
 				if ( this.classList.contains( 'cronometroCorriendo' )) {
-
+					
 					this.classList.remove( 'cronometroGrande', 'oprimido', 'cronometroCorriendo' );
 					this.classList.add( 'busqueda' )
 

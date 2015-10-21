@@ -10,6 +10,7 @@
     "trailing"	: true,
     "maxparams"	: 7,
     "maxdepth"	: 7,
+	"esnext"    : true,
     
     "asi"		: true,
     "debug"		: true,

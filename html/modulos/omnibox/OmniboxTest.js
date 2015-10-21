@@ -55,6 +55,7 @@
 		
 		// Volvemos a oprimir el botón del cronómetro, esta sería la segunda vez
 		return R07.Omnibox._clickCronometroHandler.bind( $omnibox )()
+		
 	}).then( function() {
 		
 		console.assert( $omnibox.classList.contains( 'cronometroGrande' ) === false, 'Miramos que haya quitado la clase que muestra grande el botón' );
@@ -68,9 +69,13 @@
 		// Oprimimios nuevamente el botón del cronómetro, sería esta la tercera vez
 		console.assert( $inputBusqueda.classList.contains( 'inexistente' ), 'Verificamos que no se observa el input de búsqueda' )
 		
+		console.log( $omnibox.classList.toString() )
+		
 		return R07.Omnibox._clickCronometroHandler.bind( $omnibox )
 		
 	}).then( function() {
+		
+		console.log( $omnibox.classList.toString() )
 		
 		console.assert( $omnibox.classList.contains( 'busqueda' ), 'Verificamos que se ve el botón de búsqueda' )
 		console.assert( $omnibox.classList.contains( 'buscando' ), 'Verificamos que está invisible el botón de búsqueda' )
