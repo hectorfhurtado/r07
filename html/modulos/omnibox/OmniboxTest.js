@@ -96,6 +96,7 @@
 	}).then( function() {
 		
 		// Nada debe cambiar porque escribió una fecha que no es
+		// TODO: (nando) Debe fallar esta prueba (23 de Octubre), cambiar el valor del input manualmente
 		console.assert( $omnibox.classList.contains( 'busqueda' ), 'Verificamos que se ve el botón de búsqueda' )
 		console.assert( $omnibox.classList.contains( 'buscando' ), 'Verificamos que está invisible el botón de búsqueda' )
 		
