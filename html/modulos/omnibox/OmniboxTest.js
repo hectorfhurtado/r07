@@ -8,14 +8,16 @@
     
 	var horaRegExp = /\d{2}:\d{2}/
 	
-	// Comenzamos probando los handlers de cada botón
+	// Comenzamos trayendo elementos del DOM
 	var $omnibox       = document.getElementById( 'OmniboxCronometroBtn' )
 	var $flechaDerecha = document.getElementById( 'OmniboxDerBtn' )
 	var $inputBusqueda = document.getElementById( 'OmniboxBusqueda' )
 	
-	console.assert( $omnibox, 'Verificamos que existe el botón Cronómetr' )
+	console.assert( $omnibox, 'Verificamos que existe el botón Cronómetro' )
 	
-	// Cronómetro MouseDown handler
+	/********************************
+	 * Omnibox MouseDown handler
+	 * *****************************/
 	R07.Omnibox._mousedownCronometroHandler.bind( $omnibox )()
 	
 	console.assert( $omnibox.classList.contains( 'oprimido' ), 'Verificamos que esté puesta la clase para comenzar la animación del cronómetro' )
@@ -38,7 +40,9 @@
 		}
 	}
 	
-	// Cronómetro Click handler
+	/*************************
+	 * Omnibox Click handler
+	 * **********************/
 	var $horas = document.getElementById( 'OmniboxHoras' )
 	
 	console.assert( R07.Omnibox.devocional.horainicio === null,       'Probamos que al inicio no tengamos nada en la hora inicial' )
@@ -53,35 +57,50 @@
 		
 		console.assert( horaRegExp.test( R07.Omnibox.devocional.horainicio ), 'Miramos que si haya escrito la hora de inicio')
 		
-		// Volvemos a oprimir el botón del cronómetro, esta sería la segunda vez
+		/*************************************************************************
+		 * Volvemos a oprimir el botón del cronómetro, esta sería la segunda vez
+		 * **********************************************************************/
 		return R07.Omnibox._clickCronometroHandler.bind( $omnibox )()
 		
 	}).then( function() {
 		
-		console.assert( $omnibox.classList.contains( 'cronometroGrande' ) === false, 'Miramos que haya quitado la clase que muestra grande el botón' );
-		console.assert( $omnibox.classList.contains( 'oprimido' ) === false,         'Miramos que ya no se vea oprimido el botón del cronómetro' );
+		console.assert( $omnibox.classList.contains( 'cronometroGrande' ) === false,    'Miramos que haya quitado la clase que muestra grande el botón' );
+		console.assert( $omnibox.classList.contains( 'oprimido' ) === false,            'Miramos que ya no se vea oprimido el botón del cronómetro' );
 		console.assert( $omnibox.classList.contains( 'cronometroCorriendo' ) === false, 'Miramos que ya no esté corriendo la manecilla del cronómetro' );
-		console.assert( $omnibox.classList.contains( 'busqueda'), 'Miramos que esté visible el ícono de búsqueda' )
+		console.assert( $omnibox.classList.contains( 'busqueda'),                       'Miramos que esté visible el ícono de búsqueda' )
 		
 		console.assert( horaRegExp.test( R07.Omnibox.devocional.horafin ), 'Miramos que si haya escrito la hora de fin')
 		
-	// TODO: Aquí debemos probar que al hacer click en la lupa de búsqueda aparezca el input de la fecha
-		// Oprimimios nuevamente el botón del cronómetro, sería esta la tercera vez
+		/****************************************************************************
+		 * Oprimimios nuevamente el botón del cronómetro, sería esta la tercera vez
+		 ***************************************************************************/
 		console.assert( $inputBusqueda.classList.contains( 'inexistente' ), 'Verificamos que no se observa el input de búsqueda' )
 		
-		console.log( $omnibox.classList.toString() )
-		
-		return R07.Omnibox._clickCronometroHandler.bind( $omnibox )
+		return R07.Omnibox._clickCronometroHandler.bind( $omnibox )()
 		
 	}).then( function() {
 		
-		console.log( $omnibox.classList.toString() )
-		
 		console.assert( $omnibox.classList.contains( 'busqueda' ), 'Verificamos que se ve el botón de búsqueda' )
 		console.assert( $omnibox.classList.contains( 'buscando' ), 'Verificamos que está invisible el botón de búsqueda' )
-		console.assert( $inputBusqueda.classList.contains( 'inexistente' ) === false, 'Verificamos que se observa el input de búsqueda' )
-		console.assert( $inputBusqueda.classList.contains( 'colapsado' ) === false, 'Verificamos que el input ya no está colapsado' )
 		
+		console.assert( $inputBusqueda.classList.contains( 'inexistente' ) === false, 'Verificamos que se observa el input de búsqueda' )
+		console.assert( $inputBusqueda.classList.contains( 'colapsado' ) === false,   'Verificamos que el input ya no está colapsado' )
+		
+		/***************************
+		 * // TODO: Aquí debemos probar que al cambiar la fecha en el input, traiga los datos de esa fecha
+		 * Probamos Omnibox _buscarFechaHandler con un valor errado de fecha
+		 * **************************/
+		
+		return R07.Omnibox._buscarFechaHandler.bind( $inputBusqueda, { value: '2015/10/22' })()
+		
+	}).then( function() {
+		
+		// Nada debe cambiar porque escribió una fecha que no es
+		console.assert( $omnibox.classList.contains( 'busqueda' ), 'Verificamos que se ve el botón de búsqueda' )
+		console.assert( $omnibox.classList.contains( 'buscando' ), 'Verificamos que está invisible el botón de búsqueda' )
+		
+		console.assert( $inputBusqueda.classList.contains( 'inexistente' ) === false, 'Verificamos que se observa el input de búsqueda' )
+		console.assert( $inputBusqueda.classList.contains( 'colapsado' ) === false,   'Verificamos que el input ya no está colapsado' )
 		
 		
 	}).then( function() {
@@ -149,7 +168,6 @@
 	})
 	
 	
-	// TODO: Aquí debemos probar que al cambiar la fecha en el input, traiga los datos de esa fecha
 	// TODO: Probar que al traer los datos de la fecha, quede solo la lupa si hay datos de hora inicio y fin
 	// TODO: Probar que al cambiar el devocional se actualice todo el UI: Probar cuando no viene nada
 	// TODO: Probar que al cambiar el devocional se actualice todo el UI: Probar cuando sólo viene la fecha de inicio

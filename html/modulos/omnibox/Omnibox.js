@@ -26,7 +26,7 @@
 
 				// Luego de que termine la animación del cronómetro encogiéndose, mostramos la hora de inicio
 				$cronometroBtn.addEventListener( 'transitionend', this._transitionEndHandler, false );
-
+				
 			}.bind( this )).then( function() {
 				
 				// Agregamos los Event handlers para la flecha de la izquierda
@@ -41,7 +41,12 @@
 					
 				$botonDer.addEventListener( 'click', this._clickBotonDerechoHandler, true );
 				
-            }.bind( this )).then( function() {
+				return R07.Elementos.damePorId( 'OmniboxBusqueda' )
+				
+            }.bind( this )).then( function( $inputBusqueda ) {
+				
+				$inputBusqueda.addEventListener( 'change', this._buscarFechaHandler, true )
+				$inputBusqueda.addEventListener( 'blur',   this._buscarFechaHandler, true )
 				
 				this.cambioDevocional( devocional )
 				return true
@@ -74,13 +79,14 @@
 			return R07.Cargador.dame( 'UtilidadFecha' ).then( function( Util ) {
 				
 				var fecha = new Date()
+				var evento
 				
 				// Este sería el tercer, quinto, séptimo, etc, click
 				if ( this.classList.contains( 'busqueda' )) {
 					
 					this.classList.add( 'buscando' )
 					
-					R07.Elementos.damePorId( 'OmniboxBusqueda' ).then( function( $input ) {
+					return R07.Elementos.damePorId( 'OmniboxBusqueda' ).then( function( $input ) {
 						
 						$input.classList.remove( 'inexistente')
 						$input.focus()
@@ -91,7 +97,6 @@
 						
 						$input.classList.remove( 'colapsado')
 					})
-					return
 				}
 				
 				// Esto es en el segundo click
@@ -100,8 +105,12 @@
 					this.classList.remove( 'cronometroGrande', 'oprimido', 'cronometroCorriendo' );
 					this.classList.add( 'busqueda' )
 
+					evento = new CustomEvent( 'actualizaDevocional', { detail: R07.Omnibox.devocional });
+					this.dispatchEvent( evento );
+					
 					R07.Omnibox.devocional.horafin = Util.traeHoras( fecha ) + ':' + Util.traeMinutos( fecha )
-					R07.Omnibox.escribeHoraFin( R07.Omnibox.devocional.horafin )
+					
+					return R07.Omnibox.escribeHoraFin( R07.Omnibox.devocional.horafin )
 				}
 
 				// Esto es en el primer click
@@ -109,15 +118,16 @@
 
 					this.classList.remove( 'cronometroGrande', 'oprimido' );
 					this.classList.add( 'cronometroCorriendo' );
+					
+					evento = new CustomEvent( 'actualizaDevocional', { detail: R07.Omnibox.devocional });
+					this.dispatchEvent( evento );
 
 					R07.Omnibox.devocional.horainicio = Util.traeHoras( fecha ) + ':' + Util.traeMinutos( fecha )
-					R07.Omnibox.escribeHoraInicio( R07.Omnibox.devocional.horainicio );
+					
+					return R07.Omnibox.escribeHoraInicio( R07.Omnibox.devocional.horainicio );
 				}
 
-				var evento = new CustomEvent( 'actualizaDevocional', { detail: R07.Omnibox.devocional });
-				this.dispatchEvent( evento );
 			}.bind( this ))
-			
 		},
 		
 		_mousedownCronometroHandler: function() {
@@ -135,6 +145,10 @@
 			var evento = new Event( 'traeFechaSiguiente' );
 
 			this.dispatchEvent( evento );
+		},
+		
+		_buscarFechaHandler: function() {
+			// TODO: (Nando) Implementar la función
 		},
 		
 		/**
