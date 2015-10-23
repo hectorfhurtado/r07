@@ -47,6 +47,7 @@
 				
 				$inputBusqueda.addEventListener( 'change', this._buscarFechaHandler, true )
 				$inputBusqueda.addEventListener( 'blur',   this._buscarFechaHandler, true )
+				$inputBusqueda.addEventListener( 'animationend', this._quitarAnimacionHandler, true )
 				
 				this.cambioDevocional( devocional )
 				return true
@@ -147,9 +148,31 @@
 			this.dispatchEvent( evento );
 		},
 		
+		/**
+		 * Valida si lo ingresado en el Input para buscar fecha es correcto, de no ser así, le indica al usuario de manera visual.
+		 * De estar todo correcto, lanza un evento para que controlador maestro traiga la información solicitada
+		 */
 		_buscarFechaHandler: function() {
-			// TODO: (Nando) Implementar la función
+			
+			if ( this.value === '' ) return
+			
+			if ( /\d{4}\-\d{1,2}\-\d{1,2}/.test( this.value )) {
+				var fechaSplit = this.value.split( '-' )
+				var evento = new CustomEvent( 'traeFecha', { detail: new Date( fechaSplit[ 0 ], fechaSplit[ 1 ], fechaSplit[ 2 ])})
+				
+				this.dispatchEvent( evento )
+				this.value = ''
+			}
+			else {
+				this.value = ''
+				this.classList.add( 'error' )
+			}
 		},
+		
+		_quitarAnimacionHandler: function() {
+			this.classList.remove( 'error' )
+		},
+		
 		
 		/**
 		 * Cuando hay un cambio en el devocional por la BD, debemos ajsutar el UI para reflejar el cambio

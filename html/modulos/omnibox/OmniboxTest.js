@@ -71,6 +71,10 @@
 		
 		console.assert( horaRegExp.test( R07.Omnibox.devocional.horafin ), 'Miramos que si haya escrito la hora de fin')
 		
+		console.assert( $horas,                                              'Miramos que exista OmniboxHoras que es donde escribimos la hora de inicio y la de fin' )
+		console.assert( horaRegExp.test( $horas.children[ 0 ].textContent ), 'Miramos que haya escrito la hora de inicio en las pruebas anteriores' )
+		console.assert( horaRegExp.test( $horas.children[ 1 ].textContent ), 'Miramos que haya escrito la hora de fin en las pruebas anteriores' )
+		
 		/****************************************************************************
 		 * Oprimimios nuevamente el botón del cronómetro, sería esta la tercera vez
 		 ***************************************************************************/
@@ -87,31 +91,52 @@
 		console.assert( $inputBusqueda.classList.contains( 'colapsado' ) === false,   'Verificamos que el input ya no está colapsado' )
 		
 		/***************************
-		 * // TODO: Aquí debemos probar que al cambiar la fecha en el input, traiga los datos de esa fecha
 		 * Probamos Omnibox _buscarFechaHandler con un valor errado de fecha
 		 * **************************/
+		$inputBusqueda.value = '2015/10/22'
 		
-		return R07.Omnibox._buscarFechaHandler.bind( $inputBusqueda, { value: '2015/10/22' })()
+		return R07.Omnibox._buscarFechaHandler.bind( $inputBusqueda )()
 		
 	}).then( function() {
 		
 		// Nada debe cambiar porque escribió una fecha que no es
-		// TODO: (nando) Debe fallar esta prueba (23 de Octubre), cambiar el valor del input manualmente
 		console.assert( $omnibox.classList.contains( 'busqueda' ), 'Verificamos que se ve el botón de búsqueda' )
 		console.assert( $omnibox.classList.contains( 'buscando' ), 'Verificamos que está invisible el botón de búsqueda' )
 		
 		console.assert( $inputBusqueda.classList.contains( 'inexistente' ) === false, 'Verificamos que se observa el input de búsqueda' )
 		console.assert( $inputBusqueda.classList.contains( 'colapsado' ) === false,   'Verificamos que el input ya no está colapsado' )
 		
+		console.assert( $inputBusqueda.value === '', 'Verificamos que no tomamos ningún valor sino que reseteamos el input para que el usuario vuelva a intentar escribir una fecha' )
+		console.assert( $inputBusqueda.classList.contains( 'error' ), 'Verificamos que muestra al usuario hubo un error' )
+		
 		
 	}).then( function() {
 		
-
-		console.assert( $horas,                                              'Miramos que exista OmniboxHoras que es donde escribimos la hora de inicio y la de fin' )
-		console.assert( horaRegExp.test( $horas.children[ 0 ].textContent ), 'Miramos que haya escrito la hora de inicio en las pruebas anteriores' )
-		console.assert( horaRegExp.test( $horas.children[ 1 ].textContent ), 'Miramos que haya escrito la hora de fin en las pruebas anteriores' )
+		/*****************************************************************************************************************************************
+		 * Probamos que al escribir una fecha que es en el buscador de fecha, envía un evento para que pueda ser buscada la información en la BD
+		 * **************************************************************************************************************************************/
+		var EVENTO = 'traeFecha'
+		var fecha  = new Date( 2015, 10, 22 )
 		
-		// Probamos el _transitionEndHandler
+		$inputBusqueda.value = '2015-10-22'
+		
+		$body.addEventListener( EVENTO, traeFechaHandler, true )
+		
+		function traeFechaHandler( e ) {
+			console.assert( e.detail.getTime() === fecha.getTime(), 'Verificamos que envíe el evento con la fecha a buscar' )
+			
+			$body.removeEventListener( EVENTO, traeFechaHandler, true )
+		}
+		
+		return R07.Omnibox._buscarFechaHandler.bind( $inputBusqueda )()
+			
+	}).then( function() {
+		
+		console.assert( $inputBusqueda.value === '', 'Verificamos que luego de enviar el evento, limpia el Input para una nueva búsqueda' )
+		
+		/*************************************************
+		 * Probamos el _transitionEndHandler del Omnibox
+		 * **********************************************/
 		return R07.Omnibox._transitionEndHandler.bind( $omnibox )()
 		
 	}).then( function() {

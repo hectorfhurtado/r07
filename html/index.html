@@ -187,7 +187,7 @@
 				padding: 0.5rem;
 				box-sizing: border-box;
 				border-radius: 0.5rem;
-				transition: border-radius 0.3s, width 0.3s, left 0.3s, height 0.3s, top 0.3s, border-width 0.3s, margin 0.3s;
+				transition: border-radius 0.3s, width 0.3s, left 0.3s, height 0.3s, top 0.3s, border-width 0.3s, margin 0.3s, border-color 0.3s;
 				transition-timing-function: ease-out;
 				text-align: center;
 			}
@@ -201,6 +201,20 @@
 				border-width: 5px;
 				margin: 0;
 				transition-timing-function: ease-out;
+			}
+			
+			@keyframes nono {
+				20% {
+					transform: translateX( 10px );
+				}
+				80% {
+					transform: translateX( -10px );
+				}
+			}
+			
+			input#OmniboxBusqueda.error {
+				border-color: red;
+				animation: nono 0.5s ease-in-out 0s 5;
 			}
         </style>
     </head>
