@@ -42,14 +42,14 @@
 				$botonDer.addEventListener( 'click', this._clickBotonDerechoHandler, true );
 				
 				return R07.Elementos.damePorId( 'OmniboxBusqueda' )
-				
             }.bind( this )).then( function( $inputBusqueda ) {
 				
 				$inputBusqueda.addEventListener( 'change', this._buscarFechaHandler, true )
 				$inputBusqueda.addEventListener( 'blur',   this._buscarFechaHandler, true )
 				$inputBusqueda.addEventListener( 'animationend', this._quitarAnimacionHandler, true )
 				
-				this.cambioDevocional( devocional )
+				this.actualiza( devocional )
+				
 				return true
 			}.bind( this ));
         },
@@ -61,19 +61,17 @@
 		 */
 		_transitionEndHandler: function() {
 			
-			// Solo queremos que se vean las horas cuando estamos encogiendo el botón, no cuando se activa el mouseDown
-			if ( this.classList.contains( 'cronometroGrande' )) {
-				return;
-			}
+			if ( this.classList.contains( 'cronometroGrande' )) return
 
 			return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
+				
 				$horas.classList.remove( 'invisible' );
 			});
 		},
 		
 		/**
 		 * Toma en cuenta los estados en los que debe estar el cronómetro en cada click
-		 * @returns {Object} Promesa
+		 * @returns {Object} Promise
 		 */
 		_clickCronometroHandler: function() {
 			
@@ -82,7 +80,7 @@
 				var fecha = new Date()
 				var evento
 				
-				// Este sería el tercer, quinto, séptimo, etc, click
+				// Esto aplicac para el tercer click en adelante
 				if ( this.classList.contains( 'busqueda' )) {
 					
 					this.classList.add( 'buscando' )
@@ -93,7 +91,6 @@
 						$input.focus()
 						
 						return $input
-						
 					}).then( function( $input ) {
 						
 						$input.classList.remove( 'colapsado')
@@ -106,10 +103,10 @@
 					this.classList.remove( 'cronometroGrande', 'oprimido', 'cronometroCorriendo' );
 					this.classList.add( 'busqueda' )
 
+					R07.Omnibox.devocional.horafin = Util.traeHoras( fecha ) + ':' + Util.traeMinutos( fecha )
+					
 					evento = new CustomEvent( 'actualizaDevocional', { detail: R07.Omnibox.devocional });
 					this.dispatchEvent( evento );
-					
-					R07.Omnibox.devocional.horafin = Util.traeHoras( fecha ) + ':' + Util.traeMinutos( fecha )
 					
 					return R07.Omnibox.escribeHoraFin( R07.Omnibox.devocional.horafin )
 				}
@@ -119,17 +116,16 @@
 
 					this.classList.remove( 'cronometroGrande', 'oprimido' );
 					this.classList.add( 'cronometroCorriendo' );
-					
-					evento = new CustomEvent( 'actualizaDevocional', { detail: R07.Omnibox.devocional });
-					this.dispatchEvent( evento );
 
 					R07.Omnibox.devocional.horainicio = Util.traeHoras( fecha ) + ':' + Util.traeMinutos( fecha )
 					
+					evento = new CustomEvent( 'actualizaDevocional', { detail: R07.Omnibox.devocional });
+					this.dispatchEvent( evento );
+					
 					return R07.Omnibox.escribeHoraInicio( R07.Omnibox.devocional.horainicio );
 				}
-
 			}.bind( this ))
-		},
+		},  // _clickCronometroHandler
 		
 		_mousedownCronometroHandler: function() {
 			
@@ -137,12 +133,14 @@
 		},
 		
 		_clickBotonIzquierdoHandler: function() {
+			
 			var evento = new Event( 'traeFechaAnterior' );
 
 			this.dispatchEvent( evento );
 		},
 		
 		_clickBotonDerechoHandler: function() {
+			
 			var evento = new Event( 'traeFechaSiguiente' );
 
 			this.dispatchEvent( evento );
@@ -157,29 +155,34 @@
 			if ( this.value === '' ) return
 			
 			if ( /\d{4}\-\d{1,2}\-\d{1,2}/.test( this.value )) {
+				
 				var fechaSplit = this.value.split( '-' )
-				var evento = new CustomEvent( 'traeFecha', { detail: new Date( fechaSplit[ 0 ], fechaSplit[ 1 ], fechaSplit[ 2 ])})
+				var evento     = new CustomEvent( 'traeFecha', { detail: new Date( fechaSplit[ 0 ], fechaSplit[ 1 ], fechaSplit[ 2 ])})
 				
 				this.dispatchEvent( evento )
+				
 				this.value = ''
 			}
 			else {
 				this.value = ''
+				
 				this.classList.add( 'error' )
 			}
 		},
 		
 		_quitarAnimacionHandler: function() {
+			
 			this.classList.remove( 'error' )
 		},
 		
 		
 		/**
-		 * Cuando hay un cambio en el devocional por la BD, debemos ajsutar el UI para reflejar el cambio
+		 * Cuando hay un cambio en el devocional por la BD, debemos ajustar el UI para reflejar el cambio y la referencia que tenemos del devocional
 		 * @param   {Object}  devocional El devocional que viene de la BD
 		 * @returns {Promise} Esta función devuelve una promesa al estar el UI basado en ellas
 		 */
-		cambioDevocional: function( devocional ) {
+		actualiza: function( devocional ) {
+			
 			this.devocional = devocional
 			
 			return this.actualizaUI( devocional )
@@ -188,18 +191,15 @@
         /**
          * Al oprimir por primera vez el botón del reloj, el usuario puede saber a qué hora comenzó
          * a hacer su devocional
+         * @param {String} La hora de inicio
+         * @return {Object} Promise
          */
         escribeHoraInicio: function( horainicio ) {
             
 			return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
 
-				if ( horainicio ) {
-					$horas.children[ 0 ].textContent = horainicio;
-				}
-				else {
-					$horas.children[ 0 ].textContent = '--';
-				}
-			}.bind( this ));
+				$horas.children[ 0 ].textContent = horainicio ? horainicio : '--'
+			})
         },
 		
 		/**
@@ -210,12 +210,7 @@
                 
 			return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
 
-				if ( horafin ) {
-					$horas.children[ 1 ].textContent = horafin;
-				}
-				else {
-					$horas.children[ 1 ].textContent = '--';
-				}
+				$horas.children[ 1 ].textContent = horafin ? horafin : '--'
 			});
 		},
         
@@ -229,17 +224,19 @@
             var hoy = new Date();
             
             if ( fecha.getFullYear() === hoy.getFullYear() &&
-                fecha.getMonth() === hoy.getMonth() &&
-                fecha.getDate() === hoy.getDate()
+                 fecha.getMonth()    === hoy.getMonth() &&
+                 fecha.getDate()     === hoy.getDate()
             ) {
                 
                 return R07.Elementos.damePorId( 'OmniboxDerBtn' ).then( function( $btnDer ) {    
+					
                     $btnDer.classList.add( 'invisible' );
                 });
             }
             else {
                 
                 return R07.Elementos.damePorId( 'OmniboxDerBtn' ).then( function( $btnDer ) {
+					
                     $btnDer.classList.remove( 'invisible' );
                 });
             }
@@ -248,47 +245,66 @@
 		/**
 		 * Cada vez que cambia el dato del devocional debemos saber si el usuario debe ver el cronómetro para comenzar con su tiempo con Dios
 		 * @param {Object} devocional El objeto con el devocional de la base de datos
+		 * @return {Object} Promise
 		 */
 		actualizaUI: function( devocional ) {
 			
-			// TODO: (Nando) Debemos aquí mirar si debemos mostrar o no la flecha derecha
-			
 			return R07.Elementos.damePorId( 'OmniboxCronometroBtn' ).then( function( $cronometro ) {
 				
+				// para cuando no hay datos en el devocional
 				if ( !devocional.horainicio ) {
-					$cronometro.classList.add( 'cronometroGrande' );
-					$cronometro.classList.remove( 'cronometroCorriendo' );
 					
-					return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
-						$horas.classList.add( 'invisible' );
-					}).then( function() {
-						this.escribeHoraInicio( this.devocional )
-						this.escribeHoraFin( this.devocional )
-					}.bind( this ));
+					$cronometro.classList.add( 'cronometroGrande' );
+					$cronometro.classList.remove( 'oprimido', 'cronometroCorriendo', 'busqueda', 'buscando' );
+					
+					return this._actualizaHorasYBusqueda( devocional, { horaVisible: false })
 				}
 				
+				// Para cuando hay datos en hora de inicio, pero no hora de fin
 				if ( !devocional.horafin ) {
 					
-					$cronometro.classList.remove( 'cronometroGrande' );
 					$cronometro.classList.add( 'cronometroCorriendo' );
+					$cronometro.classList.remove( 'cronometroGrande', 'busqueda', 'buscando' );
 					
-					return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
-						$horas.classList.remove( 'invisible' );
-					});	// TODO(Nando): Continuar aquí con la actualización de la hora inicio y fin
+					return this._actualizaHorasYBusqueda( devocional, { horaVisible: true })
 				}
 				
-				if ( devocional.horafin ) {
-					
-					$cronometro.classList.remove( 'cronometroGrande' );
-					$cronometro.classList.remove( 'cronometroCorriendo' );
-					$cronometro.classList.add( 'inexistente' );
-					
-					return R07.Elementos.damePorId( 'OmniboxHoras' ).then(  function( $horas ) {
-						$horas.classList.remove( 'invisible' );
-					});
-				}
+				// Para cuando hay datos en hora de fin
+				$cronometro.classList.add( 'busqueda' )
+				$cronometro.classList.remove( 'cronometroGrande', 'cronometroCorriendo', 'oprimido', 'buscando' );
+
+				return this._actualizaHorasYBusqueda( devocional, { horaVisible: true })
+				
 			}.bind( this ));
-		}
+		},
 		
+		/**
+		 * Muestra o esconde la hora de incio y fin según el valor del devocional y opcion
+		 * Esconde siempre el input de búsqueda y le adiciona o quita las clases por defecto que no debe tener
+		 * @param   {Object} devocional El devocional 'actualizado'
+		 * @param   {Object} opcion     Contiene si debe verde o no la hora de inicio y fin, lo ponemos en objeto para que se sepa qué se hace al invocar la función
+		 * @returns {Object} Promise
+		 */
+		_actualizaHorasYBusqueda: function( devocional, opcion ) {
+			
+			return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas ) {
+						
+				if ( opcion.horasVisible )  $horas.classList.remove( 'invisible' )
+				else 						$horas.classList.add( 'invisible' )
+			}).then( function() {
+
+				this.escribeHoraInicio( devocional.horainicio )
+				this.escribeHoraFin( devocional.horafin )
+				this.debeMostrarFlechaDerecha( devocional.fecha )
+			}.bind( this )).then( function() {
+
+				return R07.Elementos.damePorId( 'OmniboxBusqueda' )
+			}).then( function( $input ) {
+
+				$input.classList.remove( 'error' )
+				
+				return $input.classList.add( 'colapsado', 'inexistente' )
+			})
+		}
     };
 })();
