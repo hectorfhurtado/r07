@@ -21,7 +21,6 @@
 				
 				// Al oprimir el mouse, hacemos como que oprimimos el cronóemtro para comenzar
 				$cronometroBtn.addEventListener( 'mousedown', this._mousedownCronometroHandler, false );
-					
 				$cronometroBtn.addEventListener( 'click', this._clickCronometroHandler, false );
 
 				// Luego de que termine la animación del cronómetro encogiéndose, mostramos la hora de inicio
@@ -164,6 +163,7 @@
 				this.value = ''
 			}
 			else {
+				
 				this.value = ''
 				
 				this.classList.add( 'error' )
@@ -259,7 +259,6 @@
 					
 					return this._actualizaHorasYBusqueda( devocional, { horaVisible: false })
 				}
-				
 				// Para cuando hay datos en hora de inicio, pero no hora de fin
 				if ( !devocional.horafin ) {
 					
@@ -268,13 +267,11 @@
 					
 					return this._actualizaHorasYBusqueda( devocional, { horaVisible: true })
 				}
-				
 				// Para cuando hay datos en hora de fin
 				$cronometro.classList.add( 'busqueda' )
 				$cronometro.classList.remove( 'cronometroGrande', 'cronometroCorriendo', 'oprimido', 'buscando' );
 
 				return this._actualizaHorasYBusqueda( devocional, { horaVisible: true })
-				
 			}.bind( this ));
 		},
 		

@@ -273,7 +273,9 @@
             // Si corre esto es porque está habilitado JavaScript
             
             var R07 = {
-                DEBUG: true,
+                
+				DEBUG: false,
+				
                 Cargador: {
                     
                     /**
@@ -288,6 +290,7 @@
 							
 							// Necesito mirar si el módulo no es cargador, porque es el único que está definico al comenzar
 							if ( R07[ modulo ] && modulo !== 'Cargador' ) {
+								
 								resolver( R07[ modulo ]);
 								return
 							}
@@ -299,17 +302,15 @@
 							document.querySelector( 'head' ).appendChild( script )
 
 							function alCargar() {
+								
 								script.removeEventListener( 'load', alCargar )
 								document.querySelector( 'head' ).removeChild( script )
 
 								script = null
 								resolver( R07[ modulo ])
 
-								if ( R07.DEBUG ) {
-									this.pruebaModulo( modulo )
-								}
+								if ( R07.DEBUG ) this.pruebaModulo( modulo )
 							}
-
 							script.addEventListener( 'load', alCargar.bind( this ))
 						}.bind( this ))
                     },
@@ -327,20 +328,23 @@
                         document.querySelector( 'head' ).appendChild( script )
                         
                         function alCargar() {
+							
                             script.removeEventListener( 'load', alCargar )
                             document.querySelector( 'head' ).removeChild( script )
+							
                             script = null
                         }
-                        
                         script.addEventListener( 'load', alCargar )
                     }
                 }
             }
-                
             R07.Cargador.dame( 'ControladorMaestro' ).then( function( Maestro ) {
 				
 				if ( R07.DEBUG === false ) Maestro.inicia()
 			})
+			
+			
+			// TODO: Comenzar con la implementación para la edición del devocional
         </script>
     </body>
 </html>

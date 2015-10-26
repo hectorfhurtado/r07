@@ -34,14 +34,17 @@
 			return R07.Cargador.dame( 'Elementos' ).then( function( Elementos ) {
 
 				return Elementos.damePorId( 'DescargaBtn' ).then( function( $descargarBtn ) {
+					
 					$descargarBtn.classList.remove( 'invisible' );
 					
 					return Elementos.damePorId( 'OmniboxIzqBtn' );
 				}).then( function( $izqBtn ) {
+					
 					$izqBtn.classList.remove( 'invisible' );
 					
 					return Elementos.damePorId( 'OmniboxCronometroBtn' );
 				}).then( function( $cronometroBtn ) {
+					
 					$cronometroBtn.classList.remove( 'invisible' );
 				});
 			});
@@ -53,6 +56,7 @@
         _cambiaMensajePrincipal: function() {
             
 			return R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $resumen ) {
+				
 				$resumen.textContent = 'Toca el reloj para comenzar';
 			});
         },
@@ -66,6 +70,7 @@
         _muestraFecha: function( fecha ) {
             
             return R07.Elementos.damePorId( 'fechaFooter' ).then( function( $fecha ) {
+				
                 return R07.Cargador.dame( 'UtilidadFecha' ).then( function( Util ) {
                     
                     $fecha.textContent = Util.dateAddddDDMMyyyy( fecha );
@@ -83,6 +88,7 @@
             if ( 'indexedDB' in window === false ) {
                 
                 return R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $resumen ) {
+					
                     $resumen.textContent = 'Tu navegador no soporta el tener una base de datos local que es imprescindible para poder funcionar';
 					return null
                 });
@@ -92,8 +98,10 @@
 				
 				return BD.iniciar( 'r07' )
 			}).then( function( BD ) {
+				
 				return BD.trae()
 			}).then( function( devocionalEnBd ) {
+				
 				return ( R07.DEVOCIONAL = devocionalEnBd )
 			})
         },
@@ -109,6 +117,7 @@
 			if ( devocional === null ) return null
 			
 			return R07.Cargador.dame( 'Omnibox' ).then( function( Omnibox ) {
+				
 				return Omnibox.inicia( devocional )
 			})
 		},
@@ -122,7 +131,6 @@
             return R07.Cargador.dame( 'Elementos' ).then( function( Elementos ) {
 				
 				return Elementos.damePorSelector( 'body' );
-				
 			}).then( function( $body ) {
 
 				$body.addEventListener( 'traeFechaAnterior', function() {
@@ -133,7 +141,6 @@
 
 						this._actualizaUiPrincipal( ayer );
 					}
-
 				}.bind( this ), true );
 					
 				$body.addEventListener( 'traeFechaSiguiente', function() {
@@ -144,37 +151,25 @@
 
 						this._actualizaUiPrincipal( manana );
 					}
-
 				}.bind( this ), true );
+				
+				$body.addEventListener( 'traeFecha', function( e ) {
+					
+					if ( e.detail ) this._actualizaUiPrincipal( e.detail )
+				})
 					
 				$body.addEventListener( 'actualizaDevocional', function() {
 
 					R07.Cargador.dame( 'Db' ).then( function( DB) {
 
 						DB.actualizaDato( R07.DEVOCIONAL );
+						
 						this._actualizaUiPrincipal( R07.DEVOCIONAL.fecha );
 					}.bind( this ));
 				}.bind( this ), true );
 			}.bind( this ));
         },
         
-        /**
-         * Muestra en el UI la fecha para el usuario y actualiza el objeto DEVOCIONAL que todos consumen
-         * @param   {Date}   fecha La fecha que vamos a buscar en la BD
-         * @return {Object} Promise
-         * @private
-         */
-        _actualizaFechaDevocional: function( fecha ) {
-            
-            return R07.Db.trae( fecha ).then( function( devocional ) {
-                        
-                R07.DEVOCIONAL = devocional;
-				R07.Omnibox.verificaCronometro( devocional );
-                R07.Omnibox.escribeHoraInicio( devocional );
-                R07.Omnibox.debeMostrarFlechaDerecha( devocional.fecha );
-            });
-        },
-		
 		/**
 		 * Debe actualizar la fecha que ve el usuario y preguntarle al Omnibox si debe mostrar la flecha de la derecha
 		 * @param {Date} fecha La fecha del devocional más o menos un día
@@ -187,10 +182,13 @@
 				return R07.Cargador.dame( 'Db' );
 			}).then( function( DB ) {
 
-				return this._actualizaFechaDevocional( fecha, DB );
-
-				// TODO (nando): Mirar si se necesita comunicar a todos los componentes del cambio de
-			}.bind( this ));
+				return DB.trae( fecha )
+			}).then( function( datoEnBd ) {
+				
+				R07.DEVOCIONAL = datoEnBd
+				
+				R07.Omnibox.actualiza( datoEnBd )
+			})
 		}
     };
 })();
