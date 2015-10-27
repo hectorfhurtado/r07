@@ -1,0 +1,23 @@
+
+<style>
+	section#Editor {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		box-sizing: border-box;
+	}
+</style>
+<section id="Editor">
+	<div id="EditorCabecera">
+		<input id="EditorLibro" type="text" list="EditorLibrosList" />
+		<input id="EditorCapitulo" type="number" min="1" placeholder="1" />
+		<datalist id="EditorLibrosList"></datalist>
+	</div>
+	<textarea id="EditorDevocional"></textarea>
+	<div id="EditorBotones">
+		<button id="EditorGuardarBtn"></button>
+		<button id="EditorCancelarBtn"></button>
+	</div>
+</section>

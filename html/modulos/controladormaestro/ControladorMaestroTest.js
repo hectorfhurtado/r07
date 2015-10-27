@@ -58,5 +58,14 @@
 		
 		console.assert( R07.Omnibox,            'Verificamos que haya cargado el módulo' )
 		console.assert( estadoOmnibox === true, 'Verificamos que pasamos por toda la inicialización del Omnibox' )
+		
+		/*************************
+		 * Probamos _cargaEditor
+		 * **********************/
+		return R07.ControladorMaestro._cargaEditor()
+	}).then( function() {
+		
+		console.assert( R07.Editor, 'Verificamos que haya cargado el Editor' )
+		
 	})
 })();

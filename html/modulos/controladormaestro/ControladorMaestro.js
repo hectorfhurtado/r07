@@ -21,7 +21,8 @@
 				.then( this._muestraFecha.bind( this, new Date()))
 				.then( this._iniciarBd.bind( this ))
 				.then( this._iniciaOmnibox.bind( this ))
-                .then( this._aplicaEventListeners.bind( this ));
+                .then( this._aplicaEventListeners.bind( this ))
+				.then( this._cargaEditor.bind( this ))
         },
         
         /**
@@ -188,6 +189,14 @@
 				R07.DEVOCIONAL = datoEnBd
 				
 				R07.Omnibox.actualiza( datoEnBd )
+			})
+		},
+		
+		_cargaEditor: function() {
+			
+			return R07.Cargador.dame( 'Editor' ).then( function( Editor ) {
+				
+				if ( !R07.DEBUG ) return Editor.inicia()
 			})
 		}
     };
