@@ -81,6 +81,44 @@
 					$libro.value = this.LIBROS[ 0 ]
 				}.bind( this ))
 			}
+		},
+		
+		/**
+		 * Cuando no hay información de capítulo, debe mostrar el primero
+		 * @private
+		 * @return {Promise}
+		 */
+		_arrancaInputCapitulos: function() {
+			
+			if ( !this.devocional || !this.devocional.capitulo ) {
+				
+				return R07.Elementos.damePorId( 'EditorCapitulo' ).then( function( $capitulo ) {
+					
+					$capitulo.value = 1
+				}.bind( this ))
+			}
+		},
+		
+		/**
+		 * Guarda la información de la lectura en el browser para arrancar la próxima vez con esta información
+		 * @return	{Promise}
+		 * @private
+		 */
+		_guardar: function() {
+			
+			var info = {}
+			
+			return R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro ) {
+				
+				info.libro = $libro.value
+				
+				return R07.Elementos.damePorId( 'EditorCapitulo' )
+			}).then( function( $capitulo ) {
+				
+				info.capitulo = $capitulo.value
+				
+				localStorage.setItem( 'ultimoCapitulo', JSON.stringify( info ))
+			})
 		}
 	}
 })()
