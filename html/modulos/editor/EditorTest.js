@@ -5,7 +5,7 @@
 	
 	var $libro = null
 	var $capitulo = null
-
+	
 	/*********************
 	 * Probamos _traeDOM
 	 * ******************/
@@ -15,6 +15,17 @@
 		
 		$libro    = document.getElementById( 'EditorLibro' )
 		$capitulo = document.getElementById( 'EditorCapitulo' )
+		
+		/***********************************************************************************************
+		* Guardamos temporalmente los datos que tenga el usuario para realizarlas pruebas en 'limpio'
+		* ********************************************************************************************/
+		var tempLibro        = $libro.value
+		var tempCapitulo     = $capitulo.value
+		var tempLocalStorage = localStorage.getItem( 'ultimoCapitulo' )
+		
+		$libro.value    = ''
+		$capitulo.value = '1'
+		localStorage.removeItem('ultimoCapitulo')
 		
 		/********************************
 		* Probamos _arrancaInputLibros
@@ -66,9 +77,54 @@
 		var info = JSON.parse( localStorage.getItem( 'ultimoCapitulo' ))
 		
 		console.assert( info.libro === 'Levítico', 'Guardó el nombre del libro correctamente' )
-		console.assert( info.capitulo === '2', 'Guardó el número del capítulo correctamente' )
+		console.assert( info.capitulo === '2',     'Guardó el número del capítulo correctamente' )
 
-// TODO: Probar que lee el libro y el capítulo guardado para continuar con el siguiente libro
+		/***************************************************************************
+		 * Probamos _arrancaInputLibros con elementos guardados en el localStorage
+		 * ************************************************************************/
+		$libro.value = ''
+		
+		return R07.Editor._arrancaInputLibros()
+	}).then( function() {
+		
+		console.assert( $libro.value === 'Levítico', 'Confirmamos que obtiene el valor que está guardado en el localStorage' )
+		
+		$capitulo.value = '2'
+		
+		/******************************************************************************
+		 * Probamos _arrancaInputCapitulos con elementos guardados en el localStorage
+		 * ***************************************************************************/
+		return R07.Editor._arrancaInputCapitulos()	
+	}).then( function() {
+		
+		console.assert( $capitulo.value === '3', 'Verificamos que el número del capítulo es el siguiente al que aparece en el localStorage', `Valor del capítulo: ${ $capitulo.value }` )
+		
+	}).then( function() {
+		
+		/***************************************************************************
+		 * Probamos _arrancaInputLibros con elementos guardados en el localStorage
+		 * y el último capítulo del libro
+		 * ************************************************************************/
+		$capitulo.value = '36'
+		
+		return R07.Editor._guardar()
+	}).then( function() {
+		// Tenemos que llamarlo para que actualice la info del ultimo Capitulo
+		return R07.Editor._arrancaInputLibros()
+	}).then( function() {
+		
+		return R07.Editor._arrancaInputCapitulos()
+	}).then( function() {
+	
+		console.assert( $libro.value === 'Números', 'Miramos que cambió de libro', `Nombre del libro ${ $libro.value }` )	
+		console.assert( $capitulo.value === '1', 'Miramos que cambió de libro', `Número del capítulo ${ $capitulo.value }` )
+			
+	}).then( function() {
+		
+		/********************
+		 * Hacemos limpieza
+		 * *****************/
+		localStorage.removeItem( 'ultimoCapitulo' )
 	})
 })()
 

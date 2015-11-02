@@ -74,11 +74,21 @@
 		 */
 		_arrancaInputLibros: function () {
 			
+			var libro = this.LIBROS[ 0 ]
+			
 			if ( !this.devocional || !this.devocional.libro ) {
+				
+				this.ultimoLibro = JSON.parse( localStorage.getItem( 'ultimoCapitulo' ))
+				
+				if ( this.ultimoLibro ) {
+					
+					libro = this.ultimoLibro.libro
+				}
 				
 				return R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro ) {
 					
-					$libro.value = this.LIBROS[ 0 ]
+					$libro.value = libro
+					libro        = null
 				}.bind( this ))
 			}
 		},
@@ -90,14 +100,37 @@
 		 */
 		_arrancaInputCapitulos: function() {
 			
+			var capitulo    = '1'
+			var numCapitulo = null
+			var indiceLibro = null
+			
 			if ( !this.devocional || !this.devocional.capitulo ) {
 				
+				if ( this.ultimoLibro ) {
+					
+					numCapitulo = parseInt( this.ultimoLibro.capitulo, 10 ) + 1
+					indiceLibro = this.LIBROS.indexOf( this.ultimoLibro.libro )
+					
+					if ( this.CAPITULOS[ indiceLibro ] < numCapitulo ) {
+
+						capitulo = '1'
+						
+						R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro ) {
+							
+							$libro.value = this.LIBROS[ indiceLibro + 1 ]
+						}.bind( this ))
+					}
+					else {
+						
+						capitulo = `${ numCapitulo }`
+					}
+				}
 				return R07.Elementos.damePorId( 'EditorCapitulo' ).then( function( $capitulo ) {
 					
-					$capitulo.value = 1
+					$capitulo.value = capitulo
 				}.bind( this ))
 			}
-		},
+		},	// _arrancaInputCapitulos
 		
 		/**
 		 * Guarda la información de la lectura en el browser para arrancar la próxima vez con esta información
