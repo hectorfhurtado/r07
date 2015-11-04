@@ -38,7 +38,9 @@
 		inicia: function() {
 			
 			this._traeDOM()
+				.then( this._arrancaInputCapitulos.bind( this ))
 				.then( this._arrancaInputLibros.bind( this ))
+				.then( this._arrancaListeners.bind( this ))
 		},
 		
 		/**
@@ -78,8 +80,6 @@
 			
 			if ( !this.devocional || !this.devocional.libro ) {
 				
-				this.ultimoLibro = JSON.parse( localStorage.getItem( 'ultimoCapitulo' ))
-				
 				if ( this.ultimoLibro ) {
 					
 					libro = this.ultimoLibro.libro
@@ -106,6 +106,8 @@
 			
 			if ( !this.devocional || !this.devocional.capitulo ) {
 				
+				this.ultimoLibro = JSON.parse( localStorage.getItem( 'ultimoCapitulo' ))
+				
 				if ( this.ultimoLibro ) {
 					
 					numCapitulo = parseInt( this.ultimoLibro.capitulo, 10 ) + 1
@@ -114,11 +116,7 @@
 					if ( this.CAPITULOS[ indiceLibro ] < numCapitulo ) {
 
 						capitulo = '1'
-						
-						R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro ) {
-							
-							$libro.value = this.LIBROS[ indiceLibro + 1 ]
-						}.bind( this ))
+						this.ultimoLibro.libro = (( indiceLibro + 1 ) < this.LIBROS.length ) ? this.LIBROS[ indiceLibro + 1 ] : this.LIBROS[ 0 ]
 					}
 					else {
 						
@@ -151,6 +149,18 @@
 				info.capitulo = $capitulo.value
 				
 				localStorage.setItem( 'ultimoCapitulo', JSON.stringify( info ))
+			})
+		},
+		
+		_arrancaListeners: function() {
+			
+			return R07.Elementos.damePorId( 'EditorGuardarBtn' ).then( function( $botonGuardar ) {
+				
+				$botonGuardar.addEventListener( 'click', function() {
+					
+					var evento = new CustomEvent( 'actualizaDevocional', { detail: R07.Editor.devocional });
+					this.dispatchEvent( evento );
+				}, true )
 			})
 		}
 	}
