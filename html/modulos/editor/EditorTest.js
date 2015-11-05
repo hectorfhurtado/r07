@@ -14,6 +14,10 @@
 		})
 	}
 	
+	var tempLibro = null
+	var tempCapitulo = null
+	var tempLocalStorage = null
+	
 	/*********************
 	 * Probamos _traeDOM
 	 * ******************/
@@ -27,9 +31,9 @@
 		/***********************************************************************************************
 		* Guardamos temporalmente los datos que tenga el usuario para realizarlas pruebas en 'limpio'
 		* ********************************************************************************************/
-		var tempLibro        = $libro.value
-		var tempCapitulo     = $capitulo.value
-		var tempLocalStorage = localStorage.getItem( 'ultimoCapitulo' )
+		tempLibro        = $libro.value
+		tempCapitulo     = $capitulo.value
+		tempLocalStorage = localStorage.getItem( 'ultimoCapitulo' )
 		
 		$libro.value    = ''
 		$capitulo.value = ''
@@ -148,9 +152,13 @@
 	
 		return sleep( 2000 )	
 	}).then( function() {
+// TODO: Porbar que al enviar actualizar devocional envía los cambios en el evento
 		/**********************************************************************************************
 		 * Probamos _arrancaListeners envía el evento actualizaDevocional al oprimir el botón Guardar
 		 * *******************************************************************************************/
+		document.getElementById( 'EditorDevocional' ).value = 'Aprendí algo nuevo'
+		R07.Editor.devocional = {}
+		
 		 return R07.Editor._arrancaListeners()
 	}).then( function() {
 		
@@ -159,10 +167,22 @@
 		
 		$body.addEventListener( 'actualizaDevocional', guardarHandler, true )
 		
-		function guardarHandler() {
+		function guardarHandler( e ) {
 			
 			clearTimeout( timer )
 			$body.removeEventListener( 'actualizaDevocional', guardarHandler, true )
+			
+			if ( e.detail ) {
+				
+				console.dir( e )
+				
+				console.assert( e.detail.libro      === 'Génesis',            'Verificamos que tenemos la información del libro', e.detail )
+				console.assert( e.detail.capitulo   === '1',                  'Verificamos que tenemos la información del capítulo', e.detail.capitulo )
+				console.assert( e.detail.devocional === 'Aprendí algo nuevo', 'Verificamos que tenemos la información del devocional como tal', e.detail.devocional )
+			}
+			else {
+				console.assert( false, 'Verificamos que no llegó nada en evento', e.detail )
+			}
 		}
 		
 		timer = setTimeout( () => console.assert( false, 'Verificamos que no llamó el actualizaDevocional' ), 2000 )
@@ -173,11 +193,11 @@
 		/********************
 		 * Hacemos limpieza
 		 * *****************/
-		localStorage.removeItem( 'ultimoCapitulo' )
+		$libro.value = tempLibro
+		localStorage.setItem( 'ultimoCapitulo', tempLocalStorage )
 	})
 })()
 
-// TODO: Porbar que al enviar actualizar devocional envía los cambios en el evento
 // TODO: Probar que descarta los cambios al hacer click en Cancelar
 // TODO: Probar las transiciones entre la vista principal y el Devocional
 // TODO: Probar que el textarea no adicione espacioes como suele hacer

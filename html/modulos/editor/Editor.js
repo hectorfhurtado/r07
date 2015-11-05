@@ -152,15 +152,44 @@
 			})
 		},
 		
+		/**
+		 * Al momento de oprimir el botón de guardar es necesario actualizar la información en la BD
+		 * @returns {Object} Promise
+		 */
 		_arrancaListeners: function() {
 			
 			return R07.Elementos.damePorId( 'EditorGuardarBtn' ).then( function( $botonGuardar ) {
 				
 				$botonGuardar.addEventListener( 'click', function() {
 					
-					var evento = new CustomEvent( 'actualizaDevocional', { detail: R07.Editor.devocional });
-					this.dispatchEvent( evento );
-				}, true )
+					this._actualizaDevocional()
+					this._guardar()
+					
+					var evento = new CustomEvent( 'actualizaDevocional', { detail: this.devocional });
+					$botonGuardar.dispatchEvent( evento );
+				}.bind( this ), true )
+			}.bind( this ))
+		},
+		
+		/**
+		 * Actualizar la referencia al devocional para poder lanzar la actualización con la información de los campos del devocional
+		 * @returns {Object} Promise
+		 */
+		_actualizaDevocional: function() {
+			
+			return R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro ) {
+				
+				R07.Editor.devocional.libro = $libro.value
+				
+				return R07.Elementos.damePorId( 'EditorCapitulo' )
+			}).then( function( $capitulo ) {
+				
+				R07.Editor.devocional.capitulo = $capitulo.value
+				
+				return R07.Elementos.damePorId( 'EditorDevocional' )
+			}).then( function( $devocional ) {
+				
+				R07.Editor.devocional.devocional = $devocional.value.trim()
 			})
 		}
 	}
