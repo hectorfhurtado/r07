@@ -1,6 +1,6 @@
 {
 	"curly"		: false,
-    "eqeqeq"	: true,
+    "eqeqeq"	: false,
     "immed"		: true,
     "nonew"		: true,
     "quotmark"	: "single",

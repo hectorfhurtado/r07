@@ -152,7 +152,6 @@
 	
 		return sleep( 2000 )	
 	}).then( function() {
-// TODO: Porbar que al enviar actualizar devocional envía los cambios en el evento
 		/**********************************************************************************************
 		 * Probamos _arrancaListeners envía el evento actualizaDevocional al oprimir el botón Guardar
 		 * *******************************************************************************************/
@@ -174,8 +173,6 @@
 			
 			if ( e.detail ) {
 				
-				console.dir( e )
-				
 				console.assert( e.detail.libro      === 'Génesis',            'Verificamos que tenemos la información del libro', e.detail )
 				console.assert( e.detail.capitulo   === '1',                  'Verificamos que tenemos la información del capítulo', e.detail.capitulo )
 				console.assert( e.detail.devocional === 'Aprendí algo nuevo', 'Verificamos que tenemos la información del devocional como tal', e.detail.devocional )
@@ -188,17 +185,62 @@
 		timer = setTimeout( () => console.assert( false, 'Verificamos que no llamó el actualizaDevocional' ), 2000 )
 		
 		document.getElementById( 'EditorGuardarBtn' ).click()
+		
+		return sleep( 1000 )
+	}).then( function() {
+		
+		/************************************************************************************************
+		 * Probamos _clickCancelarBotonHandler. Debe lanzar el evento para salir de la vista del Editor
+		 * *********************************************************************************************/
+		var $body = document.querySelector( 'body' )
+		var timer = null
+		
+		$body.addEventListener( 'saleEditor', saleEditorHandler, true )
+		
+		function saleEditorHandler() {
+			
+			clearTimeout( timer )
+			$body.removeEventListener( 'saleEditor', saleEditorHandler, true )
+		}
+		
+		timer = setTimeout( () => console.assert( false, 'Verificamos que no llamó el saleEditor' ), 2000 )
+		
+		document.getElementById( 'EditorCancelarBtn' ).click()
+		
+		return sleep( 1000 )
+	}).then( function() {
+		
+		var DEVOCIONAL = {
+			libro     : 'Deuteronomio',
+			capitulo  : '28',
+			devocional: 'El Señor es bueno'
+		}
+		
+		/****************************************************************************************************************
+		 * Probamos actualizaDevocional: debe tomar los datos que suministramos y actualizar todo el UI conforme a esto
+		 * *************************************************************************************************************/
+		return R07.Editor.actualizaDevocional( DEVOCIONAL )
+	}).then( function() {
+		
+		console.assert( R07.Editor.devocional.libro == 'Deuteronomio',           'Verificamos que tiene el libro suministrado' )
+		console.assert( R07.Editor.devocional.capitulo == '28',                  'Verificamos que tiene el capitulo suministrado' )
+		console.assert( R07.Editor.devocional.devocional == 'El Señor es bueno', 'Verificamos que tiene el devocional suministrado' )
+		
+		console.assert( $libro.value == 'Deuteronomio',                                             'Verificamos que tiene el libro suministrado' )
+		console.assert( $capitulo.value == '28',                                                    'Verificamos que tiene el capitulo suministrado' )
+		console.assert( document.getElementById( 'EditorDevocional' ).value == 'El Señor es bueno', 'Verificamos que tiene el devocional suministrado' )
 	}).then( function() {
 		
 		/********************
 		 * Hacemos limpieza
 		 * *****************/
-		$libro.value = tempLibro
+		if ( tempLibro ) $libro.value = tempLibro
+		if ( tempCapitulo ) $capitulo.value = tempCapitulo
+		
 		localStorage.setItem( 'ultimoCapitulo', tempLocalStorage )
+		
+		console.info( 'Termina pruebas de Editor.js' )
 	})
 })()
 
-// TODO: Probar que descarta los cambios al hacer click en Cancelar
 // TODO: Probar las transiciones entre la vista principal y el Devocional
-// TODO: Probar que el textarea no adicione espacioes como suele hacer
-// TODO: Limpiar todo cuando acabe de probar

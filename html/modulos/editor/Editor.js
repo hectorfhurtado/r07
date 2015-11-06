@@ -37,10 +37,11 @@
 		
 		inicia: function() {
 			
-			this._traeDOM()
+			return this._traeDOM()
 				.then( this._arrancaInputCapitulos.bind( this ))
 				.then( this._arrancaInputLibros.bind( this ))
 				.then( this._arrancaListeners.bind( this ))
+				.then( this._iniciaDatalist.bind( this ))
 		},
 		
 		/**
@@ -52,7 +53,7 @@
 			return new Promise( function( resolve ) {
 				
 				var xhr = new XMLHttpRequest()
-				// xhr.setRequestHeader( 'Content-type', 'text/html' )
+				xhr.responseType = 'text'
 				
 				xhr.addEventListener( 'load', function() {
 					
@@ -160,15 +161,36 @@
 			
 			return R07.Elementos.damePorId( 'EditorGuardarBtn' ).then( function( $botonGuardar ) {
 				
-				$botonGuardar.addEventListener( 'click', function() {
-					
-					this._actualizaDevocional()
-					this._guardar()
-					
-					var evento = new CustomEvent( 'actualizaDevocional', { detail: this.devocional });
-					$botonGuardar.dispatchEvent( evento );
-				}.bind( this ), true )
+				$botonGuardar.addEventListener( 'click', this._clickBotonGuardarHandler.bind( this, $botonGuardar ), true )
+				
+				return R07.Elementos.damePorId( 'EditorCancelarBtn' )
+			}.bind( this )).then( function( $botonCancelar ) {
+				
+				$botonCancelar.addEventListener( 'click', this._clickBotonCancelarHandler.bind( this, $botonCancelar ), true )
 			}.bind( this ))
+		},
+		
+		_clickBotonGuardarHandler: function( $botonGuardar ) {
+			
+			this._actualizaDevocional().then(function() {
+				
+				var evento = new CustomEvent( 'actualizaDevocional', { detail: this.devocional });
+				$botonGuardar.dispatchEvent( evento );
+				
+				this._lanzaEventoSaleEditor( $botonGuardar )
+			}.bind( this ))
+			
+			this._guardar()
+		},
+		
+		_clickBotonCancelarHandler: function( $botonCancelar ) {
+			
+			this._lanzaEventoSaleEditor( $botonCancelar )
+		},
+		
+		_lanzaEventoSaleEditor: function( $elemento ) {
+			
+			$elemento.dispatchEvent( new CustomEvent( 'saleEditor' ))
 		},
 		
 		/**
@@ -190,6 +212,50 @@
 			}).then( function( $devocional ) {
 				
 				R07.Editor.devocional.devocional = $devocional.value.trim()
+			})
+		},
+		
+		/**
+		 * Para la lista que tenemos definida de libros, llenamos el datalist para que el usuario reciba ayuda por si no se acuerda cómo se llama un libro
+		 * @returns {Object} Promise
+		 * @private
+		 */
+		_iniciaDataList: function() {
+			
+			return R07.Elementos.damePorId( 'EditorLibrosList' ).then( function( $lista ) {
+				
+				this.LIBROS.forEach( function( libro ) {
+					
+					var opcion = document.createElement( 'option' )
+					opcion.value = libro
+					
+					$lista.appendChild( opcion )
+				})
+			}.bind( this ))
+		},
+		
+		/**
+		 * Se encarga de actualizar los datos del UI con el objeto devocional suministrado
+		 * @param   {Object} devocional 
+		 * @returns {Object} Promise
+		 */
+		actualizaDevocional: function( devocional ) {
+			
+			this.devocional = devocional
+			
+			return R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro ) {
+				
+				if ( devocional.libro ) $libro.value = devocional.libro
+				
+				return R07.Elementos.damePorId( 'EditorCapitulo' )
+			}).then( function( $capitulo ) {
+				
+				if ( devocional.capitulo ) $capitulo.value = devocional.capitulo
+				
+				return R07.Elementos.damePorId( 'EditorDevocional' )
+			}).then( function( $devocional ) {
+				
+				if ( devocional.devocional ) $devocional.value = devocional.devocional
 			})
 		}
 	}
