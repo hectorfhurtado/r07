@@ -5,24 +5,24 @@
 
 /* global R07, window */
 
-( function() {
-    
+( function()
+{    
 	var UN_DIA_EN_MILIS = 1000 * 60 * 60 * 24;
 	
-    R07.ControladorMaestro = {
-        
+    R07.ControladorMaestro =
+	{    
         /**
          * El inicio de este módulo
          */
-        inicia: function() {
-            
+        inicia: function()
+		{    
 			this._mostrarElementosIniciales()
 				.then( this._cambiaMensajePrincipal.bind( this ))
 				.then( this._muestraFecha.bind( this, new Date()))
 				.then( this._iniciarBd.bind( this ))
 				.then( this._iniciaOmnibox.bind( this ))
                 .then( this._aplicaEventListeners.bind( this ))
-				.then( this._cargaEditor.bind( this ))
+				.then( this._cargaEditor.bind( this ));
         },
         
         /**
@@ -30,22 +30,22 @@
          * @return {Object}   Promesa sin parámetros
          * @private
          */
-        _mostrarElementosIniciales: function() {
-            
-			return R07.Cargador.dame( 'Elementos' ).then( function( Elementos ) {
-
-				return Elementos.damePorId( 'DescargaBtn' ).then( function( $descargarBtn ) {
-					
+        _mostrarElementosIniciales: function()
+		{    
+			return R07.Cargador.dame( 'Elementos' ).then( function( Elementos )
+			{
+				return Elementos.damePorId( 'DescargaBtn' ).then( function( $descargarBtn )
+				{	
 					$descargarBtn.classList.remove( 'invisible' );
 					
 					return Elementos.damePorId( 'OmniboxIzqBtn' );
-				}).then( function( $izqBtn ) {
-					
+				}).then( function( $izqBtn )
+				{
 					$izqBtn.classList.remove( 'invisible' );
 					
 					return Elementos.damePorId( 'OmniboxCronometroBtn' );
-				}).then( function( $cronometroBtn ) {
-					
+				}).then( function( $cronometroBtn )
+				{
 					$cronometroBtn.classList.remove( 'invisible' );
 				});
 			});
@@ -54,10 +54,10 @@
         /**
          * Cambia el mensaje inicial cuando no hay JavasCript a uno donde se le indica al usuario qué hacer
          */
-        _cambiaMensajePrincipal: function() {
-            
-			return R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $resumen ) {
-				
+        _cambiaMensajePrincipal: function()
+		{
+			return R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $resumen )
+			{
 				$resumen.textContent = 'Toca el reloj para comenzar';
 			});
         },
@@ -68,12 +68,12 @@
          * @return {Object} Devuelve una promesa
          * @private
          */
-        _muestraFecha: function( fecha ) {
-            
-            return R07.Elementos.damePorId( 'fechaFooter' ).then( function( $fecha ) {
-				
-                return R07.Cargador.dame( 'UtilidadFecha' ).then( function( Util ) {
-                    
+        _muestraFecha: function( fecha )
+		{
+            return R07.Elementos.damePorId( 'fechaFooter' ).then( function( $fecha )
+			{
+                return R07.Cargador.dame( 'UtilidadFecha' ).then( function( Util )
+				{
                     $fecha.textContent = Util.dateAddddDDMMyyyy( fecha );
                 });
             });
@@ -84,27 +84,27 @@
          * @param   {Function}  callback    La función para continuar el flujo del módulo
          * @private
          */
-        _iniciarBd: function() {
-            
-            if ( 'indexedDB' in window === false ) {
-                
-                return R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $resumen ) {
-					
+        _iniciarBd: function()
+		{
+            if ( 'indexedDB' in window === false )
+			{
+                return R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $resumen )
+				{
                     $resumen.textContent = 'Tu navegador no soporta el tener una base de datos local que es imprescindible para poder funcionar';
-					return null
+					return null;
                 });
             }
             
-			return R07.Cargador.dame( 'Db' ).then( function( BD ) {
-				
-				return BD.iniciar( 'r07' )
-			}).then( function( BD ) {
-				
-				return BD.trae()
-			}).then( function( devocionalEnBd ) {
-				
-				return ( R07.DEVOCIONAL = devocionalEnBd )
-			})
+			return R07.Cargador.dame( 'Db' ).then( function( BD )
+			{
+				return BD.iniciar( 'r07' );
+			}).then( function( BD )
+			{
+				return BD.trae();
+			}).then( function( devocionalEnBd )
+			{
+				return ( R07.DEVOCIONAL = devocionalEnBd );
+			});
         },
 		
 		/**
@@ -112,57 +112,57 @@
 		 * @param   {Object}  devocional El devocional que viene de la BD
 		 * @returns {Promise} La promesa para pasar al siguiente método
 		 */
-		_iniciaOmnibox: function( devocional ) {
-			
+		_iniciaOmnibox: function( devocional )
+		{
 			// Cuando hay problemas con la BD, me devuelven null
-			if ( devocional === null ) return null
+			if ( devocional === null ) return null;
 			
-			return R07.Cargador.dame( 'Omnibox' ).then( function( Omnibox ) {
-				
-				return Omnibox.inicia( devocional )
-			})
+			return R07.Cargador.dame( 'Omnibox' ).then( function( Omnibox )
+			{
+				return Omnibox.inicia( devocional );
+			});
 		},
         
         /**
          * Escucha todos los eventos que vengan de los componentes de la app
          * @private
          */
-        _aplicaEventListeners: function() {
-            
-            return R07.Cargador.dame( 'Elementos' ).then( function( Elementos ) {
-				
+        _aplicaEventListeners: function()
+		{
+            return R07.Cargador.dame( 'Elementos' ).then( function( Elementos )
+			{
 				return Elementos.damePorSelector( 'body' );
-			}).then( function( $body ) {
-
-				$body.addEventListener( 'traeFechaAnterior', function() {
-
-					if ( R07.DEVOCIONAL ) {
-
+			}).then( function( $body )
+			{
+				$body.addEventListener( 'traeFechaAnterior', function()
+				{
+					if ( R07.DEVOCIONAL )
+					{
 						var ayer = new Date( R07.DEVOCIONAL.fecha.getTime() - UN_DIA_EN_MILIS );
 
 						this._actualizaUiPrincipal( ayer );
 					}
 				}.bind( this ), true );
 					
-				$body.addEventListener( 'traeFechaSiguiente', function() {
-
-					if ( R07.DEVOCIONAL ) {
-
+				$body.addEventListener( 'traeFechaSiguiente', function()
+				{
+					if ( R07.DEVOCIONAL )
+					{
 						var manana = new Date( R07.DEVOCIONAL.fecha.getTime() + UN_DIA_EN_MILIS );
 
 						this._actualizaUiPrincipal( manana );
 					}
 				}.bind( this ), true );
 				
-				$body.addEventListener( 'traeFecha', function( e ) {
+				$body.addEventListener( 'traeFecha', function( e )
+				{
+					if ( e.detail ) this._actualizaUiPrincipal( e.detail );
+				});
 					
-					if ( e.detail ) this._actualizaUiPrincipal( e.detail )
-				})
-					
-				$body.addEventListener( 'actualizaDevocional', function() {
-
-					R07.Cargador.dame( 'Db' ).then( function( DB) {
-
+				$body.addEventListener( 'actualizaDevocional', function()
+				{
+					R07.Cargador.dame( 'Db' ).then( function( DB)
+					{
 						DB.actualizaDato( R07.DEVOCIONAL );
 						
 						this._actualizaUiPrincipal( R07.DEVOCIONAL.fecha );
@@ -176,28 +176,28 @@
 		 * @param {Date} fecha La fecha del devocional más o menos un día
 		 * @private
 		 */
-		_actualizaUiPrincipal: function( fecha ) {
-			
-			return this._muestraFecha( fecha ).then( function() {
-				
+		_actualizaUiPrincipal: function( fecha )
+		{
+			return this._muestraFecha( fecha ).then( function()
+			{
 				return R07.Cargador.dame( 'Db' );
-			}).then( function( DB ) {
-
-				return DB.trae( fecha )
-			}).then( function( datoEnBd ) {
+			}).then( function( DB )
+			{
+				return DB.trae( fecha );
+			}).then( function( datoEnBd )
+			{
+				R07.DEVOCIONAL = datoEnBd;
 				
-				R07.DEVOCIONAL = datoEnBd
-				
-				R07.Omnibox.actualiza( datoEnBd )
-			})
+				R07.Omnibox.actualiza( datoEnBd );
+			});
 		},
 		
-		_cargaEditor: function() {
-			
-			return R07.Cargador.dame( 'Editor' ).then( function( Editor ) {
-				
-				if ( !R07.DEBUG ) return Editor.inicia()
-			})
+		_cargaEditor: function()
+		{
+			return R07.Cargador.dame( 'Editor' ).then( function( Editor )
+			{
+				if ( !R07.DEBUG ) return Editor.inicia();
+			});
 		}
     };
 })();

@@ -5,11 +5,12 @@
 
 /* global R07, Promise */
 
-( function() {
-	
-	R07.Editor = {
-		
-		LIBROS: [
+( function()
+{
+	R07.Editor =
+	{
+		LIBROS:
+		[
 			'Génesis',     'Éxodo',        'Levítico',         'Números',          'Deuteronomio',    'Josué',        'Jueces',
 			'Rut',         '1 Samuel',     '2 Samuel',         '1 Reyes',          '2 Reyes',         '1 Crónicas',   '2 Crónicas',
 			'Edras',       'Nehemías',     'Ester',            'Job',              'Salmos',          'Proverbios',   'Eclesiastés',
@@ -22,7 +23,8 @@
 			'3 Juan',      'Judas',        'Apocalipsis'
 		],
 		
-		CAPITULOS: [
+		CAPITULOS:
+		[
 			50,  40,  27,  36,  34,  24,  21,
 			4,   31,  24,  31,  25,  29,  36,
 			10,  13,  10,  42,  150, 31,  12,
@@ -35,38 +37,38 @@
 			1,   1,   22
 		],
 		
-		inicia: function() {
-			
+		inicia: function()
+		{
 			return this._traeDOM()
 				.then( this._arrancaInputCapitulos.bind( this ))
 				.then( this._arrancaInputLibros.bind( this ))
 				.then( this._arrancaListeners.bind( this ))
-				.then( this._iniciaDatalist.bind( this ))
+				.then( this._iniciaDatalist.bind( this ));
 		},
 		
 		/**
 		 * Se encarga de traer el template para el módulo de Edición del Devocional
 		 * @returns {Object} Promise
 		 */
-		_traeDOM: function() {
-			
-			return new Promise( function( resolve ) {
+		_traeDOM: function()
+		{
+			return new Promise( function( resolve )
+			{
+				var xhr = new XMLHttpRequest();
+				xhr.responseType = 'text';
 				
-				var xhr = new XMLHttpRequest()
-				xhr.responseType = 'text'
+				xhr.addEventListener( 'load', function()
+				{
+					R07.Elementos.damePorSelector( 'body' ).then( function( $body )
+					{
+						$body.insertAdjacentHTML( 'beforeEnd', this.responseText );
+						resolve();
+					}.bind( this ));
+				});
 				
-				xhr.addEventListener( 'load', function() {
-					
-					R07.Elementos.damePorSelector( 'body' ).then( function( $body ) {
-						
-						$body.insertAdjacentHTML( 'beforeEnd', this.responseText )
-						resolve()
-					}.bind( this ))	
-				})
-				
-				xhr.open( 'GET', 'modulos/editor/Editor.html' )
-				xhr.send()
-			})
+				xhr.open( 'GET', 'modulos/editor/Editor.html' );
+				xhr.send();
+			});
 		},
 		
 		/**
@@ -75,22 +77,19 @@
 		 * @private
 		 * @return	{Promise}
 		 */
-		_arrancaInputLibros: function () {
+		_arrancaInputLibros: function()
+		{
+			var libro = this.LIBROS[ 0 ];
 			
-			var libro = this.LIBROS[ 0 ]
-			
-			if ( !this.devocional || !this.devocional.libro ) {
+			if ( !this.devocional || !this.devocional.libro )
+			{
+				if ( this.ultimoLibro ) libro = this.ultimoLibro.libro;
 				
-				if ( this.ultimoLibro ) {
-					
-					libro = this.ultimoLibro.libro
-				}
-				
-				return R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro ) {
-					
-					$libro.value = libro
-					libro        = null
-				}.bind( this ))
+				return R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro )
+				{
+					$libro.value = libro;
+					libro        = null;
+				}.bind( this ));
 			}
 		},
 		
@@ -99,35 +98,36 @@
 		 * @private
 		 * @return {Promise}
 		 */
-		_arrancaInputCapitulos: function() {
+		_arrancaInputCapitulos: function()
+		{
+			var capitulo    = '1';
+			var numCapitulo = null;
+			var indiceLibro = null;
 			
-			var capitulo    = '1'
-			var numCapitulo = null
-			var indiceLibro = null
-			
-			if ( !this.devocional || !this.devocional.capitulo ) {
+			if ( !this.devocional || !this.devocional.capitulo )
+			{
+				this.ultimoLibro = JSON.parse( localStorage.getItem( 'ultimoCapitulo' ));
 				
-				this.ultimoLibro = JSON.parse( localStorage.getItem( 'ultimoCapitulo' ))
-				
-				if ( this.ultimoLibro ) {
+				if ( this.ultimoLibro )
+				{
+					numCapitulo = parseInt( this.ultimoLibro.capitulo, 10 ) + 1;
+					indiceLibro = this.LIBROS.indexOf( this.ultimoLibro.libro );
 					
-					numCapitulo = parseInt( this.ultimoLibro.capitulo, 10 ) + 1
-					indiceLibro = this.LIBROS.indexOf( this.ultimoLibro.libro )
-					
-					if ( this.CAPITULOS[ indiceLibro ] < numCapitulo ) {
-
-						capitulo = '1'
-						this.ultimoLibro.libro = (( indiceLibro + 1 ) < this.LIBROS.length ) ? this.LIBROS[ indiceLibro + 1 ] : this.LIBROS[ 0 ]
+					if ( this.CAPITULOS[ indiceLibro ] < numCapitulo )
+					{
+						capitulo = '1';
+						this.ultimoLibro.libro = (( indiceLibro + 1 ) < this.LIBROS.length ) ? this.LIBROS[ indiceLibro + 1 ] : this.LIBROS[ 0 ];
 					}
-					else {
-						
-						capitulo = `${ numCapitulo }`
+					else
+					{
+						capitulo = `${ numCapitulo }`;
 					}
 				}
-				return R07.Elementos.damePorId( 'EditorCapitulo' ).then( function( $capitulo ) {
-					
-					$capitulo.value = capitulo
-				}.bind( this ))
+				
+				return R07.Elementos.damePorId( 'EditorCapitulo' ).then( function( $capitulo )
+				{
+					$capitulo.value = capitulo;
+				}.bind( this ));
 			}
 		},	// _arrancaInputCapitulos
 		
@@ -136,83 +136,83 @@
 		 * @return	{Promise}
 		 * @private
 		 */
-		_guardar: function() {
+		_guardar: function()
+		{
+			var info = {};
 			
-			var info = {}
-			
-			return R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro ) {
+			return R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro )
+			{
+				info.libro = $libro.value;
 				
-				info.libro = $libro.value
+				return R07.Elementos.damePorId( 'EditorCapitulo' );
+			}).then( function( $capitulo )
+			{
+				info.capitulo = $capitulo.value;
 				
-				return R07.Elementos.damePorId( 'EditorCapitulo' )
-			}).then( function( $capitulo ) {
-				
-				info.capitulo = $capitulo.value
-				
-				localStorage.setItem( 'ultimoCapitulo', JSON.stringify( info ))
-			})
+				localStorage.setItem( 'ultimoCapitulo', JSON.stringify( info ));
+			});
 		},
 		
 		/**
 		 * Al momento de oprimir el botón de guardar es necesario actualizar la información en la BD
 		 * @returns {Object} Promise
 		 */
-		_arrancaListeners: function() {
-			
-			return R07.Elementos.damePorId( 'EditorGuardarBtn' ).then( function( $botonGuardar ) {
+		_arrancaListeners: function()
+		{
+			return R07.Elementos.damePorId( 'EditorGuardarBtn' ).then( function( $botonGuardar )
+			{
+				$botonGuardar.addEventListener( 'click', this._clickBotonGuardarHandler.bind( this, $botonGuardar ), true );
 				
-				$botonGuardar.addEventListener( 'click', this._clickBotonGuardarHandler.bind( this, $botonGuardar ), true )
-				
-				return R07.Elementos.damePorId( 'EditorCancelarBtn' )
-			}.bind( this )).then( function( $botonCancelar ) {
-				
-				$botonCancelar.addEventListener( 'click', this._clickBotonCancelarHandler.bind( this, $botonCancelar ), true )
-			}.bind( this ))
+				return R07.Elementos.damePorId( 'EditorCancelarBtn' );
+			}.bind( this )).then( function( $botonCancelar )
+			{
+				$botonCancelar.addEventListener( 'click', this._clickBotonCancelarHandler.bind( this, $botonCancelar ), true );
+			}.bind( this ));
 		},
 		
-		_clickBotonGuardarHandler: function( $botonGuardar ) {
-			
-			this._actualizaDevocional().then(function() {
-				
+		_clickBotonGuardarHandler: function( $botonGuardar )
+		{
+			this._actualizaDevocional().then(function()
+			{
 				var evento = new CustomEvent( 'actualizaDevocional', { detail: this.devocional });
 				$botonGuardar.dispatchEvent( evento );
 				
-				this._lanzaEventoSaleEditor( $botonGuardar )
-			}.bind( this ))
+				this._lanzaEventoSaleEditor( $botonGuardar );
+			}.bind( this ));
 			
-			this._guardar()
+			this._guardar();
 		},
 		
-		_clickBotonCancelarHandler: function( $botonCancelar ) {
-			
-			this._lanzaEventoSaleEditor( $botonCancelar )
+		_clickBotonCancelarHandler: function( $botonCancelar )
+		{
+			this._lanzaEventoSaleEditor( $botonCancelar );
 		},
 		
-		_lanzaEventoSaleEditor: function( $elemento ) {
-			
-			$elemento.dispatchEvent( new CustomEvent( 'saleEditor' ))
+		_lanzaEventoSaleEditor: function( $elemento )
+		{
+			$elemento.dispatchEvent( new CustomEvent( 'saleEditor' ));
 		},
 		
 		/**
 		 * Actualizar la referencia al devocional para poder lanzar la actualización con la información de los campos del devocional
 		 * @returns {Object} Promise
 		 */
-		_actualizaDevocional: function() {
-			
-			return R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro ) {
+		_actualizaDevocional: function()
+		{
+			return R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro )
+			{
+				R07.Editor.devocional.libro = $libro.value;
 				
-				R07.Editor.devocional.libro = $libro.value
+				return R07.Elementos.damePorId( 'EditorCapitulo' );
+			}).then( function( $capitulo )
+			{
+				R07.Editor.devocional.capitulo = $capitulo.value;
 				
-				return R07.Elementos.damePorId( 'EditorCapitulo' )
-			}).then( function( $capitulo ) {
-				
-				R07.Editor.devocional.capitulo = $capitulo.value
-				
-				return R07.Elementos.damePorId( 'EditorDevocional' )
-			}).then( function( $devocional ) {
-				
-				R07.Editor.devocional.devocional = $devocional.value.trim()
-			})
+				return R07.Elementos.damePorId( 'EditorDevocional' );
+			}).then( function( $devocional )
+			{
+				R07.Editor.devocional.devocional = $devocional.value.trim();
+			});
 		},
 		
 		/**
@@ -220,18 +220,18 @@
 		 * @returns {Object} Promise
 		 * @private
 		 */
-		_iniciaDataList: function() {
-			
-			return R07.Elementos.damePorId( 'EditorLibrosList' ).then( function( $lista ) {
-				
-				this.LIBROS.forEach( function( libro ) {
+		_iniciaDataList: function()
+		{
+			return R07.Elementos.damePorId( 'EditorLibrosList' ).then( function( $lista )
+			{
+				this.LIBROS.forEach( function( libro )
+				{
+					var opcion = document.createElement( 'option' );
+					opcion.value = libro;
 					
-					var opcion = document.createElement( 'option' )
-					opcion.value = libro
-					
-					$lista.appendChild( opcion )
-				})
-			}.bind( this ))
+					$lista.appendChild( opcion );
+				});
+			}.bind( this ));
 		},
 		
 		/**
@@ -239,24 +239,24 @@
 		 * @param   {Object} devocional 
 		 * @returns {Object} Promise
 		 */
-		actualizaDevocional: function( devocional ) {
+		actualizaDevocional: function( devocional )
+		{
+			this.devocional = devocional;
 			
-			this.devocional = devocional
-			
-			return R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro ) {
+			return R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro )
+			{
+				if ( devocional.libro ) $libro.value = devocional.libro;
 				
-				if ( devocional.libro ) $libro.value = devocional.libro
+				return R07.Elementos.damePorId( 'EditorCapitulo' );
+			}).then( function( $capitulo )
+			{
+				if ( devocional.capitulo ) $capitulo.value = devocional.capitulo;
 				
-				return R07.Elementos.damePorId( 'EditorCapitulo' )
-			}).then( function( $capitulo ) {
-				
-				if ( devocional.capitulo ) $capitulo.value = devocional.capitulo
-				
-				return R07.Elementos.damePorId( 'EditorDevocional' )
-			}).then( function( $devocional ) {
-				
-				if ( devocional.devocional ) $devocional.value = devocional.devocional
-			})
+				return R07.Elementos.damePorId( 'EditorDevocional' );
+			}).then( function( $devocional )
+			{
+				if ( devocional.devocional ) $devocional.value = devocional.devocional;
+			});
 		}
-	}
-})()
+	};
+})();

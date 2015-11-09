@@ -6,10 +6,10 @@
 
 /* global R07, document, Promise */
 
-( function() {
-    
-    R07.Elementos = {
-        
+( function()
+{
+    R07.Elementos =
+	{
         elementosPorId: {},                // Contiene la lista de elementos del DOM de la app, es un caché para ello
         
         /**
@@ -18,19 +18,20 @@
          * @param   {String}   id       El ID del elemento
          * @returns {Promise}  Retornamos la promesa
          */
-        damePorId: function( id ) {
-            
-			return new Promise( function( resolver ) {
-				
-				if ( id in this.elementosPorId ) {
+        damePorId: function( id )
+		{
+			return new Promise( function( resolver )
+			{
+				if ( id in this.elementosPorId )
+				{
 					resolver( this.elementosPorId[ id ]);
 					return;
 				}
 
 				this.elementosPorId[ id ] = document.getElementById( id );
+				
 				resolver( this.elementosPorId[ id ]);
 			}.bind( this ));
-			
         },
 		
 		/**
@@ -39,17 +40,16 @@
 		 * @param {String} selector El selector para encontrar al elemento en el DOM
 		 * @return {Object} Promise con el elementos solicitado
 		 */
-		damePorSelector: function( selector ) {
-			
-			return new Promise( function( resolver ) {
-				
+		damePorSelector: function( selector )
+		{
+			return new Promise( function( resolver )
+			{
 				var $elemento = document.querySelector( selector );
 
-				if ( $elemento.id ) {
-					this.elementosPorId[ $elemento.id ] = $elemento;
-				}
+				if ( $elemento.id ) this.elementosPorId[ $elemento.id ] = $elemento;
 
 				resolver( $elemento );
+				
 				$elemento = null;
 			}.bind( this ));
 		}

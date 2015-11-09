@@ -12,7 +12,7 @@
     "maxdepth"	: 7,
 	"esnext"    : true,
     
-    "asi"		: true,
+    "asi"		: false,
     "debug"		: true,
     "smarttabs"	: true,
     "sub"		: true,
