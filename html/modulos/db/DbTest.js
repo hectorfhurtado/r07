@@ -71,6 +71,8 @@
 		{
 			R07.Db.db.close();		// Cerramos la BD de pruebas
 			R07.Db.db = BDabierta;	// Devolvemos la BD r07 al módulo
+			
+			console.info( 'Termina pruebas Db.js' );
 		};
 	});
 })();

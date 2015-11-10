@@ -56,6 +56,14 @@
          */
         _cambiaMensajePrincipal: function()
 		{
+			var localStorage = JSON.stringify( localStorage.getItem( 'ultimoCapitulo' ));
+			
+			if ( localStorage )
+			{
+				
+			// TODO: incluir aquí el código para mostrar el resumen del devocional
+			}
+			
 			return R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $resumen )
 			{
 				$resumen.textContent = 'Toca el reloj para comenzar';
@@ -189,6 +197,11 @@
 				R07.DEVOCIONAL = datoEnBd;
 				
 				R07.Omnibox.actualiza( datoEnBd );
+				
+				return R07.Cargador.dame( 'Editor' );
+			}).then( function( Editor )
+			{
+				Editor.actualizaDevocional( R07.DEVOCIONAL );
 			});
 		},
 		

@@ -31,5 +31,7 @@
 		
         document.querySelector( 'body' ).removeChild( spanPrueba );
 		spanPrueba = null;
+		
+		console.info( 'termina pruebas Elementos.js' );
 	});
 })();

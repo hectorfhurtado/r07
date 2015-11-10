@@ -4,19 +4,20 @@
 
 /* global R07 */
 
-( function() {
-    
-    R07.UtilidadFecha = {
-        
+( function()
+{    
+    R07.UtilidadFecha =
+	{
         DIA_SEMANA: [ 'Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado' ],
-        MESES: [ 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre' ],
+        MESES:      [ 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre' ],
         
         /**
          * CAmbia una fecha al formato díaSemana DD mes YYYY
          * @param     {Date} fecha
          * @return    {String}
          */
-        dateAddddDDMMyyyy: function( fecha ) {
+        dateAddddDDMMyyyy: function( fecha )
+		{
             var diaSemana = this.DIA_SEMANA[ fecha.getDay() ];
             var mes       = this.MESES[ fecha.getMonth() ];
             
@@ -27,7 +28,8 @@
          * @param   {Date} fecha
          * @returns {String} 
          */
-        traeHoras: function( fecha ) {
+        traeHoras: function( fecha )
+		{
             var horas = fecha.getHours();
             
             return horas < 10 ? '0' + horas : '' + horas;
@@ -38,7 +40,8 @@
          * @param   {Date}     fecha
          * @returns {String} 
          */
-        traeMinutos: function( fecha ) {
+        traeMinutos: function( fecha )
+		{
             var minutos = fecha.getMinutes();
             
             return minutos < 10 ? '0' + minutos : '' + minutos;
