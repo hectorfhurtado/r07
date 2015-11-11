@@ -78,14 +78,17 @@
 		
 		console.assert( $main.childNodes.length == 1, 'Verificamos el número de nodos hijos que tiene', $main.childNodes.length );
 		
-		localStorage.setItem( 'ultimoCapitulo', JSON.stringify({ libro: 'Deuteronomio', capitlo: '10' }));
+		localStorage.setItem( 'ultimoCapitulo', JSON.stringify({ libro: 'Deuteronomio', capitulo: '10' }));
 		
 		return R07.ControladorMaestro._cambiaMensajePrincipal();
 	}).then( function ()
 	{
 		var $main = document.getElementById( 'ResumenDevocional' );
 		
-		console.assert( $main.childNodes.length == 4, 'Verificamos el número de nodos hijos que tiene', $main.childNodes.length );
+		console.assert( $main.childNodes.length > 1, 'Verificamos el número de nodos hijos que tiene', $main.childNodes.length );
+		console.assert( $main.querySelector( '#ResumenDevocionalLibro' ).textContent == 'Deuteronomio', 'Verificamos el nombre del libr' );
+		console.assert( $main.querySelector( '#ResumenDevocionalCapitulo' ).textContent == '10', 'Verificamos el número del capítulo' );
+		console.assert( $main.querySelector( '#ResumenDevocionalDevocional' ).textContent === '', 'Verificamos el contenido del devocional' );
 	}).then( function ()
 	{
 		/***********************

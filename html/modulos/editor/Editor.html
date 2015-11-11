@@ -1,12 +1,42 @@
 
 <style>
 	section#Editor {
+		display: flex;
+		flex-direction: column;
 		position: absolute;
 		top: 0;
 		left: 0;
 		width: 100%;
 		height: 100%;
 		box-sizing: border-box;
+	}
+	
+	section#Editor > div {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+	}
+	
+	section#Editor input, section#Editor textarea {
+		padding: 0.5rem;
+		font-size: 1rem;
+		box-sizing: border-box;
+		color: inherit;
+		background-color: transparent;
+		border-color: transparent;
+	}
+	
+	section#Editor #EditorLibro {
+		flex-grow: 1;
+	}
+	
+	section#Editor #EditorCapitulo {
+		width: 20%;
+	}
+	
+	section#Editor #EditorDevocional {
+		border-top-color: inherit;
+		flex-grow: 1;
 	}
 </style>
 <section id="Editor">

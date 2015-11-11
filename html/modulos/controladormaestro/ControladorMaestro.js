@@ -56,19 +56,54 @@
          */
         _cambiaMensajePrincipal: function()
 		{
-			var localStorage = JSON.stringify( localStorage.getItem( 'ultimoCapitulo' ));
+			var milocalStorage = JSON.parse( localStorage.getItem( 'ultimoCapitulo' ));
 			
-			if ( localStorage )
+			if ( milocalStorage )
 			{
-				
-			// TODO: incluir aquí el código para mostrar el resumen del devocional
+				return R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $main )
+				{
+					var $libro       = null;
+					var $capitulo    = null;
+					var $devocional  = null;
+					
+					$main.textContent = '';
+					
+					if ( $main.childNodes.length > 1 )
+					{
+						return R07.Elementos.damePorId( 'ResumenDevocionalLibro' ).then( function( libro )
+						{
+							$libro = libro;
+							
+							return R07.Elementos.damePorId( 'ResumenDevocionalCapitulo' );
+						}).then( function( capitulo )
+						{
+							$capitulo = capitulo;
+							
+							return R07.Elementos.damePorId( 'ResumenDevocionalDevocional' );
+						}).then( function( devocional )
+						{
+							$devocional = devocional;
+							
+							$libro.textContent       = milocalStorage.libro;
+							$capitulo.textContent    = milocalStorage.capitulo;
+							$devocional.textContent  = milocalStorage.devocional ? milocalStorage.devocional : '';
+						});
+					}
+					else
+					{
+						$main.insertAdjacentHTML( 'beforeEnd', `
+<span id="ResumenDevocionalLibro">${ milocalStorage.libro }</span><span id="ResumenDevocionalCapitulo">${ milocalStorage.capitulo }</span>
+<p id="ResumenDevocionalDevocional">${ milocalStorage.devocional ? milocalStorage.devocional : '' }</p>
+` );
+					}
+				});
 			}
 			
 			return R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $resumen )
 			{
 				$resumen.textContent = 'Toca el reloj para comenzar';
 			});
-        },
+        },	// _cambiaMensajePrincipal
         
         /**
          * Se encarga de poner la fecha correcta en la pantalla de inicio
