@@ -38,6 +38,10 @@
 		border-top-color: inherit;
 		flex-grow: 1;
 	}
+	
+	div#EditorBotones {
+		margin-bottom: 1.8rem;
+	}
 </style>
 <section id="Editor">
 	<div id="EditorCabecera">
@@ -47,7 +51,23 @@
 	</div>
 	<textarea id="EditorDevocional" placeholder="Escribe lo que aprendiste"></textarea>
 	<div id="EditorBotones">
-		<button id="EditorGuardarBtn"></button>
-		<button id="EditorCancelarBtn"></button>
+		<button id="EditorGuardarBtn">
+			<svg width="100%" height="100%" viewbox="0 0 100 100" >
+				<!--<g style="stroke:rgb(48,177,53); stroke-width:20; fill-opacity:1.0; stroke-linecap: round;">-->
+				<g>
+					<line x1="20" y1="60" x2="38" y2="80" />
+					<line x1="38" y1="80" x2="80" y2="30" />
+				</g>
+			</svg>
+		</button>
+		<button id="EditorCancelarBtn">
+			<svg width="100%" height="100%" viewbox="0 0 100 100" >
+				<!--<g style="stroke:hsl( 0, 100%, 50% ); stroke-width:20; fill-opacity:1.0; stroke-linecap: round;">-->
+				<g>
+				<line x1="25" y1="25" x2="75" y2="75" />
+				<line x1="25" y1="75" x2="75" y2="25" />
+				</g>
+			</svg>
+		</button>
 	</div>
 </section>

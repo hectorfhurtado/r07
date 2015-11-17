@@ -9,6 +9,8 @@
 	// antes de empezar, limpiamos la consola
 	console.clear();
 	
+	var $body = document.querySelector( 'body' );
+	
 	var tempLocalStorage = localStorage.getItem( 'ultimoCapitulo' );
 	localStorage.setItem( 'ultimoCapitulo', null );
 	
@@ -88,7 +90,19 @@
 		console.assert( $main.childNodes.length > 1, 'Verificamos el número de nodos hijos que tiene', $main.childNodes.length );
 		console.assert( $main.querySelector( '#ResumenDevocionalLibro' ).textContent == 'Deuteronomio', 'Verificamos el nombre del libr' );
 		console.assert( $main.querySelector( '#ResumenDevocionalCapitulo' ).textContent == '10', 'Verificamos el número del capítulo' );
-		console.assert( $main.querySelector( '#ResumenDevocionalDevocional' ).textContent === '', 'Verificamos el contenido del devocional' );
+		
+		/*************************************************************
+		 * Probamos el click en el cuadro principal de la aplicación
+		 * **********************************************************/
+		function salePrincipalHandler()
+		{
+			console.assert( this.classList.contains( 'salePrincipal' ), 'Verificamos que el body contiene la clase para quitar el menú principal' );
+			$body.removeEventListener( 'salePrincipal', salePrincipalHandler, true );
+		}
+		
+		$body.addEventListener( 'salePrincipal', salePrincipalHandler, true );
+		
+		R07.ControladorMaestro._clickMain();
 	}).then( function ()
 	{
 		/***********************

@@ -64,7 +64,6 @@
 				{
 					var $libro       = null;
 					var $capitulo    = null;
-					var $devocional  = null;
 					
 					$main.textContent = '';
 					
@@ -79,21 +78,14 @@
 						{
 							$capitulo = capitulo;
 							
-							return R07.Elementos.damePorId( 'ResumenDevocionalDevocional' );
-						}).then( function( devocional )
-						{
-							$devocional = devocional;
-							
 							$libro.textContent       = milocalStorage.libro;
 							$capitulo.textContent    = milocalStorage.capitulo;
-							$devocional.textContent  = milocalStorage.devocional ? milocalStorage.devocional : '';
 						});
 					}
 					else
 					{
 						$main.insertAdjacentHTML( 'beforeEnd', `
-<span id="ResumenDevocionalLibro">${ milocalStorage.libro }</span><span id="ResumenDevocionalCapitulo">${ milocalStorage.capitulo }</span>
-<p id="ResumenDevocionalDevocional">${ milocalStorage.devocional ? milocalStorage.devocional : '' }</p>
+<span id="ResumenDevocionalLibro">${ milocalStorage.libro }</span>: <span id="ResumenDevocionalCapitulo">${ milocalStorage.capitulo }</span>
 ` );
 					}
 				});
@@ -211,6 +203,16 @@
 						this._actualizaUiPrincipal( R07.DEVOCIONAL.fecha );
 					}.bind( this ));
 				}.bind( this ), true );
+				
+				$body.addEventListener( 'salePrincipal', function()
+				{
+					this.classList.add( 'salePrincipal' );
+				}, true );
+				
+				return R07.Elementos.damePorId( 'ResumenDevocional' );
+			}.bind( this )).then( function( $main )
+			{
+				$main.addEventListener( 'click', this._clickMain, true );
 			}.bind( this ));
         },
         
@@ -246,6 +248,13 @@
 			{
 				if ( !R07.DEBUG ) return Editor.inicia();
 			});
+		},
+		
+		_clickMain: function( e )
+		{
+			console.dir( e ) // TODO: Seguir con las pruebas
+			
+			this.dispatchEvent( new CustomEvent( 'salePrincipal' ));
 		}
     };
 })();

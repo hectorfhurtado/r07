@@ -51,6 +51,7 @@
                 flex          : 1 0 auto;
                 padding       : 0.5rem;
                 vertical-align: middle;
+				font-size: 1rem;
             }
 
             footer {
@@ -68,6 +69,10 @@
                 flex-direction: row;
                 position: relative;
             }
+			
+			main > span {
+				display: inline-block;
+			}
 
             .invisible {
                 visibility: hidden;
@@ -77,14 +82,15 @@
                 display: none;
             }
 
-            button#DescargaBtn, button#OmniboxIzqBtn, button#OmniboxCronometroBtn, button#OmniboxDerBtn {
+            /*button#DescargaBtn, button#OmniboxIzqBtn, button#OmniboxCronometroBtn, button#OmniboxDerBtn {*/
+            button {
                 fill        : none;
                 outline     : none;
                 stroke      : hsl( 183, 100%, 50% );
                 stroke-width: 10%;
             }
             
-            button#OmniboxCronometroBtn #manecilla, button#OmniboxIzqBtn, button#OmniboxDerBtn {
+            button#OmniboxCronometroBtn #manecilla, button#OmniboxIzqBtn, button#OmniboxDerBtn, button#EditorGuardarBtn, button#EditorCancelarBtn {
                 stroke-linecap: round;
             }
             
@@ -100,7 +106,8 @@
                 flex-direction: row;
             }
             
-            button#OmniboxIzqBtn, button#OmniboxCronometroBtn, button#OmniboxDerBtn {
+/*            button#OmniboxIzqBtn, button#OmniboxCronometroBtn, button#OmniboxDerBtn {*/
+            button {
                 width: 54px;
                 height: 54px;
                 background-color: transparent;
