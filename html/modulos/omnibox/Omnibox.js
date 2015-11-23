@@ -220,7 +220,7 @@
         debeMostrarFlechaDerecha: function( fecha )
 		{
             var hoy = new Date();
-            
+			
             if ( fecha.getFullYear() === hoy.getFullYear() &&
                  fecha.getMonth()    === hoy.getMonth() &&
                  fecha.getDate()     === hoy.getDate()

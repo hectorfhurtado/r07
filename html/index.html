@@ -327,6 +327,8 @@
                      * @param {String} modulo El nombre del módulo que estamos cargando
                      */
                     pruebaModulo: function( modulo ) {
+						
+						if ( !R07.Pruebas_DEBUG ) R07.Pruebas_DEBUG = Promise.resolve()
                         
                         var script  = document.createElement( 'script' )
                         script.type = 'text/javascript'

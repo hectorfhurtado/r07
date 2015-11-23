@@ -4,5 +4,8 @@
 
 ( function()
 {
-    console.assert( true, 'DEBUG CargadorConPromesa' );
+	R07.Pruebas_DEBUG.then( function()
+	{
+    	return console.assert( true, 'DEBUG CargadorConPromesa' );
+	});
 })();

@@ -205,7 +205,7 @@
 				}.bind( this ), true );
 				
 				$body.addEventListener( 'salePrincipal', function()
-				{
+				{	
 					this.classList.add( 'salePrincipal' );
 				}, true );
 				
@@ -252,9 +252,8 @@
 		
 		_clickMain: function( e )
 		{
-			console.dir( e ) // TODO: Seguir con las pruebas
-			
-			this.dispatchEvent( new CustomEvent( 'salePrincipal' ));
+			var evento = new CustomEvent( 'salePrincipal' );
+			this.dispatchEvent( evento );
 		}
     };
 })();
