@@ -30,6 +30,7 @@
                 display        : flex;
                 justify-content: space-around;
                 padding        : 0.5rem;
+				transition     : transform 0.3s;
             }
             header > button {
                 background-color: hsla(0, 0%, 0%, 0);
@@ -60,6 +61,7 @@
 
             nav#Omnibox {
                 display: flex;
+				transition: transform 0.3s;
             }
 
             div#OmniboxContenidoCentral {
@@ -222,6 +224,15 @@
 			input#OmniboxBusqueda.error {
 				border-color: red;
 				animation: nono 0.5s ease-in-out 0s 5;
+			}
+			
+			/* ANIMACION PARA CAMBIO DE VISTAS*/
+			.salePrincipal header {
+				transform: translateY( -3rem );
+			}
+			
+			.salePrincipal nav#Omnibox {
+				transform: translateY( 7rem );
 			}
         </style>
     </head>

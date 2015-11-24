@@ -206,7 +206,7 @@
 				
 				$body.addEventListener( 'salePrincipal', function()
 				{	
-					this.classList.add( 'salePrincipal' );
+					// this.classList.add( 'salePrincipal' );
 				}, true );
 				
 				return R07.Elementos.damePorId( 'ResumenDevocional' );
@@ -250,10 +250,15 @@
 			});
 		},
 		
-		_clickMain: function( e )
+		_clickMain: function()
 		{
 			var evento = new CustomEvent( 'salePrincipal' );
 			this.dispatchEvent( evento );
+			
+			return R07.Elementos.damePorSelector( 'body' ).then( function( $body )
+			{
+				$body.classList.add( 'salePrincipal' );
+			});
 		}
     };
 })();
