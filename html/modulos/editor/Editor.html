@@ -41,9 +41,20 @@
 	
 	div#EditorBotones {
 		margin-bottom: 1.8rem;
+		
+		transition: transform 0.3s;
+		transform: translateY( 7rem ); 
+	}
+	
+	section#Editor.inexistente {
+		display: none;
+	}
+	
+	section#Editor.muestraBotones div#EditorBotones {
+		transform: translateY( 0 );
 	}
 </style>
-<section id="Editor">
+<section id="Editor" class="inexistente">
 	<div id="EditorCabecera">
 		<input id="EditorLibro" type="text" list="EditorLibrosList" />
 		<input id="EditorCapitulo" type="number" min="1" placeholder="1" />

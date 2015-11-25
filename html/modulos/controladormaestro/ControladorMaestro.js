@@ -250,15 +250,49 @@
 			});
 		},
 		
+		/**
+		 * Se encarga de coordinar las clases y eventos que definen la animación que se da en el cambio de vista principal al Editor del devocional
+		 * @private
+		 */
 		_clickMain: function()
 		{
 			var evento = new CustomEvent( 'salePrincipal' );
 			this.dispatchEvent( evento );
 			
-			return R07.Elementos.damePorSelector( 'body' ).then( function( $body )
+			return R07.Elementos.damePorSelector( 'body' ).then( function( $header )
+			{
+				$header.addEventListener( 'transitionend', this._transitionEndSalePrincipalHandler, true );
+				
+				return R07.Elementos.damePorSelector( 'body' );
+			}.bind( this )).then( function( $body )
 			{
 				$body.classList.add( 'salePrincipal' );
 			});
+		},
+		
+		/**
+		 * Quita la clase inexistente al Editor para que se pueda ver y le da la animación de los botones después de quitar el event
+		 * handler sobre el header que tuvo la animación anterior. Esto lo hago porque el browser primero debe mostrar el editor para 
+		 * que luego aplique la clase y con eso la animación, si se hace todo al tiempo no muestra la animación
+		 * @private
+		 */
+		_transitionEndSalePrincipalHandler: function()
+		{
+			R07.Elementos.damePorId( 'Editor' ).then( function( $editor )
+			{
+				$editor.classList.remove( 'inexistente' );
+				
+				return R07.Elementos.damePorSelector( 'header' );
+			}).then( function( $header )
+			{
+				$header.removeEventListener( 'transitionend', this._transitionEndSalePrincipalHandler, true );
+				
+				return R07.Elementos.damePorId( 'Editor' );
+			}.bind( this )).then(function( $editor )
+			{
+				$editor.classList.add( 'muestraBotones' );
+			});
 		}
+		// TODO: Crear el handler para la salida del editor
     };
 })();
