@@ -43,7 +43,7 @@
 				.then( this._arrancaInputCapitulos.bind( this ))
 				.then( this._arrancaInputLibros.bind( this ))
 				.then( this._arrancaListeners.bind( this ))
-				.then( this._iniciaDatalist.bind( this ));
+				.then( this._iniciaDataList.bind( this ));
 		},
 		
 		/**

@@ -206,15 +206,44 @@
 				
 				$body.addEventListener( 'salePrincipal', function()
 				{	
-					// this.classList.add( 'salePrincipal' );
+					// Podemos usar este listener si sacamos de ControladorMaestro la lógica para la primera página
 				}, true );
+				
+				$body.addEventListener( 'saleEditor', function()
+				{
+					console.log( 'si ve el saleEditor')
+					
+					R07.Elementos.damePorId( 'Editor' ).then( function( $editor )
+					{
+						$editor.classList.remove( 'muestraBotones' );
+						$editor.addEventListener( 'transitionend', transitionEndSaleEditorHandler, false );
+						
+						function transitionEndSaleEditorHandler()
+						{
+							$editor.removeEventListener( 'transitionend', transitionEndSaleEditorHandler, false );
+							$editor.classList.add( 'inexistente' );
+							
+							R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $main)
+							{
+								$main.style.opacity = 1;
+								
+								return R07.Elementos.damePorSelector( 'body' );
+							}).then( function( $body )
+							{
+								$body.classList.remove( 'salePrincipal' );
+							});
+						}
+					});
+				}, true );
+				
+				// TODO: Mirar por qué sale dos veces el salePrincipal cuando hacemos click en cancelarBtn del Editor
 				
 				return R07.Elementos.damePorId( 'ResumenDevocional' );
 			}.bind( this )).then( function( $main )
 			{
-				$main.addEventListener( 'click', this._clickMain, true );
+				$main.addEventListener( 'click', this._clickMain.bind( this ), true );
 			}.bind( this ));
-        },
+        },  // _aplicaEventListeners
         
 		/**
 		 * Debe actualizar la fecha que ve el usuario y preguntarle al Omnibox si debe mostrar la flecha de la derecha
@@ -254,13 +283,13 @@
 		 * Se encarga de coordinar las clases y eventos que definen la animación que se da en el cambio de vista principal al Editor del devocional
 		 * @private
 		 */
-		_clickMain: function()
+		_clickMain: function( e )
 		{
 			var evento = new CustomEvent( 'salePrincipal' );
-			this.dispatchEvent( evento );
+			e.target.dispatchEvent( evento );
 			
-			return R07.Elementos.damePorSelector( 'body' ).then( function( $header )
-			{
+			return R07.Elementos.damePorSelector( 'header' ).then( function( $header )
+			{	
 				$header.addEventListener( 'transitionend', this._transitionEndSalePrincipalHandler, true );
 				
 				return R07.Elementos.damePorSelector( 'body' );
@@ -291,8 +320,12 @@
 			}.bind( this )).then(function( $editor )
 			{
 				$editor.classList.add( 'muestraBotones' );
+				
+				return R07.Elementos.damePorId( 'ResumenDevocional' );
+			}).then( function( $main )
+			{
+				$main.style.opacity = 0;
 			});
 		}
-		// TODO: Crear el handler para la salida del editor
     };
 })();
