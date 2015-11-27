@@ -9,6 +9,8 @@
 {
 	R07.Editor =
 	{
+		devocional: {},
+		
 		LIBROS:
 		[
 			'Génesis',     'Éxodo',        'Levítico',         'Números',          'Deuteronomio',    'Josué',        'Jueces',
@@ -161,12 +163,12 @@
 		{
 			return R07.Elementos.damePorId( 'EditorGuardarBtn' ).then( function( $botonGuardar )
 			{
-				$botonGuardar.addEventListener( 'click', this._clickBotonGuardarHandler.bind( this, $botonGuardar ), true );
+				$botonGuardar.addEventListener( 'click', this._clickBotonGuardarHandler.bind( this, $botonGuardar ), false );
 				
 				return R07.Elementos.damePorId( 'EditorCancelarBtn' );
 			}.bind( this )).then( function( $botonCancelar )
 			{
-				$botonCancelar.addEventListener( 'click', this._clickBotonCancelarHandler.bind( this, $botonCancelar ), true );
+				$botonCancelar.addEventListener( 'click', this._clickBotonCancelarHandler.bind( this, $botonCancelar ), false );
 			}.bind( this ));
 		},
 		
@@ -183,8 +185,9 @@
 			this._guardar();
 		},
 		
-		_clickBotonCancelarHandler: function( $botonCancelar )
+		_clickBotonCancelarHandler: function( $botonCancelar, e )
 		{
+			e.stopPropagation();
 			this._lanzaEventoSaleEditor( $botonCancelar );
 		},
 		

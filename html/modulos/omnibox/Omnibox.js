@@ -30,20 +30,20 @@
 				return R07.Elementos.damePorId( 'OmniboxIzqBtn' );
 			}).then( function( $botonIzq )
 			{
-				$botonIzq.addEventListener( 'click', this._clickBotonIzquierdoHandler, true );
+				$botonIzq.addEventListener( 'click', this._clickBotonIzquierdoHandler, false );
 			
 				// Agregamos los Event handlers para la flecha de la izquierda
 				return R07.Elementos.damePorId( 'OmniboxDerBtn' );
 			}.bind( this )).then( function( $botonDer )
 			{
-				$botonDer.addEventListener( 'click', this._clickBotonDerechoHandler, true );
+				$botonDer.addEventListener( 'click', this._clickBotonDerechoHandler, false );
 				
 				return R07.Elementos.damePorId( 'OmniboxBusqueda' );
             }.bind( this )).then( function( $inputBusqueda )
 			{
-				$inputBusqueda.addEventListener( 'change', this._buscarFechaHandler, true );
-				$inputBusqueda.addEventListener( 'blur',   this._buscarFechaHandler, true );
-				$inputBusqueda.addEventListener( 'animationend', this._quitarAnimacionHandler, true );
+				$inputBusqueda.addEventListener( 'change', this._buscarFechaHandler, false );
+				$inputBusqueda.addEventListener( 'blur',   this._buscarFechaHandler, false );
+				$inputBusqueda.addEventListener( 'animationend', this._quitarAnimacionHandler, false );
 				
 				this.actualiza( devocional );
 				

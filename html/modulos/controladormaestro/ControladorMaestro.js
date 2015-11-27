@@ -209,10 +209,8 @@
 					// Podemos usar este listener si sacamos de ControladorMaestro la lógica para la primera página
 				}, true );
 				
-				$body.addEventListener( 'saleEditor', function()
+				$body.addEventListener( 'saleEditor', function( e )
 				{
-					console.log( 'si ve el saleEditor')
-					
 					R07.Elementos.damePorId( 'Editor' ).then( function( $editor )
 					{
 						$editor.classList.remove( 'muestraBotones' );
@@ -241,7 +239,7 @@
 				return R07.Elementos.damePorId( 'ResumenDevocional' );
 			}.bind( this )).then( function( $main )
 			{
-				$main.addEventListener( 'click', this._clickMain.bind( this ), true );
+				$main.addEventListener( 'click', this._clickMain.bind( this ), false );
 			}.bind( this ));
         },  // _aplicaEventListeners
         
@@ -290,7 +288,9 @@
 			
 			return R07.Elementos.damePorSelector( 'header' ).then( function( $header )
 			{	
-				$header.addEventListener( 'transitionend', this._transitionEndSalePrincipalHandler, true );
+				console.log( 'una vez toma el transition')
+				
+				$header.addEventListener( 'transitionend', this._transitionEndSalePrincipalHandler, false );
 				
 				return R07.Elementos.damePorSelector( 'body' );
 			}.bind( this )).then( function( $body )
@@ -305,16 +305,22 @@
 		 * que luego aplique la clase y con eso la animación, si se hace todo al tiempo no muestra la animación
 		 * @private
 		 */
-		_transitionEndSalePrincipalHandler: function()
+		_transitionEndSalePrincipalHandler: function( e )
 		{
+			// TODO: Averiguar por qué se ve dos veces este handler
+			console.log( 'veo el transirion end sale principal')
+			
+			
+			e.target.removeEventListener( 'transitionend', this._transitionEndSalePrincipalHandler, false );
+			
 			R07.Elementos.damePorId( 'Editor' ).then( function( $editor )
 			{
 				$editor.classList.remove( 'inexistente' );
 				
-				return R07.Elementos.damePorSelector( 'header' );
-			}).then( function( $header )
-			{
-				$header.removeEventListener( 'transitionend', this._transitionEndSalePrincipalHandler, true );
+				// return R07.Elementos.damePorSelector( 'header' );
+			// }).then( function( $header )
+			// {
+				// $header.removeEventListener( 'transitionend', this._transitionEndSalePrincipalHandler, false );
 				
 				return R07.Elementos.damePorId( 'Editor' );
 			}.bind( this )).then(function( $editor )
