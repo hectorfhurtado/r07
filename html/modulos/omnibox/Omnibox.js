@@ -154,7 +154,7 @@
 			if ( /\d{4}\-\d{1,2}\-\d{1,2}/.test( this.value ))
 			{
 				var fechaSplit = this.value.split( '-' );
-				var evento     = new CustomEvent( 'traeFecha', { detail: new Date( fechaSplit[ 0 ], fechaSplit[ 1 ], fechaSplit[ 2 ])});
+				var evento     = new CustomEvent( 'traeFecha', { detail: new Date( fechaSplit[ 0 ], fechaSplit[ 1 ] - 1, fechaSplit[ 2 ])});
 				
 				this.dispatchEvent( evento );
 				
@@ -284,8 +284,8 @@
 		{
 			return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas )
 			{
-				if ( opcion.horasVisible )  $horas.classList.remove( 'invisible' );
-				else 						$horas.classList.add( 'invisible' );
+				if ( opcion.horaVisible )  $horas.classList.remove( 'invisible' );
+				else 			    	   $horas.classList.add( 'invisible' );
 			}).then( function()
 			{
 				this.escribeHoraInicio( devocional.horainicio );

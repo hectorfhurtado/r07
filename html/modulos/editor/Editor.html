@@ -42,7 +42,7 @@
 	div#EditorBotones {
 		margin-bottom: 1.8rem;
 		
-		transition: transform 0.3s;
+		transition: transform 0.3s ease-in;
 		transform: translateY( 7rem ); 
 	}
 	
@@ -52,6 +52,7 @@
 	
 	section#Editor.muestraBotones div#EditorBotones {
 		transform: translateY( 0 );
+		transition: transform 0.3s ease-out;
 	}
 </style>
 <section id="Editor" class="inexistente">

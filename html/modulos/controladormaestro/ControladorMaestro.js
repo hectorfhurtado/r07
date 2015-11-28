@@ -17,9 +17,9 @@
         inicia: function()
 		{    
 			this._mostrarElementosIniciales()
-				.then( this._cambiaMensajePrincipal.bind( this ))
 				.then( this._muestraFecha.bind( this, new Date()))
 				.then( this._iniciarBd.bind( this ))
+				.then( this._cambiaMensajePrincipal.bind( this ))
 				.then( this._iniciaOmnibox.bind( this ))
                 .then( this._aplicaEventListeners.bind( this ))
 				.then( this._cargaEditor.bind( this ));
@@ -56,9 +56,10 @@
          */
         _cambiaMensajePrincipal: function()
 		{
-			var milocalStorage = JSON.parse( localStorage.getItem( 'ultimoCapitulo' ));
+//			var milocalStorage = JSON.parse( localStorage.getItem( 'ultimoCapitulo' ));
 			
-			if ( milocalStorage )
+			// if ( milocalStorage )
+			if ( R07.DEVOCIONAL && R07.DEVOCIONAL.capitulo )
 			{
 				return R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $main )
 				{
@@ -78,14 +79,14 @@
 						{
 							$capitulo = capitulo;
 							
-							$libro.textContent       = milocalStorage.libro;
-							$capitulo.textContent    = milocalStorage.capitulo;
+							$libro.textContent       = R07.DEVOCIONAL.libro;
+							$capitulo.textContent    = R07.DEVOCIONAL.capitulo;
 						});
 					}
 					else
 					{
 						$main.insertAdjacentHTML( 'beforeEnd', `
-<span id="ResumenDevocionalLibro">${ milocalStorage.libro }</span>: <span id="ResumenDevocionalCapitulo">${ milocalStorage.capitulo }</span>
+<span id="ResumenDevocionalLibro">${ R07.DEVOCIONAL.libro }</span> <span id="ResumenDevocionalCapitulo">${ R07.DEVOCIONAL.capitulo }</span>
 ` );
 					}
 				});
@@ -129,7 +130,7 @@
 					return null;
                 });
             }
-            
+			
 			return R07.Cargador.dame( 'Db' ).then( function( BD )
 			{
 				return BD.iniciar( 'r07' );
@@ -147,14 +148,11 @@
 		 * @param   {Object}  devocional El devocional que viene de la BD
 		 * @returns {Promise} La promesa para pasar al siguiente método
 		 */
-		_iniciaOmnibox: function( devocional )
+		_iniciaOmnibox: function()
 		{
-			// Cuando hay problemas con la BD, me devuelven null
-			if ( devocional === null ) return null;
-			
 			return R07.Cargador.dame( 'Omnibox' ).then( function( Omnibox )
 			{
-				return Omnibox.inicia( devocional );
+				return Omnibox.inicia( R07.DEVOCIONAL );
 			});
 		},
         
@@ -192,15 +190,23 @@
 				$body.addEventListener( 'traeFecha', function( e )
 				{
 					if ( e.detail ) this._actualizaUiPrincipal( e.detail );
-				});
+				}.bind( this ), true );
 					
-				$body.addEventListener( 'actualizaDevocional', function()
+				$body.addEventListener( 'actualizaDevocional', function( e )
 				{
-					R07.Cargador.dame( 'Db' ).then( function( DB)
+					if ( e.detail.horainicio ) R07.DEVOCIONAL.horainicio = e.detail.horainicio;
+					if ( e.detail.horafin    ) R07.DEVOCIONAL.horafin    = e.detail.horafin;
+					if ( e.detail.capitulo   ) R07.DEVOCIONAL.capitulo   = e.detail.capitulo;
+					if ( e.detail.libro      ) R07.DEVOCIONAL.libro      = e.detail.libro;
+					if ( e.detail.devocional ) R07.DEVOCIONAL.devocional = e.detail.devocional;
+					if ( e.detail.texto      ) R07.DEVOCIONAL.texto      = e.detail.devocional;
+					
+					R07.Cargador.dame( 'Db' ).then( function( DB )
 					{
-						DB.actualizaDato( R07.DEVOCIONAL );
-						
-						this._actualizaUiPrincipal( R07.DEVOCIONAL.fecha );
+						DB.actualizaDato( R07.DEVOCIONAL ).then( function()
+							{
+								this._actualizaUiPrincipal( R07.DEVOCIONAL.fecha );
+							}.bind( this )).then( this._cambiaMensajePrincipal );
 					}.bind( this ));
 				}.bind( this ), true );
 				
@@ -209,7 +215,7 @@
 					// Podemos usar este listener si sacamos de ControladorMaestro la lógica para la primera página
 				}, true );
 				
-				$body.addEventListener( 'saleEditor', function( e )
+				$body.addEventListener( 'saleEditor', function()
 				{
 					R07.Elementos.damePorId( 'Editor' ).then( function( $editor )
 					{
@@ -233,8 +239,6 @@
 						}
 					});
 				}, true );
-				
-				// TODO: Mirar por qué sale dos veces el salePrincipal cuando hacemos click en cancelarBtn del Editor
 				
 				return R07.Elementos.damePorId( 'ResumenDevocional' );
 			}.bind( this )).then( function( $main )
@@ -260,10 +264,11 @@
 			{
 				R07.DEVOCIONAL = datoEnBd;
 				
+				this._cambiaMensajePrincipal();
 				R07.Omnibox.actualiza( datoEnBd );
 				
 				return R07.Cargador.dame( 'Editor' );
-			}).then( function( Editor )
+			}.bind( this )).then( function( Editor )
 			{
 				Editor.actualizaDevocional( R07.DEVOCIONAL );
 			});
@@ -288,9 +293,28 @@
 			
 			return R07.Elementos.damePorSelector( 'header' ).then( function( $header )
 			{	
-				console.log( 'una vez toma el transition')
+				$header.addEventListener( 'transitionend', transitionEndSalePrincipalHandler, false );
 				
-				$header.addEventListener( 'transitionend', this._transitionEndSalePrincipalHandler, false );
+				function transitionEndSalePrincipalHandler()
+				{
+					$header.removeEventListener( 'transitionend', transitionEndSalePrincipalHandler, false );
+					
+					R07.Elementos.damePorId( 'Editor' ).then( function( $editor )
+					{
+						$editor.classList.remove( 'inexistente' );
+						
+						// Este es para que el browser alcance a aplicar primero el quitar el display:none y mostrar la animación
+						setTimeout( function()
+						{
+							$editor.classList.add( 'muestraBotones' );
+						}, 10 );
+						
+						return R07.Elementos.damePorId( 'ResumenDevocional' );
+					}).then( function( $main )
+					{
+						$main.style.opacity = 0;
+					});
+				}
 				
 				return R07.Elementos.damePorSelector( 'body' );
 			}.bind( this )).then( function( $body )
@@ -299,39 +323,5 @@
 			});
 		},
 		
-		/**
-		 * Quita la clase inexistente al Editor para que se pueda ver y le da la animación de los botones después de quitar el event
-		 * handler sobre el header que tuvo la animación anterior. Esto lo hago porque el browser primero debe mostrar el editor para 
-		 * que luego aplique la clase y con eso la animación, si se hace todo al tiempo no muestra la animación
-		 * @private
-		 */
-		_transitionEndSalePrincipalHandler: function( e )
-		{
-			// TODO: Averiguar por qué se ve dos veces este handler
-			console.log( 'veo el transirion end sale principal')
-			
-			
-			e.target.removeEventListener( 'transitionend', this._transitionEndSalePrincipalHandler, false );
-			
-			R07.Elementos.damePorId( 'Editor' ).then( function( $editor )
-			{
-				$editor.classList.remove( 'inexistente' );
-				
-				// return R07.Elementos.damePorSelector( 'header' );
-			// }).then( function( $header )
-			// {
-				// $header.removeEventListener( 'transitionend', this._transitionEndSalePrincipalHandler, false );
-				
-				return R07.Elementos.damePorId( 'Editor' );
-			}.bind( this )).then(function( $editor )
-			{
-				$editor.classList.add( 'muestraBotones' );
-				
-				return R07.Elementos.damePorId( 'ResumenDevocional' );
-			}).then( function( $main )
-			{
-				$main.style.opacity = 0;
-			});
-		}
     };
 })();

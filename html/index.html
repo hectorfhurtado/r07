@@ -30,7 +30,7 @@
                 display        : flex;
                 justify-content: space-around;
                 padding        : 0.5rem;
-				transition     : transform 0.3s;
+				transition     : transform 0.3s ease-in;
             }
             header > button {
                 background-color: hsla(0, 0%, 0%, 0);
@@ -61,7 +61,7 @@
 
             nav#Omnibox {
                 display: flex;
-				transition: transform 0.3s;
+				transition: transform 0.3s ease-in;
             }
 
             div#OmniboxContenidoCentral {
@@ -75,7 +75,7 @@
 			main > span {
 				display: inline-block;
 				font-family: Tahoma;
-				transition: transform 0.3s;
+				transition: transform 0.3s ease-in;
 			}
 
             .invisible {
@@ -231,18 +231,22 @@
 			/* ANIMACION PARA CAMBIO DE VISTAS*/
 			.salePrincipal header {
 				transform: translateY( -3rem );
+				transition: transform 0.3 ease-out;
 			}
 			
 			.salePrincipal nav#Omnibox {
 				transform: translateY( 7rem );
+				transition: transform 0.3 ease-out;
 			}
 			
 			.salePrincipal span#ResumenDevocionalLibro {
 				transform: translate( 0.1rem, -3.2rem );
+				transition: transform 0.3 ease-out;
 			}
 			
 			.salePrincipal span#ResumenDevocionalCapitulo {
 				transform: translate( 11.3rem, -3.2rem );
+				transition: transform 0.3 ease-out;
 			}
         </style>
     </head>
@@ -300,79 +304,78 @@
         <script>
             // Si corre esto es porque está habilitado JavaScript
             
-            var R07 = {
-                
-				DEBUG: false,
+            var R07 = 
+			{
+				DEBUG: true,
 				
-                Cargador: {
-                    
+                Cargador: 
+				{
                     /**
                      * Devolvemos el módulo a través del callback. No usamos promesas porque al comienzo no sabemos si las podemos usar
                      * @param {          String   } modulo   El nombre del módulo
                      * @param {Function} callback La manera como hacemos saber que fue cargado el módulo solicitado
                      * @return {Object}   La promesa con el módulo
                      */
-                    dame: function( modulo ) {
-						
-						return new Promise( function( resolver ) {
-							
+                    dame: function( modulo ) 
+					{
+						return new Promise( function( resolver ) 
+						{
 							// Necesito mirar si el módulo no es cargador, porque es el único que está definico al comenzar
-							if ( R07[ modulo ] && modulo !== 'Cargador' ) {
-								
+							if ( R07[ modulo ] && modulo !== 'Cargador' ) 
+							{
 								resolver( R07[ modulo ]);
-								return
+								return;
 							}
 							
-							var script  = document.createElement( 'script' )
-							script.type = 'text/javascript'
-							script.src  = 'modulos/' + modulo.toLowerCase() + '/' + modulo + '.js'
+							var script  = document.createElement( 'script' );
+							script.type = 'text/javascript';
+							script.src  = 'modulos/' + modulo.toLowerCase() + '/' + modulo + '.js';
 
-							document.querySelector( 'head' ).appendChild( script )
+							document.querySelector( 'head' ).appendChild( script );
 
-							function alCargar() {
-								
-								script.removeEventListener( 'load', alCargar )
-								document.querySelector( 'head' ).removeChild( script )
+							function alCargar() 
+							{
+								script.removeEventListener( 'load', alCargar );
+								document.querySelector( 'head' ).removeChild( script );
 
-								script = null
-								resolver( R07[ modulo ])
+								script = null;
+								resolver( R07[ modulo ]);
 
-								if ( R07.DEBUG ) this.pruebaModulo( modulo )
+								if ( R07.DEBUG ) this.pruebaModulo( modulo );
 							}
-							script.addEventListener( 'load', alCargar.bind( this ))
-						}.bind( this ))
+							script.addEventListener( 'load', alCargar.bind( this ));
+						}.bind( this ));
                     },
                     
                     /**
                      * El el método que carga los scripts de pruebas
                      * @param {String} modulo El nombre del módulo que estamos cargando
                      */
-                    pruebaModulo: function( modulo ) {
-						
-						if ( !R07.Pruebas_DEBUG ) R07.Pruebas_DEBUG = Promise.resolve()
+                    pruebaModulo: function( modulo ) 
+					{
+						if ( !R07.Pruebas_DEBUG ) R07.Pruebas_DEBUG = Promise.resolve();
                         
-                        var script  = document.createElement( 'script' )
-                        script.type = 'text/javascript'
-                        script.src  = 'modulos/' + modulo.toLowerCase() + '/' + modulo + 'Test.js'
+                        var script  = document.createElement( 'script' );
+                        script.type = 'text/javascript';
+                        script.src  = 'modulos/' + modulo.toLowerCase() + '/' + modulo + 'Test.js';
                         
-                        document.querySelector( 'head' ).appendChild( script )
+                        document.querySelector( 'head' ).appendChild( script );
                         
-                        function alCargar() {
+                        function alCargar() 
+						{
+                            script.removeEventListener( 'load', alCargar );
+                            document.querySelector( 'head' ).removeChild( script );
 							
-                            script.removeEventListener( 'load', alCargar )
-                            document.querySelector( 'head' ).removeChild( script )
-							
-                            script = null
+                            script = null;
                         }
-                        script.addEventListener( 'load', alCargar )
+                        script.addEventListener( 'load', alCargar );
                     }
                 }
             }
-            R07.Cargador.dame( 'ControladorMaestro' ).then( function( Maestro ) {
-				
-				if ( R07.DEBUG === false ) Maestro.inicia()
-			})
-			
+            R07.Cargador.dame( 'ControladorMaestro' ).then( function( Maestro ) 
+			{
+				if ( R07.DEBUG === false ) Maestro.inicia();
+			});
         </script>
     </body>
 </html>
