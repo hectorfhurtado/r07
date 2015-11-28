@@ -81,7 +81,13 @@ R07.Pruebas_DEBUG = R07.Pruebas_DEBUG.then( function()
 		
 		console.assert( $main.childNodes.length == 1, 'Verificamos el número de nodos hijos que tiene', $main.childNodes.length );
 		
-		localStorage.setItem( 'ultimoCapitulo', JSON.stringify({ libro: 'Deuteronomio', capitulo: '10' }));
+		R07.DEVOCIONAL =
+		{
+			libro     : 'Deuteronomio',
+			capitulo  : 10,
+			horainicio: null,
+			horafin   : null,
+		};
 		
 		return R07.ControladorMaestro._cambiaMensajePrincipal();
 	}).then( function ()
@@ -89,7 +95,7 @@ R07.Pruebas_DEBUG = R07.Pruebas_DEBUG.then( function()
 		var $main = document.getElementById( 'ResumenDevocional' );
 		
 		console.assert( $main.childNodes.length > 1, 'Verificamos el número de nodos hijos que tiene', $main.childNodes.length );
-		console.assert( $main.querySelector( '#ResumenDevocionalLibro' ).textContent == 'Deuteronomio', 'Verificamos el nombre del libr' );
+		console.assert( $main.querySelector( '#ResumenDevocionalLibro' ).textContent == 'Deuteronomio', 'Verificamos el nombre del libro' );
 		console.assert( $main.querySelector( '#ResumenDevocionalCapitulo' ).textContent == '10', 'Verificamos el número del capítulo' );
 		
 		/*************************************************************
@@ -103,7 +109,12 @@ R07.Pruebas_DEBUG = R07.Pruebas_DEBUG.then( function()
 		
 		$body.addEventListener( 'salePrincipal', salePrincipalHandler, true );
 		
-		return R07.ControladorMaestro._clickMain.bind( $main )();
+		const e =
+		{
+			target: $main
+		};
+		
+		return R07.ControladorMaestro._clickMain.bind( R07.ControladorMaestro, e )();
 	}).then( function ()
 	{
 		console.assert( $body.classList.contains( 'salePrincipal' ), 'Verificamos que estemos listos para hacer el cambio de vista' );

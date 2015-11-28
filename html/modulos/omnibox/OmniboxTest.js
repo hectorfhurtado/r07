@@ -14,6 +14,17 @@ R07.Pruebas_DEBUG = R07.Pruebas_DEBUG.then( function()
 	var $flechaDerecha = document.getElementById( 'OmniboxDerBtn' );
 	var $inputBusqueda = document.getElementById( 'OmniboxBusqueda' );
 	
+	// Como ControladorMaestro en algún momento inicializó el Omnibox, cambio el devocional del Omnibox
+	$omnibox.classList.add( 'cronometroGrande' );
+	$omnibox.classList.remove( 'oprimido', 'cronometroCorriendo', 'busqueda', 'buscando' );
+	document.getElementById( 'OmniboxHoras' ).classList.add( 'invisible' );
+	
+	R07.Omnibox.devocional =
+	{
+		horainicio: null,
+		horafin   : null,
+	};
+	
 	function sleep( tiempo )
 	{	
 		return new Promise( function( resolve )
@@ -55,8 +66,8 @@ R07.Pruebas_DEBUG = R07.Pruebas_DEBUG.then( function()
 	* **********************/
 	var $horas = document.getElementById( 'OmniboxHoras' );
 	
-	console.assert( R07.Omnibox.devocional.horainicio === null,       'Probamos que al inicio no tengamos nada en la hora inicial' );
-	console.assert( $omnibox.classList.contains( 'cronometroGrande'), 'Verificamos que al comienzo el botón del cronómetro sea grande' );
+	console.assert( R07.Omnibox.devocional.horainicio === null,       'Probamos que al inicio no tengamos nada en la hora inicial', R07.Omnibox.devocional );
+	console.assert( $omnibox.classList.contains( 'cronometroGrande'), 'Verificamos que al comienzo el botón del cronómetro sea grande', $omnibox.classList );
 	console.assert( $horas.classList.contains( 'invisible' ),         'Miramos que no se esté mostrando la hora aún cuando hayamos oprimido "mousedown" el cronómetor' );
 	
 	return R07.Omnibox._clickCronometroHandler.bind( $omnibox )().then( function()
@@ -129,7 +140,7 @@ R07.Pruebas_DEBUG = R07.Pruebas_DEBUG.then( function()
 		* Probamos que al escribir una fecha que es en el buscador de fecha, envía un evento para que pueda ser buscada la información en la BD
 		* **************************************************************************************************************************************/
 		var EVENTO = 'traeFecha';
-		var fecha  = new Date( 2015, 10, 22 );
+		var fecha  = new Date( 2015, 10 - 1, 22 );	// Aquí la fecha es el mes menos 1
 		
 		$inputBusqueda.value = '2015-10-22';
 		
@@ -137,7 +148,7 @@ R07.Pruebas_DEBUG = R07.Pruebas_DEBUG.then( function()
 		
 		function traeFechaHandler( e )
 		{
-			console.assert( e.detail.getTime() === fecha.getTime(), 'Verificamos que envíe el evento con la fecha a buscar' );
+			console.assert( e.detail.getTime() === fecha.getTime(), 'Verificamos que envíe el evento con la fecha a buscar', e.detail );
 			
 			$body.removeEventListener( EVENTO, traeFechaHandler, true );
 		}

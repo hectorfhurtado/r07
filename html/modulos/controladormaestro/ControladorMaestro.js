@@ -298,6 +298,9 @@
 				function transitionEndSalePrincipalHandler()
 				{
 					$header.removeEventListener( 'transitionend', transitionEndSalePrincipalHandler, false );
+
+					// Al hacer pruebas, no existe aún el Editor, así que este pedazo sale con error
+					if ( R07.DEBUG ) return;
 					
 					R07.Elementos.damePorId( 'Editor' ).then( function( $editor )
 					{
