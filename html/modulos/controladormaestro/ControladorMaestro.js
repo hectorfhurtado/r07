@@ -1,6 +1,6 @@
 /**
  * @author nando
- * @description Se encarga de coordinar a todos los módulos de la app
+ * @description Se encarga de coordinar a todos los módulos de la app y de la página pricipal como tal
  */
 
 /* global R07, window */
@@ -57,9 +57,6 @@
          */
         _cambiaMensajePrincipal: function()
 		{
-//			var milocalStorage = JSON.parse( localStorage.getItem( 'ultimoCapitulo' ));
-			
-			// if ( milocalStorage )
 			if ( R07.DEVOCIONAL && R07.DEVOCIONAL.capitulo )
 			{
 				return R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $main )
@@ -284,7 +281,7 @@
 			{
 				$body.classList.add( 'salePrincipal' );
 			});
-		},
+		},	// _clickMain
 		
 		/**
 		 * Se encarga de generar el reporte para el mes seleccionado, consultando a la BD por cada día en el mes y generando un link para guardar el reporte como un archivo .txt
@@ -356,6 +353,12 @@
 			}
 		},
 		
+		/**
+		 * Verifica que todos los cambios realizados sean actualizados en la BD
+		 * @author Héctor Fernando Hurtado
+		 * @param {object} e Contiene el detalle que viene del módulo que realizó el cambio en el devocional
+		 * @private
+		 */
 		_actualizaDevocionalHandler: function( e )
 		{
 			if ( e.detail.horainicio ) R07.DEVOCIONAL.horainicio = e.detail.horainicio;
@@ -374,6 +377,14 @@
 			}.bind( this ));
 		},
 		
+		/**
+		 * Cuando sale del editor, coordinamos la animación de salida con la de entrada de los contorles de la página principal.
+		 * Es necesario tener en la misma función el handler para el animationend porque de lo contrario al intentar quitarlo del elemento es como si pasáramos
+		 * una función distinta a la del addEventListener, por eso todo toca en esta sola función
+		 * @author Héctor Fernando Hurtado
+		 * @returns {undefined}
+		 * @private
+		 */
 		_saleEditorHandler: function()
 		{
 			R07.Elementos.damePorId( 'Editor' ).then( function( $editor )
