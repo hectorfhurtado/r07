@@ -7,7 +7,8 @@
 
 ( function()
 {    
-	var UN_DIA_EN_MILIS = 1000 * 60 * 60 * 24;
+	var UN_DIA_EN_MILIS  = 1000 * 60 * 60 * 24;
+	var MESES            = [ 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre' ];
 	
     R07.ControladorMaestro =
 	{    
@@ -167,85 +168,39 @@
 				return Elementos.damePorSelector( 'body' );
 			}).then( function( $body )
 			{
-				$body.addEventListener( 'traeFechaAnterior', function()
-				{
-					if ( R07.DEVOCIONAL )
-					{
-						var ayer = new Date( R07.DEVOCIONAL.fecha.getTime() - UN_DIA_EN_MILIS );
-
-						this._actualizaUiPrincipal( ayer );
-					}
-				}.bind( this ), true );
-					
-				$body.addEventListener( 'traeFechaSiguiente', function()
-				{
-					if ( R07.DEVOCIONAL )
-					{
-						var manana = new Date( R07.DEVOCIONAL.fecha.getTime() + UN_DIA_EN_MILIS );
-
-						this._actualizaUiPrincipal( manana );
-					}
-				}.bind( this ), true );
+				$body.addEventListener( 'traeFechaAnterior',  this._traeFechaAnteriorHandler.bind( this ),  true );
+				$body.addEventListener( 'traeFechaSiguiente', this._traeFechaSiguienteHandler.bind( this ), true );
 				
 				$body.addEventListener( 'traeFecha', function( e )
 				{
 					if ( e.detail ) this._actualizaUiPrincipal( e.detail );
 				}.bind( this ), true );
 					
-				$body.addEventListener( 'actualizaDevocional', function( e )
-				{
-					if ( e.detail.horainicio ) R07.DEVOCIONAL.horainicio = e.detail.horainicio;
-					if ( e.detail.horafin    ) R07.DEVOCIONAL.horafin    = e.detail.horafin;
-					if ( e.detail.capitulo   ) R07.DEVOCIONAL.capitulo   = e.detail.capitulo;
-					if ( e.detail.libro      ) R07.DEVOCIONAL.libro      = e.detail.libro;
-					if ( e.detail.devocional ) R07.DEVOCIONAL.devocional = e.detail.devocional;
-					if ( e.detail.texto      ) R07.DEVOCIONAL.texto      = e.detail.devocional;
-					
-					R07.Cargador.dame( 'Db' ).then( function( DB )
-					{
-						DB.actualizaDato( R07.DEVOCIONAL ).then( function()
-							{
-								this._actualizaUiPrincipal( R07.DEVOCIONAL.fecha );
-							}.bind( this )).then( this._cambiaMensajePrincipal );
-					}.bind( this ));
-				}.bind( this ), true );
+				$body.addEventListener( 'actualizaDevocional', this._actualizaDevocionalHandler.bind( this ), true );
 				
 				$body.addEventListener( 'salePrincipal', function()
 				{	
 					// Podemos usar este listener si sacamos de ControladorMaestro la lógica para la primera página
 				}, true );
 				
-				$body.addEventListener( 'saleEditor', function()
-				{
-					R07.Elementos.damePorId( 'Editor' ).then( function( $editor )
-					{
-						$editor.classList.remove( 'muestraBotones' );
-						$editor.addEventListener( 'transitionend', transitionEndSaleEditorHandler, false );
-						
-						function transitionEndSaleEditorHandler()
-						{
-							$editor.removeEventListener( 'transitionend', transitionEndSaleEditorHandler, false );
-							$editor.classList.add( 'inexistente' );
-							
-							R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $main)
-							{
-								$main.style.opacity = 1;
-								
-								return R07.Elementos.damePorSelector( 'body' );
-							}).then( function( $body )
-							{
-								$body.classList.remove( 'salePrincipal' );
-							});
-						}
-					});
-				}, true );
+				$body.addEventListener( 'saleEditor', this._saleEditorHandler, true );
 				
 				return R07.Elementos.damePorId( 'ResumenDevocional' );
 			}.bind( this )).then( function( $main )
 			{
 				$main.addEventListener( 'click', this._clickMain.bind( this ), false );
+				
+				return R07.Elementos.damePorId( 'DescargaBtn' );
+			}.bind( this )).then( function( $descarga )
+			{
+				$descarga.addEventListener( 'click', this._clickDescargaHandler.bind( this ), false );
 			}.bind( this ));
         },  // _aplicaEventListeners
+		
+		_cambiaNumeroADosDigitos: function( numero )
+		{
+			return ( numero < 10 ) ? '0' + numero : '' + numero;
+		},
         
 		/**
 		 * Debe actualizar la fecha que ve el usuario y preguntarle al Omnibox si debe mostrar la flecha de la derecha
@@ -274,6 +229,11 @@
 			});
 		},
 		
+		/**
+		 * Carga el módulo Editor, sin embargo, al realizar los tests, debemos cargarlo por separado, por eso verificamos si está 'seteada' la variable R07.DEBUG
+		 * @author Héctor Fernando Hurtado
+		 * @returns {[[Type]]} [[Description]]
+		 */
 		_cargaEditor: function()
 		{
 			return R07.Cargador.dame( 'Editor' ).then( function( Editor )
@@ -326,5 +286,117 @@
 			});
 		},
 		
+		/**
+		 * Se encarga de generar el reporte para el mes seleccionado, consultando a la BD por cada día en el mes y generando un link para guardar el reporte como un archivo .txt
+		 * @author Héctor Fernando Hurtado
+		 * @private
+		 */
+		_clickDescargaHandler: function()
+		{
+			var fechaActual                  = R07.DEVOCIONAL.fecha;
+			var primerDiaDelMes              = new Date( fechaActual.getFullYear(), fechaActual.getMonth() );
+			var primerDiaSiguienteMes        = new Date( primerDiaDelMes.getFullYear(), primerDiaDelMes.getMonth() + 1 );
+			var primerDiaSiguienteMesEnMilis = primerDiaSiguienteMes.getTime();
+			var promesas                     = [];
+			var log                          = 'Reporte del 1 al ';
+
+			for ( var i = primerDiaDelMes.getTime(); i < primerDiaSiguienteMesEnMilis; i += UN_DIA_EN_MILIS )
+			{
+				promesas.push( R07.Db.trae( new Date( i )));
+			}
+
+			log += new Date( i - UN_DIA_EN_MILIS ).getDate();
+			log += ' de ' + MESES[ fechaActual.getMonth() ];
+			log += ' de ' + fechaActual.getFullYear() + '\r\n\r\n';
+			log += 'Dia\tInicio\tFin\tPorción\r\n';
+
+			Promise.all( promesas ).then( function( resultados )
+			{
+				resultados.forEach( function( resultado )
+				{
+					log += resultado.fecha.getDate() + '\t';													// Día
+					log += ( resultado.horainicio ? resultado.horainicio : '' ) + '\t';							// Inicio
+					log += ( resultado.horafin    ? resultado.horafin    : '' ) + '\t';							// Fin
+					log += resultado.libro + ' ' + resultado.capitulo + '\t' + resultado.devocional + '\r\n';	// Porción
+				});
+
+				var link      = document.createElement( 'a' );
+				link.href     = 'data:,' +  encodeURI( log );
+				link.style    = 'visibility:hidden';
+				
+				link.download = 'reporte' + primerDiaDelMes.getFullYear() +
+					this._cambiaNumeroADosDigitos(( primerDiaDelMes.getMonth() + 1 )) + 
+					this._cambiaNumeroADosDigitos( primerDiaDelMes.getDate() ) + '.txt';
+
+				document.body.appendChild( link );
+				link.click();
+				document.body.removeChild( link );
+				
+				link = fechaActual = primerDiaDelMes = primerDiaSiguienteMes = primerDiaSiguienteMesEnMilis = log = promesas = null;
+			}.bind( this ));			
+		},	// _clickDescargaHandler
+		
+		_traeFechaAnteriorHandler: function()
+		{
+			if ( R07.DEVOCIONAL )
+			{
+				var ayer = new Date( R07.DEVOCIONAL.fecha.getTime() - UN_DIA_EN_MILIS );
+
+				this._actualizaUiPrincipal( ayer );
+			}
+		},
+		
+		_traeFechaSiguienteHandler: function()
+		{
+			if ( R07.DEVOCIONAL )
+			{
+				var manana = new Date( R07.DEVOCIONAL.fecha.getTime() + UN_DIA_EN_MILIS );
+
+				this._actualizaUiPrincipal( manana );
+			}
+		},
+		
+		_actualizaDevocionalHandler: function( e )
+		{
+			if ( e.detail.horainicio ) R07.DEVOCIONAL.horainicio = e.detail.horainicio;
+			if ( e.detail.horafin    ) R07.DEVOCIONAL.horafin    = e.detail.horafin;
+			if ( e.detail.capitulo   ) R07.DEVOCIONAL.capitulo   = e.detail.capitulo;
+			if ( e.detail.libro      ) R07.DEVOCIONAL.libro      = e.detail.libro;
+			if ( e.detail.devocional ) R07.DEVOCIONAL.devocional = e.detail.devocional;
+			if ( e.detail.texto      ) R07.DEVOCIONAL.texto      = e.detail.devocional;
+
+			R07.Cargador.dame( 'Db' ).then( function( DB )
+			{
+				DB.actualizaDato( R07.DEVOCIONAL ).then( function()
+				{
+					this._actualizaUiPrincipal( R07.DEVOCIONAL.fecha );
+				}.bind( this )).then( this._cambiaMensajePrincipal );
+			}.bind( this ));
+		},
+		
+		_saleEditorHandler: function()
+		{
+			R07.Elementos.damePorId( 'Editor' ).then( function( $editor )
+			{
+				$editor.classList.remove( 'muestraBotones' );
+				$editor.addEventListener( 'transitionend', transitionEndSaleEditorHandler, false );
+
+				function transitionEndSaleEditorHandler()
+				{
+					$editor.removeEventListener( 'transitionend', transitionEndSaleEditorHandler, false );
+					$editor.classList.add( 'inexistente' );
+
+					R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $main)
+					{
+						$main.style.opacity = 1;
+
+						return R07.Elementos.damePorSelector( 'body' );
+					}).then( function( $body )
+							{
+						$body.classList.remove( 'salePrincipal' );
+					});
+				}
+			});
+		},
     };
 })();
