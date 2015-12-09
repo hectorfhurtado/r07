@@ -24,5 +24,5 @@ const servidor = http.createServer( function( req, res )
 });
 
 
-servidor.listen( 7000, '127.0.0.1' );
+servidor.listen( 7000 );
 console.log( 'Oyendo en el puerto 7000...' );

@@ -129,6 +129,3 @@ R07.Pruebas_DEBUG = R07.Pruebas_DEBUG.then( function()
 	});
 })
 .catch( error => console.log( error ));
-
-// TODO: Probar interacción con el Editor
-// TODO: Verificar que si existen datos en el localStorage, muestre al usuario el libro y capítulo que están guardados
