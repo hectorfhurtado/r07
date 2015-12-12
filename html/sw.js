@@ -1,11 +1,15 @@
+
 /**
  * ServiceWorker para tener experiencia offline
  */
+
+/* global caches, fetch */
 
 const VERSION = 'v1';
 const APP     = 'r07';
 const ASSETS  = [
 	'/',
+	'/index.js',
 	'/modulos/cargador/Cargador.js',
 	'/modulos/controladormaestro/ControladorMaestro.js',
 	'/modulos/db/Db.js',
@@ -16,12 +20,27 @@ const ASSETS  = [
 	'/modulos/utilidadfecha/UtilidadFecha.js',
 ];
 
-self.addEventListener( 'install', function( e )
+const NOMBRE_CACHE = `${ APP }-${ VERSION }`;
+
+self.addEventListener( 'install', function enInstall( evento )
 {
-	e.waitUntil( caches.open( `${ APP }-${ VERSION }` ).then( function( cache )
-	{
-		return cache.addAll( ASSETS );
-	}));
+	evento.waitUntil( caches.open( NOMBRE_CACHE ).then( cache => cache.addAll( ASSETS )));
 });
 
-// TODO: Continuar con el eventListener para el fetch
+self.addEventListener( 'fetch', function enFetch( e )
+{
+	e.respondWith( caches.match( e.request ).then( function responde( respuesta )
+	{
+		// hacemos igual la petición por si hay alguna nueva versión del archivo
+		fetch( e.request.clone() ).then( function haceElFetch( respuestaFetch )
+		{
+			if ( !respuestaFetch || respuestaFetch.status != 200 ) return;
+			
+			caches
+				.open( NOMBRE_CACHE )
+				.then( cache => cache.put( e.request, respuestaFetch.clone() ));
+		});
+		
+		if ( respuesta ) return respuesta;
+	}));
+});

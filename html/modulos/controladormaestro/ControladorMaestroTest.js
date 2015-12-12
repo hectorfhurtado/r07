@@ -1,5 +1,5 @@
 /**
- * @author nando
+ * @author Héctor Fernando Hurtado
  */
 
 /* global console, R07 */
