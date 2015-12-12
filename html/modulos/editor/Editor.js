@@ -202,19 +202,15 @@
 		 */
 		_actualizaDevocional: function()
 		{
-			return R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro )
+			return Promise.all([
+				R07.Elementos.damePorId( 'EditorLibro' ),
+				R07.Elementos.damePorId( 'EditorCapitulo' ),
+				R07.Elementos.damePorId( 'EditorDevocional' )
+			]).then( function( $elementos )
 			{
-				R07.Editor.devocional.libro = $libro.value;
-				
-				return R07.Elementos.damePorId( 'EditorCapitulo' );
-			}).then( function( $capitulo )
-			{
-				R07.Editor.devocional.capitulo = $capitulo.value;
-				
-				return R07.Elementos.damePorId( 'EditorDevocional' );
-			}).then( function( $devocional )
-			{
-				R07.Editor.devocional.devocional = $devocional.value.trim();
+				R07.Editor.devocional.libro      = $elementos[ 0 ].value;
+				R07.Editor.devocional.capitulo   = $elementos[ 1 ].value;
+				R07.Editor.devocional.devocional = $elementos[ 2 ].value.trim();
 			});
 		},
 		
@@ -245,20 +241,17 @@
 		actualizaDevocional: function( devocional )
 		{
 			this.devocional = devocional;
-			
-			return R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro )
+
+			// Debemos hacer la lectura de elementos del DOM y la escritura en batches por el reflujo que debe calcular el browser
+			return Promise.all([
+				R07.Elementos.damePorId( 'EditorLibro' ),
+				R07.Elementos.damePorId( 'EditorCapitulo' ),
+				R07.Elementos.damePorId( 'EditorDevocional' )
+			]).then( function( $elementos )
 			{
-				if ( devocional.libro ) $libro.value = devocional.libro;
-				
-				return R07.Elementos.damePorId( 'EditorCapitulo' );
-			}).then( function( $capitulo )
-			{
-				if ( devocional.capitulo ) $capitulo.value = devocional.capitulo;
-				
-				return R07.Elementos.damePorId( 'EditorDevocional' );
-			}).then( function( $devocional )
-			{
-				if ( devocional.devocional ) $devocional.value = devocional.devocional;
+				if ( devocional.libro )      $elementos[ 0 ].value = devocional.libro;
+				if ( devocional.capitulo )   $elementos[ 1 ].value = devocional.capitulo;
+				if ( devocional.devocional ) $elementos[ 2 ].value = devocional.devocional;
 			});
 		}
 	};

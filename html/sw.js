@@ -10,6 +10,7 @@ const APP     = 'r07';
 const ASSETS  = [
 	'/',
 	'/index.js',
+	'/chromeManifest.json',
 	'/modulos/cargador/Cargador.js',
 	'/modulos/controladormaestro/ControladorMaestro.js',
 	'/modulos/db/Db.js',
@@ -39,7 +40,7 @@ self.addEventListener( 'fetch', function enFetch( e )
 			caches
 				.open( NOMBRE_CACHE )
 				.then( cache => cache.put( e.request, respuestaFetch.clone() ));
-		});
+		}).catch( error => console.log( 'No alcancé al servidor' ));
 		
 		if ( respuesta ) return respuesta;
 	}));

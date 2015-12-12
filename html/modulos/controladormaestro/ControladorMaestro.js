@@ -258,7 +258,10 @@
 
 					// Al hacer pruebas, no existe aún el Editor, así que este pedazo sale con error
 					if ( R07.DEBUG ) return;
-					
+				
+					if ( R07.DEVOCIONAL && R07.DEVOCIONAL.capitulo && R07.DEVOCIONAL.libro )
+						R07.Editor.actualizaDevocional( R07.DEVOCIONAL );
+						
 					R07.Elementos.damePorId( 'Editor' ).then( function( $editor )
 					{
 						$editor.classList.remove( 'inexistente' );
