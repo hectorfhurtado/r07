@@ -10,7 +10,7 @@ const APP     = 'r07';
 const ASSETS  = [
 	'/',
 	'/index.js',
-	'/chromeManifest.json',
+	'/webManifest.json',
 	'/modulos/cargador/Cargador.js',
 	'/modulos/controladormaestro/ControladorMaestro.js',
 	'/modulos/db/Db.js',
