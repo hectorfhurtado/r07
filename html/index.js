@@ -88,6 +88,3 @@
 		if ( R07.DEBUG === false ) Maestro.inicia();
 	});
 })( window );
-
-
-// TODO: ENcontré un bug. Cuando ya haya información para el día en actual, si se elige el Editor, debe mostrar lo que tiene y no buscar lo de mañana
