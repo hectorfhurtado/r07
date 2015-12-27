@@ -32,7 +32,7 @@ R07.Pruebas_DEBUG = R07.Pruebas_DEBUG.then( function()
 		var $resumenDevocional = document.getElementById( 'ResumenDevocional' );
 		var textoDevocional    = 'Toca el reloj para comenzar';
 		
-		console.assert( $resumenDevocional,                                 'Miramos que exista el elemento en el DOM' );
+		console.assert( !!$resumenDevocional,                                 'Miramos que exista el elemento en el DOM' );
 		console.assert( $resumenDevocional.textContent === textoDevocional, 'Mira que sí haya cambiado el texto del devocional' );
 		
 		/**************************

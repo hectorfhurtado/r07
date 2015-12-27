@@ -10,6 +10,7 @@
     
     R07.Cargador =
 	{
+		HEAD: document.querySelector( 'head' ),
        /**
          * Devolvemos el módulo a través del callback. No usamos promesas porque al comienzo no sabemos si las podemos usar
          * @param {          String   } modulo   El nombre del módulo
@@ -29,13 +30,13 @@
                 script.type = 'text/javascript';
                 script.src  = `modulos/${ modulo.toLocaleLowerCase() }/${ modulo }.js`;
 
-                document.querySelector( 'head' ).appendChild( script );
+                R07.Cargador.HEAD.appendChild( script );
                 script.addEventListener( 'load', alCargar );
 
                 function alCargar()
 				{
                     script.removeEventListener( 'load', alCargar );
-                    document.querySelector( 'head' ).removeChild( script );
+                    R07.Cargador.HEAD.removeChild( script );
 					
                     script = null;
                     resolve( R07[ modulo ]);
@@ -58,12 +59,12 @@
             script.type = 'text/javascript';
             script.src  = `modulos/${ modulo.toLowerCase() }/${ modulo }Test.js`;
             
-            document.querySelector( 'head' ).appendChild( script );
+            R07.Cargador.HEAD.appendChild( script );
             
             function alCargar()
 			{
                 script.removeEventListener( 'load', alCargar );
-                document.querySelector( 'head' ).removeChild( script );
+                R07.Cargador.HEAD.removeChild( script );
             
 				script = null;
             }

@@ -22,7 +22,8 @@ function servir( req, res )
 	}
 	
 	if ( /\.html$/.test( req.url ))      res.setHeader( 'Content-type', 'text/html' );
-	else if ( /\.js$/.test( req.url ))   res.setHeader( 'Content-Type', 'application/javascript' );
+	else if ( /\.js$/.test( req.url ))   res.setHeader( 'Content-type', 'application/javascript' );
+	else if ( /\.json$/.test( req.url )) res.setHeader( 'Content-type', 'application/json' );
 	else                                 return;
 	
 	fs.createReadStream( path.join( __dirname,  PATH_WEB + req.url )).pipe( res );

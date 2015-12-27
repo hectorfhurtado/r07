@@ -10,7 +10,7 @@
 {
     R07.Elementos =
 	{
-        elementosPorId: {},                // Contiene la lista de elementos del DOM de la app, es un caché para ello
+        elementosPorId: {},		// Contiene la lista de elementos del DOM de la app, es un caché para ello
         
         /**
          * Devuelve el elemento del DOM en una promesa o por callback según se necesite.
@@ -27,7 +27,6 @@
 					resolver( this.elementosPorId[ id ]);
 					return;
 				}
-
 				this.elementosPorId[ id ] = document.getElementById( id );
 				
 				resolver( this.elementosPorId[ id ]);
