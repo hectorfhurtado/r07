@@ -8,18 +8,18 @@
 const VERSION = 'v1';
 const APP     = 'r07';
 const ASSETS  = [
-	'/',
-	'/index.js',
-	'/webManifest.json',
-	'/favicon.ico',
-	'/modulos/cargador/Cargador.js',
-	'/modulos/controladormaestro/ControladorMaestro.js',
-	'/modulos/db/Db.js',
-	'/modulos/editor/Editor.js',
-	'/modulos/editor/Editor.html',
-	'/modulos/elementos/Elementos.js',
-	'/modulos/omnibox/Omnibox.js',
-	'/modulos/utilidadfecha/UtilidadFecha.js',
+	'/r07/',
+	'/r07/index.js',
+	'/r07/webManifest.json',
+	'/r07/favicon.ico',
+	'/r07/modulos/cargador/Cargador.js',
+	'/r07/modulos/controladormaestro/ControladorMaestro.js',
+	'/r07/modulos/db/Db.js',
+	'/r07/modulos/editor/Editor.js',
+	'/r07/modulos/editor/Editor.html',
+	'/r07/modulos/elementos/Elementos.js',
+	'/r07/modulos/omnibox/Omnibox.js',
+	'/r07/modulos/utilidadfecha/UtilidadFecha.js',
 ];
 
 const NOMBRE_CACHE = `${ APP }-${ VERSION }`;
