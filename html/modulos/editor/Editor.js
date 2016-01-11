@@ -170,6 +170,7 @@
 			return Promise.all([
 				R07.Elementos.damePorId( 'EditorGuardarBtn' ),
 				R07.Elementos.damePorId( 'EditorCancelarBtn' ),
+				R07.Elementos.damePorId( 'EditorLibro' ),
 			]).then( function( $elementos )
 			{
 				var $botonGuardar = $elementos[ 0 ];
@@ -177,6 +178,12 @@
 				
 				var $botonCancelar = $elementos[ 1 ];
 				$botonCancelar.addEventListener( 'click', this._clickBotonCancelarHandler.bind( this, $botonCancelar ), false );
+				
+				var $inputLibros    = $elementos[ 2 ]
+				$inputLibros.addEventListener( 'change', this._changeInputLibrosHandler, false )
+				
+				// Quitamos referencia a los objetos del DOM
+				$botonGuardar = $botonCancelar = $inputLibros = null
 			}.bind( this ));
 		},
 		
@@ -197,6 +204,14 @@
 		{
 			e.stopPropagation();
 			this._lanzaEventoSaleEditor( $botonCancelar );
+		},
+		
+		_changeInputLibrosHandler: function()
+		{
+			R07.Elementos.damePorId( 'EditorCapitulo' ).then( function( $inputCapitulos )
+			{
+				$inputCapitulos.value = '1'
+			})
 		},
 		
 		_lanzaEventoSaleEditor: function( $elemento )
@@ -231,13 +246,17 @@
 		{
 			return R07.Elementos.damePorId( 'EditorLibrosList' ).then( function( $lista )
 			{
+				var fragmente = document.createDocumentFragment()
+				
 				this.LIBROS.forEach( function( libro )
 				{
 					var opcion = document.createElement( 'option' );
 					opcion.value = libro;
 					
-					$lista.appendChild( opcion );
+					fragmente.appendChild( opcion )
 				});
+				
+				$lista.appendChild( fragmente )
 			}.bind( this ));
 		},
 		
