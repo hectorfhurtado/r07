@@ -31,7 +31,7 @@ self.addEventListener( 'install', function enInstall( evento )
 
 self.addEventListener( 'fetch', function enFetch( e )
 {
-	e.respondWith( caches.match( e.request ).then( function responde( respuesta )
+	e.respondWith( caches.match( `/r07${ e.request }` ).then( function responde( respuesta )
 	{
 		// hacemos igual la petición por si hay alguna nueva versión del archivo
 		fetch( e.request.clone() ).then( function haceElFetch( respuestaFetch )
