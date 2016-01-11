@@ -34,7 +34,7 @@ self.addEventListener( 'fetch', function enFetch( e )
 	e.respondWith( caches.match( e.request ).then( function responde( respuesta )
 	{
 		// hacemos igual la petición por si hay alguna nueva versión del archivo
-		fetch(  `${ e.request.clone() }` ).then( function haceElFetch( respuestaFetch )
+		fetch( e.request.clone() ).then( function haceElFetch( respuestaFetch )
 		{
 			if ( !respuestaFetch || respuestaFetch.status != 200 ) return;
 			
