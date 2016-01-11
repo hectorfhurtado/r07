@@ -5,7 +5,7 @@
 {
 	if ( 'serviceWorker' in navigator )
 	{
-		navigator.serviceWorker.register( '/sw.js' ).then( function responderConRegistro( registro )
+		navigator.serviceWorker.register( '/r07/sw.js' ).then( function responderConRegistro( registro )
 		{
 			console.log( 'Nos registramos con scope: ', registro.scope );
 		}).catch( function muestraError( err )
