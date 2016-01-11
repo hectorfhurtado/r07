@@ -11,6 +11,7 @@ const ASSETS  = [
 	'/',
 	'/index.js',
 	'/webManifest.json',
+	'/favicon.ico',
 	'/modulos/cargador/Cargador.js',
 	'/modulos/controladormaestro/ControladorMaestro.js',
 	'/modulos/db/Db.js',
