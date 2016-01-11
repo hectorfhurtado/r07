@@ -15,34 +15,32 @@
 		{
 			return R07.Cargador.dame( 'Elementos' ).then( function( Elementos )
 			{
-                return Elementos.damePorId( 'OmniboxCronometroBtn' );
-			}).then( function( $cronometroBtn )
+				return Promise.all([
+					Elementos.damePorId( 'OmniboxCronometroBtn' ),
+					Elementos.damePorId( 'OmniboxIzqBtn' ),
+					Elementos.damePorId( 'OmniboxDerBtn' ),
+					Elementos.damePorId( 'OmniboxBusqueda' ),
+				]);
+			}).then( function( $elementos )
 			{
+				var $cronometroBtn = $elementos[ 0 ];
 				// Al oprimir el mouse, hacemos como que oprimimos el cronóemtro para comenzar
 				$cronometroBtn.addEventListener( 'mousedown', this._mousedownCronometroHandler, false );
 				$cronometroBtn.addEventListener( 'click', this._clickCronometroHandler, false );
 
 				// Luego de que termine la animación del cronómetro encogiéndose, mostramos la hora de inicio
 				$cronometroBtn.addEventListener( 'transitionend', this._transitionEndHandler, false );
-			}.bind( this )).then( function()
-			{
-				// Agregamos los Event handlers para la flecha de la izquierda
-				return R07.Elementos.damePorId( 'OmniboxIzqBtn' );
-			}).then( function( $botonIzq )
-			{
+
+				var $botonIzq = $elementos[ 1 ];
 				$botonIzq.addEventListener( 'click', this._clickBotonIzquierdoHandler, false );
 			
 				// Agregamos los Event handlers para la flecha de la izquierda
-				return R07.Elementos.damePorId( 'OmniboxDerBtn' );
-			}.bind( this )).then( function( $botonDer )
-			{
+				var $botonDer = $elementos[ 2 ];
 				$botonDer.addEventListener( 'click', this._clickBotonDerechoHandler, false );
 				
-				return R07.Elementos.damePorId( 'OmniboxBusqueda' );
-            }.bind( this )).then( function( $inputBusqueda )
-			{
-				$inputBusqueda.addEventListener( 'change', this._buscarFechaHandler, false );
-				$inputBusqueda.addEventListener( 'blur',   this._buscarFechaHandler, false );
+				var $inputBusqueda = $elementos[ 3 ];
+				$inputBusqueda.addEventListener( 'change',       this._buscarFechaHandler, false );
+				$inputBusqueda.addEventListener( 'blur',         this._buscarFechaHandler, false );
 				$inputBusqueda.addEventListener( 'animationend', this._quitarAnimacionHandler, false );
 				
 				this.actualiza( devocional );
@@ -77,7 +75,7 @@
 				var fecha = new Date();
 				var evento;
 				
-				// Esto aplicac para el tercer click en adelante
+				// Esto aplica para el tercer click en adelante
 				if ( this.classList.contains( 'busqueda' ))
 				{
 					this.classList.add( 'buscando' );
@@ -172,7 +170,6 @@
 		{
 			this.classList.remove( 'error' );
 		},
-		
 		
 		/**
 		 * Cuando hay un cambio en el devocional por la BD, debemos ajustar el UI para reflejar el cambio y la referencia que tenemos del devocional
@@ -282,24 +279,25 @@
 		 */
 		_actualizaHorasYBusqueda: function( devocional, opcion )
 		{
-			return R07.Elementos.damePorId( 'OmniboxHoras' ).then( function( $horas )
+			return Promise.all([
+				R07.Elementos.damePorId( 'OmniboxHoras' ),
+				R07.Elementos.damePorId( 'OmniboxBusqueda' ),
+			]).then( function( $elementos )
 			{
+				var $horas = $elementos[ 0 ];
+				
 				if ( opcion.horaVisible )  $horas.classList.remove( 'invisible' );
 				else 			    	   $horas.classList.add( 'invisible' );
-			}).then( function()
-			{
+				
 				this.escribeHoraInicio( devocional.horainicio );
 				this.escribeHoraFin( devocional.horafin );
 				this.debeMostrarFlechaDerecha( devocional.fecha );
-			}.bind( this )).then( function()
-			{
-				return R07.Elementos.damePorId( 'OmniboxBusqueda' );
-			}).then( function( $input )
-			{
+				
+				var $input = $elementos[ 1 ];
 				$input.classList.remove( 'error' );
 				
 				return $input.classList.add( 'colapsado', 'inexistente' );
-			});
+			}.bind( this ))
 		}
     };
 })();

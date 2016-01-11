@@ -56,17 +56,23 @@
 		{
 			return new Promise( function( resolve )
 			{
-				var xhr = new XMLHttpRequest();
+				var xhr          = new XMLHttpRequest();
 				xhr.responseType = 'text';
 				
-				xhr.addEventListener( 'load', function()
+				xhr.addEventListener( 'load', xhrHandler, false );
+				
+				function xhrHandler()
 				{
 					R07.Elementos.damePorSelector( 'body' ).then( function( $body )
 					{
 						$body.insertAdjacentHTML( 'beforeEnd', this.responseText );
+						
+						xhr.removeEventListener( 'load', xhrHandler, false );
+						xhr = null;
+						
 						resolve();
 					}.bind( this ));
-				});
+				}
 				
 				xhr.open( 'GET', 'modulos/editor/Editor.html' );
 				xhr.send();
@@ -140,16 +146,16 @@
 		 */
 		_guardar: function()
 		{
-			var info = {};
-			
-			return R07.Elementos.damePorId( 'EditorLibro' ).then( function( $libro )
+			return Promise.all([
+				R07.Elementos.damePorId( 'EditorLibro' ),
+				R07.Elementos.damePorId( 'EditorCapitulo' ),
+			]).then( function( $elementos )
 			{
-				info.libro = $libro.value;
-				
-				return R07.Elementos.damePorId( 'EditorCapitulo' );
-			}).then( function( $capitulo )
-			{
-				info.capitulo = $capitulo.value;
+				var info =
+				{
+					libro   : $elementos[ 0 ].value,
+					capitulo: $elementos[ 1 ].value
+				};
 				
 				localStorage.setItem( 'ultimoCapitulo', JSON.stringify( info ));
 			});
@@ -161,14 +167,23 @@
 		 */
 		_arrancaListeners: function()
 		{
-			return R07.Elementos.damePorId( 'EditorGuardarBtn' ).then( function( $botonGuardar )
+			return Promise.all([
+				R07.Elementos.damePorId( 'EditorGuardarBtn' ),
+				R07.Elementos.damePorId( 'EditorCancelarBtn' ),
+				R07.Elementos.damePorId( 'EditorLibro' ),
+			]).then( function( $elementos )
 			{
+				var $botonGuardar = $elementos[ 0 ];
 				$botonGuardar.addEventListener( 'click', this._clickBotonGuardarHandler.bind( this, $botonGuardar ), false );
 				
-				return R07.Elementos.damePorId( 'EditorCancelarBtn' );
-			}.bind( this )).then( function( $botonCancelar )
-			{
+				var $botonCancelar = $elementos[ 1 ];
 				$botonCancelar.addEventListener( 'click', this._clickBotonCancelarHandler.bind( this, $botonCancelar ), false );
+				
+				var $inputLibros    = $elementos[ 2 ]
+				$inputLibros.addEventListener( 'change', this._changeInputLibrosHandler, false )
+				
+				// Quitamos referencia a los objetos del DOM
+				$botonGuardar = $botonCancelar = $inputLibros = null
 			}.bind( this ));
 		},
 		
@@ -189,6 +204,14 @@
 		{
 			e.stopPropagation();
 			this._lanzaEventoSaleEditor( $botonCancelar );
+		},
+		
+		_changeInputLibrosHandler: function()
+		{
+			R07.Elementos.damePorId( 'EditorCapitulo' ).then( function( $inputCapitulos )
+			{
+				$inputCapitulos.value = '1'
+			})
 		},
 		
 		_lanzaEventoSaleEditor: function( $elemento )
@@ -223,13 +246,17 @@
 		{
 			return R07.Elementos.damePorId( 'EditorLibrosList' ).then( function( $lista )
 			{
+				var fragmente = document.createDocumentFragment()
+				
 				this.LIBROS.forEach( function( libro )
 				{
 					var opcion = document.createElement( 'option' );
 					opcion.value = libro;
 					
-					$lista.appendChild( opcion );
+					fragmente.appendChild( opcion )
 				});
+				
+				$lista.appendChild( fragmente )
 			}.bind( this ));
 		},
 		
@@ -242,7 +269,6 @@
 		{
 			this.devocional = devocional;
 
-			// Debemos hacer la lectura de elementos del DOM y la escritura en batches por el reflujo que debe calcular el browser
 			return Promise.all([
 				R07.Elementos.damePorId( 'EditorLibro' ),
 				R07.Elementos.damePorId( 'EditorCapitulo' ),
@@ -251,7 +277,8 @@
 			{
 				if ( devocional.libro )      $elementos[ 0 ].value = devocional.libro;
 				if ( devocional.capitulo )   $elementos[ 1 ].value = devocional.capitulo;
-				if ( devocional.devocional ) $elementos[ 2 ].value = devocional.devocional;
+				
+				$elementos[ 2 ].value = devocional.devocional ? devocional.devocional : '';
 			});
 		}
 	};

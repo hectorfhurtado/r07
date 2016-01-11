@@ -35,19 +35,15 @@
 		{    
 			return R07.Cargador.dame( 'Elementos' ).then( function( Elementos )
 			{
-				return Elementos.damePorId( 'DescargaBtn' ).then( function( $descargarBtn )
-				{	
-					$descargarBtn.classList.remove( 'invisible' );
-					
-					return Elementos.damePorId( 'OmniboxIzqBtn' );
-				}).then( function( $izqBtn )
+				return Promise.all([
+					Elementos.damePorId( 'DescargaBtn' ),
+					Elementos.damePorId( 'OmniboxIzqBtn' ),
+					Elementos.damePorId( 'OmniboxCronometroBtn' ),
+				]).then( function( $elementos )
 				{
-					$izqBtn.classList.remove( 'invisible' );
-					
-					return Elementos.damePorId( 'OmniboxCronometroBtn' );
-				}).then( function( $cronometroBtn )
-				{
-					$cronometroBtn.classList.remove( 'invisible' );
+					$elementos[ 0 ].classList.remove( 'invisible' );
+					$elementos[ 1 ].classList.remove( 'invisible' );
+					$elementos[ 2 ].classList.remove( 'invisible' );
 				});
 			});
         },
@@ -61,24 +57,17 @@
 			{
 				return R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $main )
 				{
-					var $libro       = null;
-					var $capitulo    = null;
-					
 					$main.textContent = '';
 					
 					if ( $main.childNodes.length > 1 )
 					{
-						return R07.Elementos.damePorId( 'ResumenDevocionalLibro' ).then( function( libro )
+						return Promise.all([
+							R07.Elementos.damePorId( 'ResumenDevocionalLibro' ),
+							R07.Elementos.damePorId( 'ResumenDevocionalCapitulo' ),
+						]).then( function( $elementos )
 						{
-							$libro = libro;
-							
-							return R07.Elementos.damePorId( 'ResumenDevocionalCapitulo' );
-						}).then( function( capitulo )
-						{
-							$capitulo = capitulo;
-							
-							$libro.textContent       = R07.DEVOCIONAL.libro;
-							$capitulo.textContent    = R07.DEVOCIONAL.capitulo;
+							$elementos[ 0 ].textContent = R07.DEVOCIONAL.libro;
+							$elementos[ 1 ].textContent = R07.DEVOCIONAL.capitulo;
 						});
 					}
 					else
@@ -92,7 +81,8 @@
 			
 			return R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $resumen )
 			{
-				$resumen.textContent = 'Toca el reloj para comenzar';
+				if ( R07.DEVOCIONAL && R07.DEVOCIONAL.horainicio ) $resumen.textContent = 'Ahora toca o haz click aquí para escribir en tu devocional'
+				else $resumen.textContent = 'Toca o haz click en el reloj para comenzar'
 			});
         },	// _cambiaMensajePrincipal
         
@@ -162,9 +152,17 @@
 		{
             return R07.Cargador.dame( 'Elementos' ).then( function( Elementos )
 			{
-				return Elementos.damePorSelector( 'body' );
-			}).then( function( $body )
+				return Promise.all([
+					Elementos.damePorSelector( 'body' ),
+					Elementos.damePorId( 'ResumenDevocional' ),
+					Elementos.damePorId( 'DescargaBtn' ),
+				]);
+				
+				// return Elementos.damePorSelector( 'body' );
+			}).then( function( $elementos )
 			{
+				var $body = $elementos[ 0 ];
+				
 				$body.addEventListener( 'traeFechaAnterior',  this._traeFechaAnteriorHandler.bind( this ),  true );
 				$body.addEventListener( 'traeFechaSiguiente', this._traeFechaSiguienteHandler.bind( this ), true );
 				
@@ -182,18 +180,18 @@
 				
 				$body.addEventListener( 'saleEditor', this._saleEditorHandler, true );
 				
-				return R07.Elementos.damePorId( 'ResumenDevocional' );
-			}.bind( this )).then( function( $main )
-			{
+				var $main = $elementos[ 1 ];
 				$main.addEventListener( 'click', this._clickMain.bind( this ), false );
 				
-				return R07.Elementos.damePorId( 'DescargaBtn' );
-			}.bind( this )).then( function( $descarga )
-			{
+				var $descarga = $elementos[ 2 ];
 				$descarga.addEventListener( 'click', this._clickDescargaHandler.bind( this ), false );
 			}.bind( this ));
         },  // _aplicaEventListeners
-		
+		/**
+		 * @param	{NUmber}
+		 * @return	{String}
+		 * @private
+		 */
 		_cambiaNumeroADosDigitos: function( numero )
 		{
 			return ( numero < 10 ) ? '0' + numero : '' + numero;
@@ -320,9 +318,9 @@
 					log += resultado.libro + ' ' + resultado.capitulo + '\t' + resultado.devocional + '\r\n';	// Porción
 				});
 
-				var link      = document.createElement( 'a' );
-				link.href     = 'data:,' +  encodeURI( log );
-				link.style    = 'visibility:hidden';
+				var link              = document.createElement( 'a' );
+				link.href             = 'data:                          ,' +  encodeURI( log );
+				link.style.visibility ='hidden';
 				
 				link.download = 'reporte' + primerDiaDelMes.getFullYear() +
 					this._cambiaNumeroADosDigitos(( primerDiaDelMes.getMonth() + 1 )) + 

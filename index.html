@@ -22,8 +22,8 @@
             body {
                 background-color: hsl(0, 0%, 0%);
                 display         : flex;
-                font-size       : 16px;
                 flex-direction  : column;
+                font-size       : 16px;
                 overflow        : hidden;
             }
             
@@ -52,9 +52,9 @@
 
             main {
                 flex          : 1 0 auto;
+				font-size     : 1rem;
                 padding       : 0.5rem;
                 vertical-align: middle;
-				font-size: 1rem;
             }
 
             footer {
@@ -62,22 +62,22 @@
             }
 
             nav#Omnibox {
-                display: flex;
+                display   : flex;
 				transition: transform 0.3s ease-in;
             }
 
             div#OmniboxContenidoCentral {
-                display: flex;
-                flex: 1 0 auto;
+                display        : flex;
+                flex           : 1 0 auto;
+                flex-direction : row;
                 justify-content: center;
-                flex-direction: row;
-                position: relative;
+                position       : relative;
             }
 			
 			main > span {
-				display: inline-block;
+				display    : inline-block;
 				font-family: Tahoma;
-				transition: transform 0.3s ease-in;
+				transition : transform 0.3s ease-in;
 			}
 
             .invisible {
@@ -105,19 +105,17 @@
             }
             
             nav#Omnibox {
-/*                height: 5vh;*/
-                display: flex;
+                display        : flex;
+                flex-direction : row;
                 justify-content: space-between;
-                width: 100%;
-                flex-direction: row;
+                width          : 100%;
             }
             
-/*            button#OmniboxIzqBtn, button#OmniboxCronometroBtn, button#OmniboxDerBtn {*/
             button {
-                width: 54px;
-                height: 54px;
                 background-color: transparent;
-                border: none;
+                border          : none;
+                height          : 54px;
+                width           : 54px;
             }
             
             button#OmniboxCronometroBtn {
@@ -125,20 +123,20 @@
             }
             
             button#OmniboxCronometroBtn.cronometroGrande {
-                transform : scale( 8 ) translateY( -5vh );
+                transform: scale( 8 ) translateY( -5vh );
             }
             
             div#OmniboxHoras {
-                display: flex;
-                position: absolute;
-                top: -0.7rem;
-                margin: 0 auto;
-                width: 100%;
-                box-sizing: border-box;
-                left: 0;
-                padding: 0 33%;
+                box-sizing     : border-box;
+                display        : flex;
+                font-size      : 0.7rem;
                 justify-content: space-between;
-                font-size: 0.7rem;
+                left           : 0;
+                margin         : 0 auto;
+                padding        : 0 33%;
+                position       : absolute;
+                top            : -0.7rem;
+                width          : 100%;
             }
 			
 			/* Animaciones de los elementos internos del cronómetro */
@@ -159,8 +157,8 @@
 			}
 			
 			#OmniboxCronometroBtn.cronometroCorriendo #manecilla {
+				animation       : giroManecilla 10s linear infinite;
 				transform-origin: 50px 55px;
-				animation: giroManecilla 10s linear infinite;
 			}
 			
 			#OmniboxCronometroBtn.busqueda #botonReloj {
@@ -174,9 +172,9 @@
 			
 			#OmniboxCronometroBtn.busqueda #manecilla {
 				/*transform:  scale( 2, 2 ) translate3D( 8%, 2.5%, 0) rotateZ(45deg);*/
-				transform:  scale( 2, 2 ) translate3D( 6px, 5px, 0 ) rotateZ( 45deg );
+				stroke-width    : 5;
+				transform       :  scale( 2, 2 ) translate3D( 6px, 5px, 0 ) rotateZ( 45deg );
 				transform-origin: center;
-				stroke-width: 5;
 			}
 			
 			#OmniboxCronometroBtn.busqueda.buscando circle {
@@ -189,33 +187,33 @@
 			
 			/* INPUT de búsqueda de fechas */
 			input#OmniboxBusqueda {
-				color: hsl( 183, 100%, 50% );
-				font-size: 1rem;
-				position: absolute;
-				left: 0px;
-				top: 0px;
-				width: calc( 100% - 1rem);
-				height: calc( 100% - 1rem );
-				margin: 0.5rem;
-				background-color: transparent;
-				border: solid thin hsl( 183, 100%, 50% );
-				padding: 0.5rem;
-				box-sizing: border-box;
-				border-radius: 0.5rem;
-				transition: border-radius 0.3s, width 0.3s, left 0.3s, height 0.3s, top 0.3s, border-width 0.3s, margin 0.3s, border-color 0.3s;
+				background-color          : transparent;
+				border                    : solid thin hsl( 183, 100%, 50% );
+				border-radius             : 0.5rem;
+				box-sizing                : border-box;
+				color                     : hsl( 183, 100%, 50% );
+				font-size                 : 1rem;
+				height                    : calc( 100% - 1rem );
+				left                      : 0px;
+				margin                    : 0.5rem;
+				padding                   : 0.5rem;
+				position                  : absolute;
+				text-align                : center;
+				top                       : 0px;
+				transition                : border-radius 0.3s, width 0.3s, left 0.3s, height 0.3s, top 0.3s, border-width 0.3s, margin 0.3s, border-color 0.3s;
 				transition-timing-function: ease-out;
-				text-align: center;
+				width                     : calc( 100% - 1rem);
 			}
 			
 			input#OmniboxBusqueda.colapsado {
-				border-radius: 50%;
-				width: 27px;
-				left: calc(50% - 18px);
-				height: 27px;
-				top: 9.4px;
-				border-width: 5px;
-				margin: 0;
+				border-radius             : 50%;
+				border-width              : 5px;
+				height                    : 27px;
+				left                      : calc(50% - 18px);
+				margin                    : 0;
+				top                       : 9.4px;
 				transition-timing-function: ease-out;
+				width                     : 27px;
 			}
 			
 			@keyframes nono {
@@ -228,28 +226,28 @@
 			}
 			
 			input#OmniboxBusqueda.error {
+				animation   : nono 0.5s ease-in-out 0s 5;
 				border-color: red;
-				animation: nono 0.5s ease-in-out 0s 5;
 			}
 			
 			/* ANIMACION PARA CAMBIO DE VISTAS*/
 			.salePrincipal header {
-				transform: translateY( -4rem );
+				transform : translateY( -4rem );
 				transition: transform 0.3 ease-out;
 			}
 			
 			.salePrincipal nav#Omnibox {
-				transform: translateY( 7rem );
+				transform : translateY( 7rem );
 				transition: transform 0.3 ease-out;
 			}
 			
 			.salePrincipal span#ResumenDevocionalLibro {
-				transform: translate( 0.1rem, -3.2rem );
+				transform : translate( 0.1rem, -3.2rem );
 				transition: transform 0.3 ease-out;
 			}
 			
 			.salePrincipal span#ResumenDevocionalCapitulo {
-				transform: translate( 11.3rem, -3.2rem );
+				transform : translate( 11.3rem, -3.2rem );
 				transition: transform 0.3 ease-out;
 			}
         </style>
