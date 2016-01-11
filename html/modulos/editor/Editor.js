@@ -153,7 +153,7 @@
 			{
 				var info =
 				{
-					libro: $elementos[ 0 ].value,
+					libro   : $elementos[ 0 ].value,
 					capitulo: $elementos[ 1 ].value
 				};
 				

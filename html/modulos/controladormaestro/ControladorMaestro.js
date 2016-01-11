@@ -81,7 +81,8 @@
 			
 			return R07.Elementos.damePorId( 'ResumenDevocional' ).then( function( $resumen )
 			{
-				$resumen.textContent = 'Toca el reloj para comenzar';
+				if ( R07.DEVOCIONAL && R07.DEVOCIONAL.horainicio ) $resumen.textContent = 'Ahora toca o haz click aquí para escribir en tu devocional'
+				else $resumen.textContent = 'Toca o haz click en el reloj para comenzar'
 			});
         },	// _cambiaMensajePrincipal
         
@@ -186,7 +187,11 @@
 				$descarga.addEventListener( 'click', this._clickDescargaHandler.bind( this ), false );
 			}.bind( this ));
         },  // _aplicaEventListeners
-		
+		/**
+		 * @param	{NUmber}
+		 * @return	{String}
+		 * @private
+		 */
 		_cambiaNumeroADosDigitos: function( numero )
 		{
 			return ( numero < 10 ) ? '0' + numero : '' + numero;
