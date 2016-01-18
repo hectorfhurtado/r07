@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"></meta>
+        <title>Icono</title>
+    </head>
+    <body>
+		
+        <canvas width="192" height="192"></canvas>
+        <script>
+			/**
+			 * Este script sirve para crear íconos .png a partir de archivos SVG que se encuentren en 
+			 * /html/svg/
+			 * 
+			 * Se debe subir el servidor para que Chrome permita realizar el comando canvas.toDataURL porque al subirlo por script dice que está 'tainted'.
+			 * Al subir el servidor.bat, debemos escribir localhost:7000/icono.html y listo.
+			 * Obviamente cambia el puerto según el servidor
+			 */
+			const TAMAÑO_ICONO = 192
+			const PATH_ICONO   = '../svg/icono.svg'
+
+            var imagenIcono    = new Image
+            imagenIcono.width  = TAMAÑO_ICONO
+            imagenIcono.height = TAMAÑO_ICONO
+
+            imagenIcono.onload = function() {
+
+                var canvas = document.querySelector( 'canvas' )
+                var ctx    = canvas.getContext( '2d' )
+
+                var a      = document.createElement( 'a' )
+                a.download = `icon${ TAMAÑO_ICONO }x${ TAMAÑO_ICONO }.png`
+
+                ctx.drawImage( imagenIcono, 0, 0 )
+                a.href = canvas.toDataURL( 'image/png' )
+                a.click()
+            }
+			imagenIcono.setAttribute( 'crossOrigin', 'anonymous' )
+            imagenIcono.src = PATH_ICONO
+            
+            document.querySelector( 'body' ).appendChild( imagenIcono )
+        </script>
+    </body>
+</html

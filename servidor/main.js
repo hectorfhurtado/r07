@@ -25,9 +25,14 @@ function servir( req, res )
 	else if ( /\.js$/.test( req.url ))   res.setHeader( 'Content-type', 'application/javascript' );
 	else if ( /\.json$/.test( req.url )) res.setHeader( 'Content-type', 'application/json' );
 	else if ( /\.ico$/.test( req.url ))  res.setHeader( 'Content-type', 'image/x-icon' )
+	else if ( /\.svg$/.test( req.url ))  res.setHeader( 'Content-type', 'image/svg+xml' )
 	else                                 return;
 	
-	fs.createReadStream( path.join( __dirname,  PATH_WEB + req.url )).pipe( res );
+	if ( /icono\.html$/.test( req.url ))
+		// Esto es para poder crear los íconos a partir de archivos .svg
+		fs.createReadStream( path.join( __dirname, req.url )).pipe( res );
+	else
+		fs.createReadStream( path.join( __dirname, PATH_WEB + req.url )).pipe( res );
 }
 
 servidor.listen( 7000 );

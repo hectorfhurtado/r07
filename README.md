@@ -9,7 +9,6 @@ Para probarlo con el browser Chrome, debes instalar [nodejs](https://nodejs.org/
 
 ## Todo
 
-- Hacer que se adapte a los cambios de tamaño de pantalla.
 - Crear un 'build' para la web
 - Crear un build para ChromeApp
 - Crear un build para FirefoxOS
