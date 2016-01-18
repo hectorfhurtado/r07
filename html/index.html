@@ -11,7 +11,8 @@
 				}
             }
             
-            html, body {
+            html,
+			body {
                 color  : hsl( 183, 100%, 50% );
                 height : 100%;
                 margin : 0;
@@ -34,12 +35,12 @@
                 padding        : 0.5rem;
 				transition     : transform 0.3s ease-in;
             }
+			
             header > button {
                 background-color: hsla(0, 0%, 0%, 0);
                 border          : none;
-                height          : 10vw;
-                padding         : 0;
-                width           : 10vw;
+                height          : 54px;
+                width           : 54px;
             }
             
             header .dummy {
@@ -88,7 +89,6 @@
                 display: none;
             }
 
-            /*button#DescargaBtn, button#OmniboxIzqBtn, button#OmniboxCronometroBtn, button#OmniboxDerBtn {*/
             button {
                 fill        : none;
                 outline     : none;
@@ -96,11 +96,16 @@
                 stroke-width: 10%;
             }
             
-            button#OmniboxCronometroBtn #manecilla, button#OmniboxIzqBtn, button#OmniboxDerBtn, button#EditorGuardarBtn, button#EditorCancelarBtn {
+            button#OmniboxCronometroBtn #manecilla,
+			button#OmniboxIzqBtn,
+			button#OmniboxDerBtn,
+			button#EditorGuardarBtn,
+			button#EditorCancelarBtn {
                 stroke-linecap: round;
             }
             
-            button:hover, button > svg:hover {
+            button:hover,
+			button > svg:hover {
                 cursor: pointer;
             }
             
@@ -141,7 +146,7 @@
 			
 			/* Animaciones de los elementos internos del cronómetro */
 			#OmniboxCronometroBtn #botonReloj {
-				transition: transform 0.3s, opacity: 0.2s;
+				transition: transform 0.3s, opacity 0.2s;
 			}
 			
 			#OmniboxCronometroBtn circle {
@@ -249,6 +254,18 @@
 			.salePrincipal span#ResumenDevocionalCapitulo {
 				transform : translate( 11.3rem, -3.2rem );
 				transition: transform 0.3 ease-out;
+			}
+			
+			@media ( min-width: 512px ) {
+				
+				header,
+				main,
+				footer,
+				nav#Omnibox {
+					margin-left : auto;
+					margin-right: auto;
+					width       : 512px;
+				}
 			}
         </style>
     </head>
