@@ -3,36 +3,36 @@
 	"name"      : "R07",
 	"icons": [
 	{
-		"src"  : "img/iconos/icon16x16.png",
+		"src"  : "/r07/img/iconos/icon16x16.png",
 		"sizes": "16x16",
 		"type" : "image/png"
 	},
 	{
-		"src"  : "img/iconos/icon48x48.png",
+		"src"  : "/r07/img/iconos/icon48x48.png",
 		"sizes": "48x48",
 		"type" : "image/png"
 	},
 	{
-		"src"  : "img/iconos/icon60x60.png",
+		"src"  : "/r07/img/iconos/icon60x60.png",
 		"sizes": "60x60",
 		"type" : "image/png"
 	},
 	{
-		"src"  : "img/iconos/icon128x128.png",
+		"src"  : "/r07/img/iconos/icon128x128.png",
 		"sizes": "128x128",
 		"type" : "image/png"
 	},
 	{
-		"src"  : "img/iconos/icon144x144.png",
+		"src"  : "/r07/img/iconos/icon144x144.png",
 		"sizes": "144x144",
 		"type" : "image/png"
 	},
 	{
-		"src"  : "img/iconos/icon192x192.png",
+		"src"  : "/r07/img/iconos/icon192x192.png",
 		"sizes": "192x192",
 		"type" : "image/png"
 	}],
-	"start_url"  : "/index.html",
+	"start_url"  : "/r07/index.html",
 	"display"    : "standalone",
 	"orientation": "landscape"
 }
