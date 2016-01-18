@@ -34,5 +34,5 @@
 	}],
 	"start_url"  : "/r07/index.html",
 	"display"    : "standalone",
-	"orientation": "landscape"
+	"orientation": "portrait"
 }
