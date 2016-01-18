@@ -1,0 +1,20 @@
+{
+  "name": "r07",
+  "version": "1.0.0",
+  "description": "Devocional diario",
+  "main": "index.js",
+  "scripts": {
+    "test" : "echo \"Error: no test specified\" && exit 1",
+	"build": "node build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hectorfhurtado/r07.git"
+  },
+  "author": "hectorfhurtado",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hectorfhurtado/r07/issues"
+  },
+  "homepage": "https://github.com/hectorfhurtado/r07#readme"
+}
