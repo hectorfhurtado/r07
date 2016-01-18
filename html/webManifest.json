@@ -34,5 +34,7 @@
 	}],
 	"start_url"  : "/index.html",
 	"display"    : "standalone",
-	"orientation": "portrait"
+	"orientation": "portrait",
+	"backgrund_color": "black",
+	"theme_color": "black"
 }
