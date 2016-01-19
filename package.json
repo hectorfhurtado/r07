@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test" : "echo \"Error: no test specified\" && exit 1",
-	"build": "npm run build:web",
-	"build:web": "node bin/web_build.js"
+	"build": "npm run build:web && npm run build:firefoxos",
+	"build:web": "node bin/web_build.js",
+	"build:firefoxos": "node bin/firefoxos_build.js"
   },
   "repository": {
     "type": "git",
