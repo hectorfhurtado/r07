@@ -1,21 +1,20 @@
 {
-  "name": "r07",
-  "version": "1.0.0",
+  "name"       : "r07",
+  "version"    : "1.0.0",
   "description": "Devocional diario",
-  "main": "index.js",
-  "scripts": {
-    "test" : "echo \"Error: no test specified\" && exit 1",
-	"build": "npm run build:web && npm run build:firefoxos",
-	"build:web": "node bin/web_build.js",
-	"build:firefoxos": "node bin/firefoxos_build.js"
+  "main"       : "index.js",
+  "scripts"    : {
+    "test"     : "echo \"Error: no test specified\" && exit 1",
+	"build"    : "npm run build:web",
+	"build:web": "node bin/web_build.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hectorfhurtado/r07.git"
+    "url" : "git+https://github.com/hectorfhurtado/r07.git"
   },
-  "author": "hectorfhurtado",
+  "author" : "hectorfhurtado",
   "license": "MIT",
-  "bugs": {
+  "bugs"   : {
     "url": "https://github.com/hectorfhurtado/r07/issues"
   },
   "homepage": "https://github.com/hectorfhurtado/r07#readme"
