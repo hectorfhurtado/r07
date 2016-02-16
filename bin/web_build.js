@@ -4,8 +4,9 @@
 
 const p       = require( 'path' )
 const Copia   = require( '../lib/copia' )
-const ORIGEN  = 'C:\\Users\\Nando\\proyectos\\r07\\html'
-const DESTINO = '../dest/web'
+const ROOT    = process.cwd()
+const ORIGEN  = '/html'
+const DESTINO = '/dest/web'
 
 const WebBuild =
 {
@@ -21,4 +22,4 @@ const WebBuild =
 // Tomamos como prototipo Copia
 Object.assign( Object.getPrototypeOf( WebBuild ), Copia )
 
-WebBuild.copiaTodo( ORIGEN, p.join( ORIGEN, DESTINO ))
+WebBuild.copiaTodo( p.join( ROOT, ORIGEN ), p.join( ROOT, DESTINO ))

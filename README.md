@@ -9,7 +9,5 @@ Para probarlo con el browser Chrome, debes instalar [nodejs](https://nodejs.org/
 
 ## Todo
 
-- Crear un 'build' para la web
-- Crear un build para ChromeApp
-- Crear un build para FirefoxOS
-- Crear el scrapper para adicionar una Biblia
+- Crear un API para usar la aplicacion como REST (podria ser usado para los browsers que no soporten o tengan deshabilitado JavaScript, aunque no podria subido a GitHub pages).
+- Crear un API en el front para poder hacer cambios de *piel* (tal vez usando variables CSS).
