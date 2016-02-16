@@ -72,6 +72,7 @@
 					}
 					else
 					{
+						// TODO: Cambiar en el builder el ` por comillas simples para FirefoxOs
 						$main.insertAdjacentHTML( 'beforeEnd', `
 <span id="ResumenDevocionalLibro">${ R07.DEVOCIONAL.libro }</span> <span id="ResumenDevocionalCapitulo">${ R07.DEVOCIONAL.capitulo }</span>
 ` );

@@ -28,3 +28,4 @@ node_modules
 
 # La carpeta con las llaves para probar el servidor con SSL
 servidor/llaves
+dest/
